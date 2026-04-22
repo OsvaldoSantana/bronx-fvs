@@ -9,434 +9,661 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Google Sans', 'Roboto', 'sans-serif'] }, colors: { g: { bg: '#f8f9fa', surface: '#ffffff', border: '#dadce0', divider: '#e8eaed', text: '#202124', secondary: '#5f6368', hint: '#80868b', blue: '#1a73e8', blueHover: '#1557b0', blueBg: '#e8f0fe', green: '#1e8e3e', greenBg: '#e6f4ea', red: '#d93025', redBg: '#fce8e6', amber: '#e37400', amberBg: '#fef7e0' } }, boxShadow: { 'md1': '0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)', 'md2': '0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)' } } } }
+    tailwind.config={theme:{extend:{
+      fontFamily:{sans:['Google Sans','Roboto','sans-serif']},
+      colors:{g:{bg:'#f8f9fa',surface:'#ffffff',border:'#dadce0',divider:'#e8eaed',text:'#202124',secondary:'#5f6368',hint:'#80868b',blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',green:'#1e8e3e',greenBg:'#e6f4ea',red:'#d93025',redBg:'#fce8e6',amber:'#e37400',amberBg:'#fef7e0'}},
+      boxShadow:{'md1':'0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)','md2':'0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)'}
+    }}}
   </script>
   <style>
-    *{-webkit-tap-highlight-color:transparent}body{overscroll-behavior:none}
+    *{-webkit-tap-highlight-color:transparent}body{overscroll-behavior:none}select,input,textarea{font-size:16px!important}
     .input-field{width:100%;height:48px;padding:0 12px;background:#fff;border:1px solid #dadce0;border-radius:8px;font-size:14px;color:#202124;outline:none;transition:border .15s,box-shadow .15s}
     .input-field:focus{border-color:#1a73e8;box-shadow:0 0 0 2px #e8f0fe}
-    .result-btn{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
-    .result-btn.selected-ok{background:#e6f4ea;border-color:#1e8e3e;color:#1e8e3e}
-    .result-btn.selected-fail{background:#fce8e6;border-color:#d93025;color:#d93025}
-    .result-btn.selected-fix{background:#fef7e0;border-color:#e37400;color:#e37400}
-    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
-    .step-dot.active{background:#1a73e8;color:#fff}
-    .step-dot.done{background:#1e8e3e;color:#fff}
-    .step-dot.pending{background:#e8eaed;color:#80868b}
-    .step-line{height:2px;flex:1;transition:background .2s}
-    .step-line.done{background:#1e8e3e}
-    .step-line.pending{background:#e8eaed}
+    .input-field.error{border-color:#d93025;box-shadow:0 0 0 2px #fce8e6}
+    .input-field::placeholder{color:#80868b}
+    textarea.input-field{height:auto;padding:12px;resize:none}
+    select.input-field{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+    .section-label{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:#5f6368;margin-bottom:12px}
+    .field-label{display:block;font-size:12px;font-weight:500;color:#5f6368;margin-bottom:6px}
+    .field-group{transition:opacity .2s}.field-group.disabled{opacity:.35;pointer-events:none}
+    .slide-up{animation:slideUp .3s ease both}@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .toast{animation:toastIn .25s ease,toastOut .25s ease 2.7s forwards}
     @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
     .btn-loading{position:relative;color:transparent!important}
     .btn-loading::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+    .result-btn{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
+    .result-btn:hover{background:#f8f9fa}
+    .result-btn.selected-ok{background:#e6f4ea;border-color:#1e8e3e;color:#1e8e3e}
+    .result-btn.selected-fail{background:#fce8e6;border-color:#d93025;color:#d93025}
+    .result-btn.selected-fix{background:#fef7e0;border-color:#e37400;color:#e37400}
+    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
+    .step-dot.active{background:#1a73e8;color:#fff}.step-dot.done{background:#1e8e3e;color:#fff}.step-dot.pending{background:#e8eaed;color:#80868b}
+    .step-line{height:2px;flex:1;transition:background .2s}.step-line.done{background:#1e8e3e}.step-line.pending{background:#e8eaed}
+    .fvs-card{transition:all .15s;cursor:pointer}.fvs-card:hover{box-shadow:0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15);transform:translateY(-1px)}
   </style>
 </head>
 <body class="bg-g-bg font-sans min-h-screen">
 
-<header class="bg-white sticky top-0 z-50 border-b border-g-border">
-  <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
-      <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
-    </div>
-    <button onclick="showView('viewDashboard'); carregarDashboard()" class="text-xs text-g-blue font-medium hover:underline">Início</button>
-  </div>
-</header>
-
-<!-- DASHBOARD -->
-<main id="viewDashboard" class="max-w-3xl mx-auto px-4 py-5">
-  <div class="text-center mb-6">
-    <h1 class="text-xl font-bold text-g-text">Ficha de Verificação de Serviços</h1>
-    <p class="text-sm text-g-secondary mt-1">Selecione o tipo de FVS</p>
-  </div>
-  <div class="bg-white rounded-lg shadow-md1 p-4 flex items-center gap-3 mb-5">
-    <span class="field-label mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
-    <input type="text" id="responsavel" required placeholder="Seu nome" class="input-field h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
-  </div>
-  <p class="section-label">Nova FVS</p>
-  <div id="fvsCards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
-  <div id="savedSection" class="hidden"><p class="section-label">FVS em andamento (rascunhos)</p><div id="savedList" class="space-y-3 mb-6"></div></div>
-  <div id="pendentesSection" class="hidden"><p class="section-label">Pendentes de Revistoria</p><div id="pendentesList" class="space-y-3 mb-6"></div></div>
-  <div id="finalizadasSection" class="hidden"><p class="section-label">FVS Finalizadas</p><div id="finalizadasList" class="space-y-3 mb-6"></div></div>
-</main>
-
-<!-- IDENTIFICAÇÃO -->
-<main id="viewIdent" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <div class="text-center mb-5"><h2 class="text-lg font-bold text-g-text" id="identTitle"></h2><p class="text-sm text-g-secondary mt-1" id="identSubtitle"></p></div>
-  <div class="space-y-4">
-    <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4">
-      <p class="section-label mb-2">Localização</p>
-      <select id="obra" required class="input-field"><option value="">Selecione a obra</option></select>
-      <select id="pavimento" required class="input-field"><option value="">Selecione o pavimento</option></select>
-      <input type="text" id="ambiente" required placeholder="Ex: Laje Subpressão, WCs, Jardins" class="input-field">
-    </div>
-    <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4">
-      <p class="section-label mb-2">Equipe</p>
-      <div class="grid grid-cols-2 gap-3">
-        <select id="encarregado" required class="input-field"><option value="">Encarregado</option></select>
-        <select id="executor" required class="input-field"><option value="">Executor</option></select>
+  <header class="bg-white sticky top-0 z-50 border-b border-g-border">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
+        <div class="h-5 w-px bg-g-border hidden sm:block"></div>
+        <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
       </div>
+      <button onclick="showView('viewDashboard')" class="text-xs text-g-blue font-medium hover:underline" id="btnHome">Início</button>
     </div>
-    <button onclick="iniciarChecklist()" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium rounded-lg">Iniciar Verificação →</button>
-  </div>
-</main>
+  </header>
 
-<!-- CHECKLIST -->
-<main id="viewChecklist" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <div id="stepper" class="flex items-center mb-5 px-2"></div>
-  <div class="flex items-center justify-between mb-4">
-    <div><p class="text-xs text-g-hint font-medium" id="etapaLabel"></p><h2 class="text-lg font-bold" id="etapaNome"></h2></div>
-    <span class="text-xs font-medium bg-g-bg px-3 py-1 rounded-full" id="etapaProgress">0/0</span>
-  </div>
-  <div id="checklistContainer" class="space-y-3"></div>
-  <div class="mt-6 space-y-3 pb-8">
-    <button onclick="avancarEtapa()" id="btnAvancar" disabled class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium rounded-lg disabled:opacity-40">Assinar e Avançar →</button>
-    <button onclick="salvarRascunhoPlanilha()" class="w-full h-10 border border-g-blue text-g-blue font-medium rounded-lg">💾 Salvar Rascunho na Planilha</button>
-    <button onclick="voltarEtapa()" id="btnVoltar" class="w-full text-sm text-g-blue font-medium hover:underline hidden">← Etapa anterior</button>
-  </div>
-</main>
+  <!-- ===================== DASHBOARD ===================== -->
+  <main id="viewDashboard" class="max-w-3xl mx-auto px-4 py-5">
+    <div class="text-center mb-6">
+      <h1 class="text-xl font-bold text-g-text">Ficha de Verificação de Serviços</h1>
+      <p class="text-sm text-g-secondary mt-1">Selecione o tipo de FVS</p>
+    </div>
 
-<!-- ASSINATURA -->
-<main id="viewSignature" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <div class="bg-white rounded-lg shadow-md1 p-6 space-y-5">
-    <div class="text-center"><div class="w-12 h-12 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-3">✓</div><h2 class="text-lg font-bold" id="sigEtapaNome"></h2><p class="text-sm text-g-secondary">Assinatura de conclusão da etapa</p></div>
-    <div id="sigResumo" class="flex justify-center gap-3 flex-wrap text-sm font-medium"></div>
-    <select id="sigRespBronx" required class="input-field"><option value="">Responsável Bronx</option></select>
-    <input type="text" id="sigRespObra" placeholder="Responsável da Obra" class="input-field">
-    <button onclick="confirmarAssinatura()" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-medium rounded-lg">Confirmar Assinatura</button>
-  </div>
-</main>
+    <!-- Responsavel -->
+    <div class="bg-white rounded-lg shadow-md1 p-4 flex items-center gap-3 mb-5 slide-up">
+      <span class="field-label mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
+      <input type="text" id="responsavel" required placeholder="Seu nome" class="input-field h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
+    </div>
 
-<!-- NCS -->
-<main id="viewNCs" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <div class="text-center mb-5"><div class="w-12 h-12 rounded-full bg-g-blueBg flex items-center justify-center mx-auto mb-3">✓</div><h2 class="text-lg font-bold">Etapas concluídas</h2><p class="text-sm text-g-secondary">Registre não conformidades (se houver)</p></div>
-  <div id="ncList" class="space-y-3 mb-4"></div>
-  <button onclick="addNC()" class="w-full h-11 border-2 border-dashed border-g-border rounded-lg text-g-blue hover:bg-g-blueBg mb-4">+ Adicionar NC</button>
-  <button onclick="finalizarFVS()" id="btnFinalizar" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium rounded-lg">Finalizar FVS</button>
-</main>
+    <!-- FVS Type Cards -->
+    <p class="section-label">Nova FVS</p>
+    <div id="fvsCards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
 
-<!-- DONE -->
-<main id="viewDone" class="max-w-3xl mx-auto px-4 py-12 hidden">
-  <div class="text-center"><div class="w-16 h-16 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-4">✓</div><h2 class="text-xl font-bold">FVS Finalizada</h2><p class="text-sm text-g-secondary mt-2 mb-8" id="doneResumo"></p><button onclick="showView('viewDashboard'); carregarDashboard()" class="h-12 px-8 bg-g-blue text-white font-medium rounded-lg">Voltar ao Início</button></div>
-</main>
+    <!-- Saved FVS -->
+    <div id="savedSection" class="hidden">
+      <p class="section-label">FVS em andamento</p>
+      <div id="savedList" class="space-y-3 mb-6"></div>
+    </div>
+  </main>
 
-<!-- REVISTORIA -->
-<main id="viewRevisit" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <div class="text-center mb-5"><div class="w-12 h-12 rounded-full bg-g-amberBg flex items-center justify-center mx-auto mb-3">⚠</div><h2 class="text-lg font-bold">Revistoria</h2><p class="text-sm text-g-secondary mt-1" id="revisitInfo"></p></div>
-  <div id="revisitContainer" class="space-y-3"></div>
-  <button onclick="salvarRevisita()" class="w-full h-12 bg-g-blue text-white font-medium rounded-lg mt-6">Salvar Revistoria</button>
-</main>
+  <!-- ===================== IDENTIFICATION ===================== -->
+  <main id="viewIdent" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="text-center mb-5">
+      <h2 class="text-lg font-bold text-g-text" id="identTitle">Argamassa Polimérica</h2>
+      <p class="text-sm text-g-secondary mt-1" id="identSubtitle">Preencha os dados da frente</p>
+    </div>
+    <div class="space-y-4">
+      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 slide-up">
+        <p class="section-label mb-2">Localização</p>
+        <div class="field-group" id="fg-obra">
+          <label class="field-label">Obra <span class="text-g-red">*</span></label>
+          <select id="obra" required class="input-field"><option value="">Selecione a obra</option></select>
+        </div>
+        <div class="field-group disabled" id="fg-pavimento">
+          <label class="field-label">Pavimento <span class="text-g-red">*</span></label>
+          <select id="pavimento" required class="input-field"><option value="">Selecione o pavimento</option></select>
+        </div>
+        <div>
+          <label class="field-label">Ambiente <span class="text-g-red">*</span></label>
+          <input type="text" id="ambiente" required placeholder="Ex: Laje Subpressão, WCs, Jardins" class="input-field">
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 slide-up" style="animation-delay:.04s">
+        <p class="section-label mb-2">Equipe</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">Encarregado <span class="text-g-red">*</span></label>
+            <select id="encarregado" required class="input-field"><option value="">Selecione</option></select>
+          </div>
+          <div>
+            <label class="field-label">Executor <span class="text-g-red">*</span></label>
+            <select id="executor" required class="input-field"><option value="">Selecione</option></select>
+          </div>
+        </div>
+      </div>
+      <button onclick="iniciarChecklist()" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] slide-up" style="animation-delay:.08s">
+        Iniciar Verificação →
+      </button>
+    </div>
+  </main>
 
-<div id="toastContainer" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
+  <!-- ===================== CHECKLIST ===================== -->
+  <main id="viewChecklist" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div id="stepper" class="flex items-center mb-5 px-2"></div>
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs text-g-hint font-medium uppercase tracking-wide" id="etapaLabel">Etapa 1</p>
+        <h2 class="text-lg font-bold text-g-text" id="etapaNome"></h2>
+      </div>
+      <span class="text-xs font-medium text-g-hint bg-g-bg px-3 py-1 rounded-full" id="etapaProgress">0/0</span>
+    </div>
+    <div id="checklistContainer" class="space-y-3"></div>
+    <div class="mt-6 space-y-3 pb-8">
+      <button onclick="avancarEtapa()" id="btnAvancar" disabled class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none">Assinar e Avançar →</button>
+      <button onclick="voltarEtapa()" id="btnVoltar" class="w-full text-sm text-g-blue font-medium hover:underline text-center hidden">← Etapa anterior</button>
+    </div>
+  </main>
 
-<script>
-  // ===================== CONFIGURAÇÃO GLOBAL =====================
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
-  let fvs = { id: '', responsavel: '', obra: '', pavimento: '', ambiente: '', servico: '', encarregado: '', executor: '', dataAbertura: '', etapas: [], currentEtapa: 0, resultados: {}, assinaturas: [], ncs: [] };
-  let REF = null, FVS_CK = null;
+  <!-- ===================== SIGNATURE ===================== -->
+  <main id="viewSignature" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="bg-white rounded-lg shadow-md1 p-6 space-y-5">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-3"><span class="text-g-green text-xl">✓</span></div>
+        <h2 class="text-lg font-bold text-g-text" id="sigEtapaNome"></h2>
+        <p class="text-sm text-g-secondary mt-1">Assinatura de conclusão da etapa</p>
+      </div>
+      <div id="sigResumo" class="flex justify-center gap-3 flex-wrap text-sm font-medium"></div>
+      <div>
+        <label class="field-label">Responsável Bronx <span class="text-g-red">*</span></label>
+        <select id="sigRespBronx" required class="input-field"><option value="">Selecione</option></select>
+      </div>
+      <div>
+        <label class="field-label">Responsável da Obra</label>
+        <input type="text" id="sigRespObra" placeholder="Nome do responsável" class="input-field">
+      </div>
+      <button onclick="confirmarAssinatura()" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Confirmar Assinatura</button>
+    </div>
+  </main>
 
-  // ===================== INICIALIZAÇÃO =====================
-  document.addEventListener('DOMContentLoaded', async () => {
-    const resp = localStorage.getItem('bronx_fvs_resp');
-    if (resp) document.getElementById('responsavel').value = resp;
-    try {
-      const [r1, r2] = await Promise.all([fetch('ref_fvs.json'), fetch('dados_fvs.json')]);
-      REF = await r1.json(); FVS_CK = await r2.json();
-      carregarDashboard();
-    } catch(e) { showToast('Erro ao carregar dados', 'error'); }
-  });
+  <!-- ===================== NON-CONFORMITIES ===================== -->
+  <main id="viewNCs" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="text-center mb-5">
+      <div class="w-12 h-12 rounded-full bg-g-blueBg flex items-center justify-center mx-auto mb-3"><span class="text-g-blue text-xl font-bold">✓</span></div>
+      <h2 class="text-lg font-bold text-g-text">Etapas concluídas</h2>
+      <p class="text-sm text-g-secondary mt-1">Registre não conformidades (se houver)</p>
+    </div>
+    <div id="ncList" class="space-y-3 mb-4"></div>
+    <button onclick="addNC()" class="w-full h-11 border-2 border-dashed border-g-border rounded-lg text-sm font-medium text-g-blue hover:bg-g-blueBg transition-colors flex items-center justify-center gap-2 mb-4">+ Adicionar NC</button>
+    <button onclick="finalizarFVS()" id="btnFinalizar" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] btn-finalizar mb-8">Finalizar FVS</button>
+  </main>
 
-  // ===================== DASHBOARD =====================
-  async function carregarDashboard() {
-    let dadosPlanilha = { rascunhos: [], pendentes: [], finalizadas: [] };
-    try {
-      const resp = await fetch(`${APP_SCRIPT_URL}?acao=dashboard`);
-      dadosPlanilha = await resp.json();
-    } catch(e) { console.warn('Erro ao buscar dados da planilha', e); }
+  <!-- ===================== DONE ===================== -->
+  <main id="viewDone" class="max-w-3xl mx-auto px-4 py-12 hidden">
+    <div class="text-center">
+      <div class="w-16 h-16 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-4"><span class="text-g-green text-3xl">✓</span></div>
+      <h2 class="text-xl font-bold text-g-text">FVS Finalizada</h2>
+      <p class="text-sm text-g-secondary mt-2 mb-8" id="doneResumo"></p>
+      <button onclick="showView('viewDashboard');renderDashboard()" class="h-12 px-8 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Voltar ao Início</button>
+    </div>
+  </main>
 
-    // Cards FVS
-    const cardsDiv = document.getElementById('fvsCards');
-    cardsDiv.innerHTML = '';
-    Object.keys(FVS_CK).forEach(svc => {
-      const card = document.createElement('div');
-      card.className = 'bg-white rounded-lg shadow-md1 p-5 cursor-pointer hover:shadow-md2 transition-all';
-      card.onclick = () => selecionarFVS(svc);
-      card.innerHTML = `<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-g-blueBg flex items-center justify-center">📋</div><div><h3 class="font-bold">${svc}</h3><p class="text-xs text-g-hint">${FVS_CK[svc].etapas.length} etapas</p></div></div>`;
-      cardsDiv.appendChild(card);
+  <!-- ===================== REVISIT ===================== -->
+  <main id="viewRevisit" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="text-center mb-5">
+      <div class="w-12 h-12 rounded-full bg-g-amberBg flex items-center justify-center mx-auto mb-3"><span class="text-g-amber text-xl">⚠</span></div>
+      <h2 class="text-lg font-bold text-g-text">Revistoria</h2>
+      <p class="text-sm text-g-secondary mt-1" id="revisitInfo"></p>
+    </div>
+    <div id="revisitContainer" class="space-y-3"></div>
+    <button onclick="salvarRevisita()" id="btnRevisit" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mt-6 mb-8 btn-finalizar">Salvar Revistoria</button>
+  </main>
+
+  <div id="toastContainer" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
+
+  <script>
+    const EP="https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
+    let REF=null, FVS_CK=null;
+    let fvs={id:'',responsavel:'',obra:'',pavimento:'',ambiente:'',servico:'',encarregado:'',executor:'',dataAbertura:'',etapas:[],currentEtapa:0,resultados:{},assinaturas:[],ncs:[]};
+    let ncCounter=0;
+
+    // ====== INIT ======
+    document.addEventListener('DOMContentLoaded', async function(){
+      const s=localStorage.getItem('bronx_fvs_resp');
+      if(s) document.getElementById('responsavel').value=s;
+      try{
+        const[r1,r2]=await Promise.all([fetch('ref_fvs.json'),fetch('dados_fvs.json')]);
+        REF=await r1.json(); FVS_CK=await r2.json();
+        renderDashboard();
+      }catch(e){showToast('Erro ao carregar dados','error');console.error(e);}
     });
 
-    // Rascunhos
-    const savedDiv = document.getElementById('savedSection');
-    const savedList = document.getElementById('savedList');
-    savedList.innerHTML = '';
-    const rascunhos = dadosPlanilha.rascunhos || [];
-    if (rascunhos.length) {
-      savedDiv.classList.remove('hidden');
-      rascunhos.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'bg-white rounded-lg shadow-md1 p-4 flex justify-between items-center';
-        div.innerHTML = `<div><p class="font-medium">${r.servico}</p><p class="text-xs text-g-secondary">${r.obra} · ${r.pavimento} · ${r.ambiente}</p><p class="text-xs">Rascunho - Etapa ${r.currentEtapa+1}/${FVS_CK[r.servico]?.etapas.length || '?'}</p></div><button onclick="carregarRascunho('${r.id}')" class="text-g-blue">Continuar →</button>`;
-        savedList.appendChild(div);
+    // ====== DASHBOARD ======
+    function renderDashboard(){
+      // FVS type cards
+      const cards=document.getElementById('fvsCards');
+      cards.innerHTML='';
+      const colors=[{bg:'bg-g-blueBg',text:'text-g-blue',icon:'🧪'},{bg:'bg-g-amberBg',text:'text-g-amber',icon:'🔥'},{bg:'bg-g-greenBg',text:'text-g-green',icon:'💧'},{bg:'bg-g-redBg',text:'text-g-red',icon:'🛡'}];
+      Object.keys(FVS_CK).forEach((svc,i)=>{
+        const c=colors[i%colors.length];
+        const ck=FVS_CK[svc];
+        const totalItens=ck.etapas.reduce((s,e)=>s+e.itens.length,0);
+        const card=document.createElement('div');
+        card.className='fvs-card bg-white rounded-lg shadow-md1 p-5 slide-up';
+        card.style.animationDelay=(i*0.05)+'s';
+        card.onclick=()=>selecionarFVS(svc);
+        card.innerHTML=
+          '<div class="flex items-start gap-3">'+
+            '<div class="w-10 h-10 rounded-lg '+c.bg+' flex items-center justify-center text-lg flex-shrink-0">'+c.icon+'</div>'+
+            '<div class="flex-1 min-w-0">'+
+              '<h3 class="text-sm font-bold text-g-text">'+svc+'</h3>'+
+              '<p class="text-xs text-g-hint mt-1">'+ck.etapas.length+' etapas · '+totalItens+' itens</p>'+
+            '</div>'+
+            '<span class="text-g-blue text-lg">→</span>'+
+          '</div>';
+        cards.appendChild(card);
       });
-    } else { savedDiv.classList.add('hidden'); }
 
-    // Pendentes revistoria
-    const pendentesDiv = document.getElementById('pendentesSection');
-    const pendentesList = document.getElementById('pendentesList');
-    pendentesList.innerHTML = '';
-    const pendentes = dadosPlanilha.pendentes || [];
-    if (pendentes.length) {
-      pendentesDiv.classList.remove('hidden');
-      pendentes.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'bg-white rounded-lg shadow-md1 p-4 flex justify-between items-center';
-        div.innerHTML = `<div><p class="font-medium">${p.servico}</p><p class="text-xs text-g-secondary">${p.obra} · ${p.pavimento} · ${p.ambiente}</p></div><button onclick="abrirRevisita('${p.id}')" class="bg-g-amberBg text-g-amber px-3 py-1 rounded-full text-sm">Revistar</button>`;
-        pendentesList.appendChild(div);
+      // Saved FVS
+      const saved=getSavedFVS();
+      const section=document.getElementById('savedSection');
+      const list=document.getElementById('savedList');
+      list.innerHTML='';
+      if(saved.length===0){section.classList.add('hidden');return;}
+      section.classList.remove('hidden');
+      saved.forEach((s,i)=>{
+        const hasReprovado=Object.values(s.resultados).some(r=>r.resultado==='Reprovado');
+        const card=document.createElement('div');
+        card.className='bg-white rounded-lg shadow-md1 p-4 slide-up';
+        card.style.animationDelay=(i*0.03)+'s';
+        const statusBg=hasReprovado?'bg-g-amberBg text-g-amber':'bg-g-blueBg text-g-blue';
+        const statusText=hasReprovado?'⚠ Pendente revistoria':'Etapa '+(s.currentEtapa+1)+'/'+s.etapas.length;
+        card.innerHTML=
+          '<div class="flex items-center justify-between">'+
+            '<div class="min-w-0 flex-1">'+
+              '<p class="text-sm font-bold text-g-text truncate">'+s.servico+'</p>'+
+              '<p class="text-xs text-g-secondary mt-0.5">'+s.obra+' · '+s.pavimento+' · '+s.ambiente+'</p>'+
+              '<p class="text-xs text-g-hint mt-0.5">'+s.dataAbertura+'</p>'+
+            '</div>'+
+            '<div class="flex items-center gap-2 flex-shrink-0 ml-3">'+
+              '<span class="text-xs font-medium px-2 py-1 rounded-full '+statusBg+'">'+statusText+'</span>'+
+              '<button onclick="event.stopPropagation();'+(hasReprovado?'abrirRevisita(\''+s.id+'\')':'continuarFVS(\''+s.id+'\')')+'" class="text-sm font-medium text-g-blue hover:underline">'+
+                (hasReprovado?'Revistar':'Continuar →')+
+              '</button>'+
+              '<button onclick="event.stopPropagation();removerFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button>'+
+            '</div>'+
+          '</div>';
+        list.appendChild(card);
       });
-    } else { pendentesDiv.classList.add('hidden'); }
+    }
 
-    // Finalizadas
-    const finalizadasDiv = document.getElementById('finalizadasSection');
-    const finalizadasList = document.getElementById('finalizadasList');
-    finalizadasList.innerHTML = '';
-    const finalizadas = dadosPlanilha.finalizadas || [];
-    if (finalizadas.length) {
-      finalizadasDiv.classList.remove('hidden');
-      finalizadas.forEach(f => {
-        const div = document.createElement('div');
-        div.className = 'bg-white rounded-lg shadow-md1 p-4 flex justify-between items-center opacity-75';
-        div.innerHTML = `<div><p class="font-medium">${f.servico}</p><p class="text-xs text-g-secondary">${f.obra} · ${f.pavimento} · ${f.ambiente}</p><p class="text-xs">Concluída em ${f.dataConclusao}</p></div><span class="text-g-green text-sm">✓</span>`;
-        finalizadasList.appendChild(div);
-      });
-    } else { finalizadasDiv.classList.add('hidden'); }
-  }
+    // ====== SAVED FVS (localStorage) ======
+    function getSavedFVS(){try{return JSON.parse(localStorage.getItem('bronx_fvs_saved')||'[]');}catch(e){return[];}}
+    function saveFVS(){
+      const all=getSavedFVS().filter(s=>s.id!==fvs.id);
+      all.unshift({...fvs});
+      localStorage.setItem('bronx_fvs_saved',JSON.stringify(all.slice(0,20)));
+    }
+    function removerFVS(id){
+      const all=getSavedFVS().filter(s=>s.id!==id);
+      localStorage.setItem('bronx_fvs_saved',JSON.stringify(all));
+      renderDashboard();
+    }
 
-  function selecionarFVS(servico) {
-    fvs.servico = servico;
-    document.getElementById('identTitle').innerText = servico;
-    document.getElementById('identSubtitle').innerText = FVS_CK[servico].titulo;
-    const obraSel = document.getElementById('obra');
-    obraSel.innerHTML = '<option value="">Selecione a obra</option>';
-    REF.obras.forEach(o => obraSel.appendChild(new Option(o, o)));
-    const encSel = document.getElementById('encarregado');
-    encSel.innerHTML = '<option value="">Selecione</option>';
-    REF.encarregados.forEach(e => encSel.appendChild(new Option(e, e)));
-    const exeSel = document.getElementById('executor');
-    exeSel.innerHTML = '<option value="">Selecione</option>';
-    REF.executores.forEach(e => exeSel.appendChild(new Option(e, e)));
-    const sigSel = document.getElementById('sigRespBronx');
-    sigSel.innerHTML = '<option value="">Selecione</option>';
-    REF.encarregados.forEach(e => sigSel.appendChild(new Option(e, e)));
-    showView('viewIdent');
-  }
+    // ====== SELECT FVS TYPE ======
+    function selecionarFVS(servico){
+      fvs.servico=servico;
+      document.getElementById('identTitle').textContent=servico;
+      document.getElementById('identSubtitle').textContent=FVS_CK[servico].titulo||'Preencha os dados da frente';
 
-  function iniciarChecklist() {
-    const resp = document.getElementById('responsavel').value.trim();
-    if (!resp) { showToast('Preencha "Preenchido por"', 'error'); return; }
-    const fields = ['obra', 'pavimento', 'ambiente', 'encarregado', 'executor'];
-    let ok = true;
-    fields.forEach(id => { const el = document.getElementById(id); if (!el.value) { el.classList.add('error'); ok = false; } });
-    if (!ok) { showToast('Preencha todos os campos', 'error'); return; }
-    fvs.id = 'FVS-' + Date.now();
-    fvs.responsavel = resp;
-    fvs.obra = document.getElementById('obra').value;
-    fvs.pavimento = document.getElementById('pavimento').value;
-    fvs.ambiente = document.getElementById('ambiente').value.trim();
-    fvs.encarregado = document.getElementById('encarregado').value;
-    fvs.executor = document.getElementById('executor').value;
-    fvs.dataAbertura = new Date().toISOString().split('T')[0];
-    fvs.etapas = FVS_CK[fvs.servico].etapas;
-    fvs.currentEtapa = 0;
-    fvs.resultados = {};
-    fvs.assinaturas = [];
-    fvs.ncs = [];
-    salvarRascunhoLocal();
-    showView('viewChecklist');
-    renderStepper(); renderEtapa();
-  }
+      // Populate dropdowns
+      const obraSel=document.getElementById('obra');
+      obraSel.innerHTML='<option value="">Selecione a obra</option>';
+      REF.obras.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;obraSel.appendChild(op);});
 
-  function carregarRascunho(id) {
-    fetch(`${APP_SCRIPT_URL}?acao=rascunhos`).then(res => res.json()).then(rascunhos => {
-      const r = rascunhos.find(x => x.id === id);
-      if (r) {
-        fvs = { ...r, etapas: FVS_CK[r.servico].etapas };
-        showView('viewChecklist');
-        renderStepper(); renderEtapa();
-      } else { showToast('Rascunho não encontrado', 'error'); }
-    }).catch(() => showToast('Erro ao carregar rascunho', 'error'));
-  }
+      const encSel=document.getElementById('encarregado');
+      encSel.innerHTML='<option value="">Selecione</option>';
+      REF.encarregados.forEach(e=>{const op=document.createElement('option');op.value=e;op.textContent=e;encSel.appendChild(op);});
 
-  async function salvarRascunhoPlanilha() {
-    const btn = event.target;
-    btn.innerText = 'Salvando...'; btn.disabled = true;
-    try {
-      const payload = { tipo: 'rascunho', ...fvs, resultados: fvs.resultados, assinaturas: fvs.assinaturas, ncs: fvs.ncs };
-      await fetch(APP_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-      showToast('Rascunho salvo na planilha!', 'success');
-    } catch(e) { showToast('Erro ao salvar rascunho', 'error'); }
-    finally { btn.innerText = '💾 Salvar Rascunho na Planilha'; btn.disabled = false; }
-  }
+      const exeSel=document.getElementById('executor');
+      exeSel.innerHTML='<option value="">Selecione</option>';
+      REF.executores.forEach(e=>{const op=document.createElement('option');op.value=e;op.textContent=e;exeSel.appendChild(op);});
 
-  function salvarRascunhoLocal() { localStorage.setItem('bronx_fvs_atual', JSON.stringify(fvs)); }
+      // Populate signature dropdown
+      const sigSel=document.getElementById('sigRespBronx');
+      sigSel.innerHTML='<option value="">Selecione</option>';
+      REF.encarregados.forEach(e=>{const op=document.createElement('option');op.value=e;op.textContent=e;sigSel.appendChild(op);});
 
-  // ===================== RENDERIZAÇÃO DO CHECKLIST =====================
-  function renderStepper() {
-    const c = document.getElementById('stepper'); c.innerHTML = '';
-    fvs.etapas.forEach((e, i) => {
-      if (i > 0) { const l = document.createElement('div'); l.className = 'step-line ' + (i <= fvs.currentEtapa ? 'done' : 'pending'); c.appendChild(l); }
-      const d = document.createElement('div');
-      d.className = 'step-dot ' + (i < fvs.currentEtapa ? 'done' : i === fvs.currentEtapa ? 'active' : 'pending');
-      d.textContent = i < fvs.currentEtapa ? '✓' : (i + 1); d.title = e.nome; c.appendChild(d);
+      showView('viewIdent');
+    }
+
+    // ====== CASCADE ======
+    document.getElementById('obra').addEventListener('change',function(){
+      const sp=document.getElementById('pavimento');
+      sp.innerHTML='<option value="">Selecione o pavimento</option>';
+      if(!this.value){document.getElementById('fg-pavimento').classList.add('disabled');return;}
+      document.getElementById('fg-pavimento').classList.remove('disabled');
+      (REF.pavimentos[this.value]||[]).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sp.appendChild(o);});
     });
-  }
 
-  function renderEtapa() {
-    const etapa = fvs.etapas[fvs.currentEtapa];
-    document.getElementById('etapaLabel').innerText = `Etapa ${fvs.currentEtapa+1} de ${fvs.etapas.length}`;
-    document.getElementById('etapaNome').innerText = etapa.nome;
-    const c = document.getElementById('checklistContainer'); c.innerHTML = '';
-    etapa.itens.forEach((criterio, i) => {
-      const key = `${fvs.currentEtapa}-${i}`;
-      const r = fvs.resultados[key] || {};
-      const card = document.createElement('div'); card.className = 'bg-white rounded-lg shadow-md1 p-4 slide-up';
-      let extra = '';
-      if (r.resultado === 'Reprovado' || r.resultado === 'Aprovado após correções') {
-        extra = `<div class="mt-3 space-y-2"><div><label class="field-label">Observação <span class="text-g-red">*</span></label><textarea rows="2" class="input-field text-sm" placeholder="Descreva..." onchange="setObs('${key}',this.value)">${r.observacao || ''}</textarea></div>`;
-        if (r.resultado === 'Aprovado após correções') {
-          extra += `<div><label class="field-label">Data Vistoria Final <span class="text-g-red">*</span></label><input type="date" class="input-field h-10" value="${r.dataFinal || ''}" onchange="setDataFinal('${key}',this.value)"></div>`;
+    // ====== START CHECKLIST ======
+    function iniciarChecklist(){
+      const fields=['obra','pavimento','ambiente','encarregado','executor'];
+      let ok=true,first=null;
+      document.querySelectorAll('.error').forEach(el=>el.classList.remove('error'));
+      fields.forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('error');if(!first)first=el;ok=false;}});
+      if(!document.getElementById('responsavel').value.trim()){showToast('Preencha "Preenchido por" no início','error');return;}
+      if(!ok){first.scrollIntoView({behavior:'smooth',block:'center'});showToast('Preencha os campos obrigatórios','error');return;}
+
+      const ck=FVS_CK[fvs.servico];
+      fvs.id='FVS-'+Date.now();
+      fvs.responsavel=document.getElementById('responsavel').value.trim();
+      fvs.obra=document.getElementById('obra').value;
+      fvs.pavimento=document.getElementById('pavimento').value;
+      fvs.ambiente=document.getElementById('ambiente').value.trim();
+      fvs.encarregado=document.getElementById('encarregado').value;
+      fvs.executor=document.getElementById('executor').value;
+      fvs.dataAbertura=new Date().toISOString().split('T')[0];
+      fvs.etapas=ck.etapas;
+      fvs.currentEtapa=0;
+      fvs.resultados={};
+      fvs.assinaturas=[];
+      fvs.ncs=[];
+
+      saveFVS();
+      showView('viewChecklist');
+      renderStepper();
+      renderEtapa();
+    }
+
+    // ====== CONTINUE SAVED FVS ======
+    function continuarFVS(id){
+      const saved=getSavedFVS().find(s=>s.id===id);
+      if(!saved){showToast('FVS não encontrada','error');return;}
+      fvs={...saved};
+      showView('viewChecklist');
+      renderStepper();
+      renderEtapa();
+    }
+
+    // ====== STEPPER ======
+    function renderStepper(){
+      const c=document.getElementById('stepper');c.innerHTML='';
+      fvs.etapas.forEach((e,i)=>{
+        if(i>0){const l=document.createElement('div');l.className='step-line '+(i<=fvs.currentEtapa?'done':'pending');c.appendChild(l);}
+        const d=document.createElement('div');
+        d.className='step-dot '+(i<fvs.currentEtapa?'done':i===fvs.currentEtapa?'active':'pending');
+        d.textContent=i<fvs.currentEtapa?'✓':(i+1);d.title=e.nome;c.appendChild(d);
+      });
+    }
+
+    // ====== RENDER ETAPA ======
+    function renderEtapa(){
+      const etapa=fvs.etapas[fvs.currentEtapa];
+      document.getElementById('etapaLabel').textContent='Etapa '+(fvs.currentEtapa+1)+' de '+fvs.etapas.length;
+      document.getElementById('etapaNome').textContent=etapa.nome;
+      const c=document.getElementById('checklistContainer');c.innerHTML='';
+
+      etapa.itens.forEach((criterio,i)=>{
+        const key=fvs.currentEtapa+'-'+i;
+        const r=fvs.resultados[key]||{};
+        const card=document.createElement('div');
+        card.className='bg-white rounded-lg shadow-md1 p-4 slide-up';
+        card.style.animationDelay=(i*0.03)+'s';
+        card.id='item-'+key;
+
+        let extra='';
+        if(r.resultado==='Reprovado'||r.resultado==='Aprovado após correções'){
+          extra='<div class="mt-3 space-y-2"><div><label class="field-label">Observação <span class="text-g-red">*</span></label>'+
+            '<textarea rows="2" class="input-field text-sm" placeholder="Descreva..." onchange="setObs(\''+key+'\',this.value)">'+(r.observacao||'')+'</textarea></div>';
+          if(r.resultado==='Aprovado após correções'){
+            extra+='<div><label class="field-label">Data Vistoria Final <span class="text-g-red">*</span></label>'+
+              '<input type="date" class="input-field h-10" value="'+(r.dataFinal||'')+'" onchange="setDataFinal(\''+key+'\',this.value)"></div>';
+          }
+          extra+='</div>';
         }
-        extra += `</div>`;
-      }
-      card.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center">${i+1}</span><p class="text-sm text-g-text leading-relaxed">${criterio}</p></div><div class="flex gap-2"><button onclick="setResultado('${key}','Aprovado')" class="result-btn ${r.resultado === 'Aprovado' ? 'selected-ok' : ''}">✓ Aprovado</button><button onclick="setResultado('${key}','Reprovado')" class="result-btn ${r.resultado === 'Reprovado' ? 'selected-fail' : ''}">✕ Reprovado</button><button onclick="setResultado('${key}','Aprovado após correções')" class="result-btn ${r.resultado === 'Aprovado após correções' ? 'selected-fix' : ''}">⚠ Corrigido</button></div>${extra}`;
-      c.appendChild(card);
-    });
-    updateProgress();
-    document.getElementById('btnVoltar').classList.toggle('hidden', fvs.currentEtapa === 0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 
-  function setResultado(key, val) {
-    if (!fvs.resultados[key]) fvs.resultados[key] = {};
-    fvs.resultados[key].resultado = val;
-    fvs.resultados[key].data1a = fvs.resultados[key].data1a || new Date().toISOString().split('T')[0];
-    salvarRascunhoLocal();
-    renderEtapa();
-  }
-  function setObs(key, val) { if (!fvs.resultados[key]) fvs.resultados[key] = {}; fvs.resultados[key].observacao = val; salvarRascunhoLocal(); updateProgress(); }
-  function setDataFinal(key, val) { if (!fvs.resultados[key]) fvs.resultados[key] = {}; fvs.resultados[key].dataFinal = val; salvarRascunhoLocal(); updateProgress(); }
-  function updateProgress() {
-    const etapa = fvs.etapas[fvs.currentEtapa];
-    let done = 0, allValid = true;
-    etapa.itens.forEach((_, i) => {
-      const key = `${fvs.currentEtapa}-${i}`;
-      const r = fvs.resultados[key];
-      if (r && r.resultado) {
-        if (r.resultado === 'Reprovado' && !r.observacao) allValid = false;
-        else if (r.resultado === 'Aprovado após correções' && (!r.observacao || !r.dataFinal)) allValid = false;
-        else done++;
-      } else { allValid = false; }
-    });
-    document.getElementById('etapaProgress').innerText = `${done}/${etapa.itens.length}`;
-    document.getElementById('btnAvancar').disabled = !allValid || done < etapa.itens.length;
-  }
-
-  function avancarEtapa() {
-    showView('viewSignature');
-    const etapa = fvs.etapas[fvs.currentEtapa];
-    document.getElementById('sigEtapaNome').innerText = etapa.nome;
-    let ok = 0, fail = 0, fix = 0;
-    etapa.itens.forEach((_, i) => { const r = fvs.resultados[`${fvs.currentEtapa}-${i}`]; if (r) { if (r.resultado === 'Aprovado') ok++; else if (r.resultado === 'Reprovado') fail++; else fix++; } });
-    document.getElementById('sigResumo').innerHTML = `<span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">✓ ${ok}</span>${fail ? `<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">✕ ${fail}</span>` : ''}${fix ? `<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">⚠ ${fix}</span>` : ''}`;
-  }
-
-  function voltarEtapa() { if (fvs.currentEtapa > 0) { fvs.currentEtapa--; renderStepper(); renderEtapa(); } }
-
-  function confirmarAssinatura() {
-    const resp = document.getElementById('sigRespBronx').value;
-    if (!resp) { showToast('Selecione o Responsável Bronx', 'error'); return; }
-    fvs.assinaturas[fvs.currentEtapa] = { respBronx: resp, respObra: document.getElementById('sigRespObra').value.trim(), data: new Date().toISOString().split('T')[0] };
-    fvs.currentEtapa++;
-    salvarRascunhoLocal();
-    document.getElementById('sigRespObra').value = '';
-    if (fvs.currentEtapa >= fvs.etapas.length) { showView('viewNCs'); }
-    else { showView('viewChecklist'); renderStepper(); renderEtapa(); }
-  }
-
-  // ====== NON-CONFORMITIES ======
-  let ncCounter = 0;
-  function addNC() {
-    ncCounter++;
-    const id = ncCounter;
-    const list = document.getElementById('ncList');
-    const card = document.createElement('div'); card.className = 'bg-white rounded-lg shadow-md1 p-4 space-y-3 slide-up'; card.id = `nc-${id}`;
-    card.innerHTML = `<div class="flex items-center justify-between"><span class="text-xs font-bold text-g-secondary uppercase">NC #${id}</span><button onclick="document.getElementById('nc-${id}').remove()" class="text-g-hint hover:text-g-red text-lg">✕</button></div><div><label class="field-label">Local <span class="text-g-red">*</span></label><input type="text" id="nc-local-${id}" placeholder="Local" class="input-field h-10"></div><div><label class="field-label">Descrição <span class="text-g-red">*</span></label><textarea id="nc-desc-${id}" rows="2" placeholder="Descreva" class="input-field text-sm"></textarea></div><div><label class="field-label">Tratamento <span class="text-g-red">*</span></label><textarea id="nc-trat-${id}" rows="2" placeholder="Ação corretiva" class="input-field text-sm"></textarea></div>`;
-    list.appendChild(card);
-  }
-  function getNCData() {
-    const ncs = [];
-    document.querySelectorAll('#ncList > div').forEach(card => {
-      const id = card.id.replace('nc-', '');
-      const l = document.getElementById(`nc-local-${id}`)?.value?.trim();
-      const d = document.getElementById(`nc-desc-${id}`)?.value?.trim();
-      const t = document.getElementById(`nc-trat-${id}`)?.value?.trim();
-      if (l || d || t) ncs.push({ local: l || '', descricao: d || '', tratamento: t || '' });
-    });
-    return ncs;
-  }
-
-  // ====== FINALIZAR ======
-  async function finalizarFVS() {
-    const btn = document.querySelector('#btnFinalizar');
-    btn.classList.add('btn-loading'); btn.disabled = true;
-    const itens = [];
-    fvs.etapas.forEach((etapa, ei) => {
-      etapa.itens.forEach((criterio, ii) => {
-        const r = fvs.resultados[`${ei}-${ii}`] || {};
-        itens.push({ etapa: etapa.nome, numero: ii + 1, criterio, resultado: r.resultado || '', data1a: r.data1a || '', dataFinal: r.dataFinal || '', observacao: r.observacao || '' });
+        card.innerHTML=
+          '<div class="flex items-start gap-3 mb-3">'+
+            '<span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span>'+
+            '<p class="text-sm text-g-text leading-relaxed">'+criterio+'</p>'+
+          '</div>'+
+          '<div class="flex gap-2">'+
+            '<button onclick="setResultado(\''+key+'\',\'Aprovado\')" class="result-btn '+(r.resultado==='Aprovado'?'selected-ok':'')+'">✓ Aprovado</button>'+
+            '<button onclick="setResultado(\''+key+'\',\'Reprovado\')" class="result-btn '+(r.resultado==='Reprovado'?'selected-fail':'')+'">✕ Reprovado</button>'+
+            '<button onclick="setResultado(\''+key+'\',\'Aprovado após correções\')" class="result-btn '+(r.resultado==='Aprovado após correções'?'selected-fix':'')+'">⚠ Corrigido</button>'+
+          '</div>'+extra;
+        c.appendChild(card);
       });
-    });
-    const ncs = getNCData();
-    try {
-      await fetch(APP_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'itens', ...fvs, itens }) });
-      if (ncs.length) await fetch(APP_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'ncs', fvsId: fvs.id, obra: fvs.obra, pavimento: fvs.pavimento, ambiente: fvs.ambiente, servico: fvs.servico, ncs }) });
-      localStorage.removeItem('bronx_fvs_atual');
-      showToast('FVS finalizada!', 'success');
-      showView('viewDashboard'); carregarDashboard();
-    } catch(e) { showToast('Erro ao finalizar', 'error'); }
-    finally { btn.classList.remove('btn-loading'); btn.disabled = false; }
-  }
 
-  // ====== REVISTORIA ======
-  async function abrirRevisita(fvsId) {
-    // Buscar todos os itens da FVS na planilha (via GET) - precisamos implementar um endpoint "itensPorFVS"
-    // Por simplicidade, vamos recarregar do servidor. Vamos adicionar um novo endpoint no script?
-    // Como o script atual não tem, faremos uma busca direta na planilha "FVS_Itens" via fetch.
-    // Mas para não complicar, usaremos o mesmo endpoint "dashboard" que já retorna pendentes, mas precisamos dos itens.
-    // Vou criar uma função auxiliar no front-end que simula a busca (na prática você precisará adicionar um endpoint "itens" no GAS).
-    // Para não quebrar, assumimos que o GAS tem um endpoint "itens&fvsId=xxx". Vou implementar no script GAS depois.
-    // Enquanto isso, exibimos uma mensagem.
-    showToast('Função de revistoria precisa de ajustes no backend (endpoint itens).', 'error');
-  }
+      updateProgress();
+      document.getElementById('btnVoltar').classList.toggle('hidden',fvs.currentEtapa===0);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
 
-  async function salvarRevisita() {
-    showToast('Implementar envio de revistoria', 'error');
-  }
+    function setResultado(key,val){
+      if(!fvs.resultados[key])fvs.resultados[key]={};
+      fvs.resultados[key].resultado=val;
+      fvs.resultados[key].data1a=fvs.resultados[key].data1a||new Date().toISOString().split('T')[0];
+      saveFVS();
+      renderEtapa();
+    }
+    function setObs(key,val){if(!fvs.resultados[key])fvs.resultados[key]={};fvs.resultados[key].observacao=val;saveFVS();updateProgress();}
+    function setDataFinal(key,val){if(!fvs.resultados[key])fvs.resultados[key]={};fvs.resultados[key].dataFinal=val;saveFVS();updateProgress();}
 
-  // ====== UTILITÁRIOS ======
-  function showView(id) {
-    ['viewDashboard', 'viewIdent', 'viewChecklist', 'viewSignature', 'viewNCs', 'viewDone', 'viewRevisit'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function showToast(msg, type) {
-    const c = document.getElementById('toastContainer'), t = document.createElement('div');
-    const bg = type === 'success' ? 'bg-g-green' : 'bg-g-red';
-    t.className = `toast ${bg} text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md`;
-    t.innerHTML = `<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
-    c.appendChild(t); setTimeout(() => t.remove(), 3200);
-  }
-</script>
+    function updateProgress(){
+      const etapa=fvs.etapas[fvs.currentEtapa];
+      let done=0,allValid=true;
+      etapa.itens.forEach((_,i)=>{
+        const key=fvs.currentEtapa+'-'+i;
+        const r=fvs.resultados[key];
+        if(r&&r.resultado){
+          if(r.resultado==='Reprovado'&&!r.observacao)allValid=false;
+          else if(r.resultado==='Aprovado após correções'&&(!r.observacao||!r.dataFinal))allValid=false;
+          else done++;
+        }else{allValid=false;}
+      });
+      document.getElementById('etapaProgress').textContent=done+'/'+etapa.itens.length;
+      document.getElementById('btnAvancar').disabled=!allValid||done<etapa.itens.length;
+    }
+
+    // ====== NAVIGATE ======
+    function avancarEtapa(){
+      showView('viewSignature');
+      const etapa=fvs.etapas[fvs.currentEtapa];
+      document.getElementById('sigEtapaNome').textContent=etapa.nome;
+      let ok=0,fail=0,fix=0;
+      etapa.itens.forEach((_,i)=>{const r=fvs.resultados[fvs.currentEtapa+'-'+i];if(r){if(r.resultado==='Aprovado')ok++;else if(r.resultado==='Reprovado')fail++;else fix++;}});
+      document.getElementById('sigResumo').innerHTML=
+        '<span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">✓ '+ok+'</span>'+
+        (fail?'<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">✕ '+fail+'</span>':'')+
+        (fix?'<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">⚠ '+fix+'</span>':'');
+    }
+
+    function voltarEtapa(){if(fvs.currentEtapa>0){fvs.currentEtapa--;renderStepper();renderEtapa();}}
+
+    function confirmarAssinatura(){
+      const resp=document.getElementById('sigRespBronx').value;
+      if(!resp){showToast('Selecione o Responsável Bronx','error');return;}
+      fvs.assinaturas[fvs.currentEtapa]={respBronx:resp,respObra:document.getElementById('sigRespObra').value.trim(),data:new Date().toISOString().split('T')[0]};
+      fvs.currentEtapa++;
+      saveFVS();
+      document.getElementById('sigRespObra').value='';
+      if(fvs.currentEtapa>=fvs.etapas.length){showView('viewNCs');}
+      else{showView('viewChecklist');renderStepper();renderEtapa();}
+    }
+
+    // ====== NON-CONFORMITIES ======
+    function addNC(){
+      ncCounter++;const id=ncCounter;
+      const list=document.getElementById('ncList');
+      const card=document.createElement('div');
+      card.className='bg-white rounded-lg shadow-md1 p-4 space-y-3 slide-up';card.id='nc-'+id;
+      card.innerHTML=
+        '<div class="flex items-center justify-between"><span class="text-xs font-bold text-g-secondary uppercase">NC #'+id+'</span><button onclick="document.getElementById(\'nc-'+id+'\').remove()" class="text-g-hint hover:text-g-red text-lg">✕</button></div>'+
+        '<div><label class="field-label">Local <span class="text-g-red">*</span></label><input type="text" id="nc-local-'+id+'" placeholder="Local" class="input-field h-10"></div>'+
+        '<div><label class="field-label">Descrição <span class="text-g-red">*</span></label><textarea id="nc-desc-'+id+'" rows="2" placeholder="Descreva" class="input-field text-sm"></textarea></div>'+
+        '<div><label class="field-label">Tratamento <span class="text-g-red">*</span></label><textarea id="nc-trat-'+id+'" rows="2" placeholder="Ação corretiva" class="input-field text-sm"></textarea></div>';
+      list.appendChild(card);
+    }
+
+    function getNCData(){
+      const ncs=[];
+      document.querySelectorAll('#ncList > div').forEach(card=>{
+        const id=card.id.replace('nc-','');
+        const l=document.getElementById('nc-local-'+id)?.value?.trim();
+        const d=document.getElementById('nc-desc-'+id)?.value?.trim();
+        const t=document.getElementById('nc-trat-'+id)?.value?.trim();
+        if(l||d||t)ncs.push({local:l||'',descricao:d||'',tratamento:t||''});
+      });
+      return ncs;
+    }
+
+    // ====== FINALIZE ======
+    async function finalizarFVS(){
+      const btn=document.querySelector('.btn-finalizar');
+      btn.classList.add('btn-loading');btn.disabled=true;
+      try{
+        const itens=[];
+        fvs.etapas.forEach((etapa,ei)=>{
+          etapa.itens.forEach((criterio,ii)=>{
+            const r=fvs.resultados[ei+'-'+ii]||{};
+            itens.push({etapa:etapa.nome,numero:ii+1,criterio:criterio,resultado:r.resultado||'',data1a:r.data1a||'',dataFinal:r.dataFinal||'',observacao:r.observacao||''});
+          });
+        });
+
+        await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          tipo:'itens',fvsId:fvs.id,responsavel:fvs.responsavel,obra:fvs.obra,pavimento:fvs.pavimento,
+          ambiente:fvs.ambiente,servico:fvs.servico,encarregado:fvs.encarregado,executor:fvs.executor,
+          dataAbertura:fvs.dataAbertura,itens:itens
+        })});
+
+        const ncs=getNCData();
+        if(ncs.length>0){
+          await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+            tipo:'ncs',fvsId:fvs.id,obra:fvs.obra,pavimento:fvs.pavimento,ambiente:fvs.ambiente,servico:fvs.servico,ncs:ncs
+          })});
+        }
+
+        // Check if has reprovados - keep in saved for revisit
+        const hasReprovado=Object.values(fvs.resultados).some(r=>r.resultado==='Reprovado');
+        if(hasReprovado){
+          fvs.currentEtapa=fvs.etapas.length; // mark all etapas done
+          saveFVS();
+        }else{
+          // Remove from saved
+          const all=getSavedFVS().filter(s=>s.id!==fvs.id);
+          localStorage.setItem('bronx_fvs_saved',JSON.stringify(all));
+        }
+
+        let tOk=0,tFail=0,tFix=0;
+        Object.values(fvs.resultados).forEach(r=>{if(r.resultado==='Aprovado')tOk++;else if(r.resultado==='Reprovado')tFail++;else tFix++;});
+        document.getElementById('doneResumo').textContent=fvs.servico+' — '+fvs.obra+'\n'+tOk+' aprovados, '+tFail+' reprovados, '+tFix+' corrigidos'+(ncs.length?', '+ncs.length+' NC(s)':'')+(hasReprovado?'\n\nFVS salva para revistoria dos itens reprovados.':'');
+        showView('viewDone');
+        showToast('FVS finalizada!','success');
+      }catch(e){showToast('Erro ao enviar','error');console.error(e);}
+      finally{btn.classList.remove('btn-loading');btn.disabled=false;}
+    }
+
+    // ====== REVISIT ======
+    function abrirRevisita(id){
+      const saved=getSavedFVS().find(s=>s.id===id);
+      if(!saved){showToast('FVS não encontrada','error');return;}
+      fvs={...saved};
+
+      // Find reprovado items
+      const reprovados=[];
+      fvs.etapas.forEach((etapa,ei)=>{
+        etapa.itens.forEach((criterio,ii)=>{
+          const key=ei+'-'+ii;
+          const r=fvs.resultados[key];
+          if(r&&r.resultado==='Reprovado'){
+            reprovados.push({key,etapa:etapa.nome,numero:ii+1,criterio,obs:r.observacao||''});
+          }
+        });
+      });
+
+      document.getElementById('revisitInfo').textContent=fvs.servico+' — '+fvs.obra+' · '+fvs.pavimento+'\n'+reprovados.length+' item(ns) reprovado(s)';
+
+      const c=document.getElementById('revisitContainer');c.innerHTML='';
+      reprovados.forEach((item,i)=>{
+        const card=document.createElement('div');
+        card.className='bg-white rounded-lg shadow-md1 p-4 slide-up';
+        card.style.animationDelay=(i*0.03)+'s';
+        card.innerHTML=
+          '<div class="flex items-start gap-3 mb-2">'+
+            '<span class="text-xs font-bold text-g-red bg-g-redBg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">✕</span>'+
+            '<div><p class="text-xs text-g-hint">'+item.etapa+' · Item '+item.numero+'</p><p class="text-sm text-g-text leading-relaxed mt-1">'+item.criterio+'</p>'+
+            (item.obs?'<p class="text-xs text-g-secondary mt-1 italic">Obs: '+item.obs+'</p>':'')+
+            '</div></div>'+
+          '<div class="mt-3 space-y-2">'+
+            '<label class="field-label">Resultado da Revistoria <span class="text-g-red">*</span></label>'+
+            '<div class="flex gap-2">'+
+              '<button onclick="setRevisitResult(\''+item.key+'\',\'Aprovado após correções\',this)" class="result-btn flex-1">✓ Aprovado após correção</button>'+
+              '<button onclick="setRevisitResult(\''+item.key+'\',\'Reprovado\',this)" class="result-btn flex-1">✕ Mantém reprovado</button>'+
+            '</div>'+
+            '<div><label class="field-label">Data da Revistoria <span class="text-g-red">*</span></label>'+
+            '<input type="date" class="input-field h-10" id="rev-date-'+item.key+'" value="'+new Date().toISOString().split('T')[0]+'"></div>'+
+            '<div><label class="field-label">Observação da correção</label>'+
+            '<textarea rows="2" class="input-field text-sm" id="rev-obs-'+item.key+'" placeholder="Descreva a correção realizada..."></textarea></div>'+
+          '</div>';
+        c.appendChild(card);
+      });
+
+      showView('viewRevisit');
+    }
+
+    function setRevisitResult(key,val,btn){
+      const parent=btn.parentElement;
+      parent.querySelectorAll('.result-btn').forEach(b=>{b.classList.remove('selected-ok','selected-fail');});
+      btn.classList.add(val==='Aprovado após correções'?'selected-ok':'selected-fail');
+      btn.dataset.result=val;
+    }
+
+    async function salvarRevisita(){
+      const btn=document.getElementById('btnRevisit');
+      btn.classList.add('btn-loading');btn.disabled=true;
+
+      // Collect revisit results
+      const revisitItens=[];
+      document.querySelectorAll('#revisitContainer > div').forEach(card=>{
+        const selectedBtn=card.querySelector('.result-btn.selected-ok,.result-btn.selected-fail');
+        if(!selectedBtn){return;}
+        // Find the key from the button onclick
+        const onclickStr=selectedBtn.getAttribute('onclick');
+        const keyMatch=onclickStr.match(/setRevisitResult\('([^']+)'/);
+        if(!keyMatch)return;
+        const key=keyMatch[1];
+        const result=selectedBtn.dataset.result;
+        const date=document.getElementById('rev-date-'+key)?.value||'';
+        const obs=document.getElementById('rev-obs-'+key)?.value?.trim()||'';
+
+        fvs.resultados[key].resultado=result;
+        fvs.resultados[key].dataFinal=date;
+        if(obs) fvs.resultados[key].observacao=(fvs.resultados[key].observacao||'')+' | Revistoria: '+obs;
+
+        const parts=key.split('-');
+        const etapa=fvs.etapas[parseInt(parts[0])];
+        revisitItens.push({
+          etapa:etapa.nome,numero:parseInt(parts[1])+1,
+          criterio:etapa.itens[parseInt(parts[1])],
+          resultado:result,data1a:fvs.resultados[key].data1a||'',
+          dataFinal:date,observacao:fvs.resultados[key].observacao||''
+        });
+      });
+
+      try{
+        if(revisitItens.length>0){
+          await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+            tipo:'itens',fvsId:fvs.id+'-REV',responsavel:fvs.responsavel,obra:fvs.obra,pavimento:fvs.pavimento,
+            ambiente:fvs.ambiente,servico:fvs.servico,encarregado:fvs.encarregado,executor:fvs.executor,
+            dataAbertura:fvs.dataAbertura,itens:revisitItens
+          })});
+        }
+
+        // Check if still has reprovados
+        const stillReprovado=Object.values(fvs.resultados).some(r=>r.resultado==='Reprovado');
+        if(stillReprovado){
+          saveFVS();
+          showToast('Revistoria salva. Ainda há itens reprovados.','error');
+        }else{
+          const all=getSavedFVS().filter(s=>s.id!==fvs.id);
+          localStorage.setItem('bronx_fvs_saved',JSON.stringify(all));
+          showToast('Revistoria concluída! Todos os itens aprovados.','success');
+        }
+        showView('viewDashboard');
+        renderDashboard();
+      }catch(e){showToast('Erro ao salvar','error');console.error(e);}
+      finally{btn.classList.remove('btn-loading');btn.disabled=false;}
+    }
+
+    // ====== UTILS ======
+    function showView(id){
+      ['viewDashboard','viewIdent','viewChecklist','viewSignature','viewNCs','viewDone','viewRevisit'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function showToast(msg,type){
+      const c=document.getElementById('toastContainer'),t=document.createElement('div');
+      const bg=type==='success'?'bg-g-green':'bg-g-red';
+      t.className='toast '+bg+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';
+      t.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+(type==='success'?'✓':'✕')+'</span><span>'+msg+'</span>';
+      c.appendChild(t);setTimeout(()=>t.remove(),3200);
+    }
+  </script>
 </body>
 </html>
