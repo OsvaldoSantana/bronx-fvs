@@ -1,0 +1,169 @@
+{
+  "Argamassa Polimérica": {
+    "titulo": "Impermeabilização com Argamassa Polimérica",
+    "etapas": [
+      {
+        "nome": "Liberação Frente de Serviço",
+        "itens": [
+          "Conferir se o chumbamento das tubulações foi feito com graute",
+          "Conferir o rebaixo dos ralos, grelhas, soleiras e filetes, garantindo folga mínima de 1cm e caimento adequado",
+          "Conferir se as arestas e quinas estão requadradas com ângulo de 90°",
+          "Conferir se a argamassa de regularização está seca e curada por no mínimo 7 dias",
+          "Conferir se foi realizado o corte das superfícies em PVC (ralos, coletores e tubos passantes)",
+          "Conferir se os fechamentos de shafts foram feitos com placa verde, selados e tratados com PU",
+          "Conferir se o substrato está limpo, seco e íntegro, livre de pó, graxa, óleo ou desmoldante"
+        ]
+      },
+      {
+        "nome": "Execução",
+        "itens": [
+          "Conferir subida nos rodapés: mínimo 40cm fora do box e 1,5m dentro do box (ou conforme projeto)",
+          "Instalar tela de poliéster nos cantos, ralos e passagens de tubulação, sem rugas, vazios ou dobras",
+          "Executar segunda demão sem diluição, após ~6h da primeira, sem vazios entre as demãos",
+          "Executar terceira demão sem diluição, após ~6h, garantindo consumo indicado pelo projetista/fabricante",
+          "Executar limpeza da área e desmobilização do entulho",
+          "Aguardar cura completa por no mínimo 72 horas antes de teste ou proteção mecânica"
+        ]
+      },
+      {
+        "nome": "Teste de Estanqueidade",
+        "itens": [
+          "Executar teste de estanqueidade com lâmina d'água mínima de 5cm por 72 horas",
+          "Analisar resultado do teste, verificando possíveis falhas, infiltrações ou vazamentos",
+          "Executar proteção mecânica (contrapiso, argamassa de proteção ou revestimento), conforme projeto"
+        ]
+      }
+    ]
+  },
+  "Manta Asfáltica": {
+    "titulo": "Impermeabilização com Manta Asfáltica",
+    "etapas": [
+      {
+        "nome": "Liberação Frente de Serviço",
+        "itens": [
+          "Verificar execução do contrapiso de regularização e acabamento correto",
+          "Verificar se a argamassa de regularização está seca e curada por no mínimo 7 dias",
+          "Verificar se os elementos transpassantes estão chumbados com graute",
+          "Verificar se os ralos estão com diâmetro mínimo de 75mm",
+          "Verificar rebaixo dos ralos, grelhas, soleiras e filetes, com folga de 1cm e caimento adequado",
+          "Verificar se foi feito o corte na parede para embutir a manta (mín. 40cm ou conforme projeto)",
+          "Verificar se foi realizado o corte das superfícies em PVC (ralos, coletores e tubos passantes)",
+          "Verificar se as arestas e quinas estão requadradas com ângulo de 90° e abauladas",
+          "Verificar rebaixo dos ralos de 1cm (40cm × 40cm)",
+          "Verificar se a junta de dilatação está no ponto mais alto da regularização",
+          "Verificar se o substrato está limpo, seco e íntegro, livre de pó, graxa, óleo ou desmoldante",
+          "Verificar se o teste de carga d'água foi executado (em caso de piscinas e reservatórios)"
+        ]
+      },
+      {
+        "nome": "Impermeabilização",
+        "itens": [
+          "Verificar a realização da imprimação com primer asfáltico",
+          "Verificar o alinhamento da manta de acordo com o requadramento da área",
+          "Verificar se a manta foi corretamente aderida e 40cm acima do nível do piso",
+          "Verificar a sobreposição entre as mantas de 10cm",
+          "Verificar se o biselamento das emendas ou banho asfáltico foi realizado"
+        ]
+      },
+      {
+        "nome": "Teste de Estanqueidade",
+        "itens": [
+          "Realizar teste de estanqueidade com lâmina d'água mín. 5cm por 72h (piscinas/reservatórios: 30 dias)",
+          "Avaliar resultado do teste, verificando possíveis falhas, infiltrações ou vazamentos",
+          "Executar proteção mecânica (contrapiso, argamassa de proteção ou revestimento), conforme projeto"
+        ]
+      },
+      {
+        "nome": "Proteção Mecânica",
+        "itens": [
+          "Verificar se não houve perfurações ou passagem de novas instalações",
+          "Verificar se a proteção mecânica possui camada separadora e espessura mínima de 2cm",
+          "Verificar se a manta das paredes teve polietileno queimado e proteção com tela PEAD + argamassa AC3",
+          "Executar proteção mecânica conforme projeto",
+          "Em caso de floreira, verificar aplicação da pintura anti-raiz"
+        ]
+      }
+    ]
+  },
+  "Membrana Acrílica": {
+    "titulo": "Impermeabilização com Membrana de Polímero Acrílico sem Cimento",
+    "etapas": [
+      {
+        "nome": "Liberação Frente de Serviço",
+        "itens": [
+          "Conferir se o chumbamento das tubulações foi feito com graute",
+          "Conferir o rebaixo dos ralos, grelhas, soleiras e filetes, garantindo folga mínima de 1cm e caimento adequado",
+          "Conferir se as arestas e quinas estão requadradas com ângulo de 90°",
+          "Conferir se a argamassa de regularização está seca e curada por no mínimo 7 dias",
+          "Conferir se foi realizado o corte das superfícies em PVC (ralos, coletores e tubos passantes)",
+          "Conferir se os fechamentos de shafts foram feitos com placa verde, selados e tratados com PU",
+          "Conferir se o substrato está limpo, seco e íntegro, livre de pó, graxa, óleo ou desmoldante"
+        ]
+      },
+      {
+        "nome": "Impermeabilização",
+        "itens": [
+          "Homogeneizar o produto diluído em até 15% de água e aplicar primeira demão com rolo ou trincha, uniformemente",
+          "Conferir subida nos rodapés: mínimo 40cm fora do box e 1,5m dentro do box (ou conforme projeto)",
+          "Instalar tela de poliéster nos cantos, ralos e passagens de tubulação, sem rugas, vazios ou dobras",
+          "Executar segunda demão sem diluição, após ~6h da primeira, sem vazios entre as demãos",
+          "Executar terceira demão sem diluição, após ~6h, garantindo consumo indicado pelo projetista/fabricante",
+          "Executar limpeza da área e desmobilização do entulho",
+          "Aguardar cura completa por no mínimo 72 horas antes de teste ou proteção mecânica"
+        ]
+      },
+      {
+        "nome": "Teste de Estanqueidade",
+        "itens": [
+          "Executar teste de estanqueidade com lâmina d'água mínima de 5cm por 72 horas",
+          "Analisar resultado do teste, verificando possíveis falhas, infiltrações ou vazamentos",
+          "Executar proteção mecânica (contrapiso, argamassa de proteção ou revestimento), conforme projeto"
+        ]
+      }
+    ]
+  },
+  "Manta PEAD": {
+    "titulo": "Impermeabilização com Manta PEAD",
+    "etapas": [
+      {
+        "nome": "Liberação Frente de Serviço",
+        "itens": [
+          "Verificar se a superfície está sólida e regular",
+          "Verificar a desobstrução integral do trecho a ser executado",
+          "Verificar a limpeza fina do local",
+          "Verificar se não há água parada no local",
+          "Verificar limpeza fina com hidrojateamento (em caso de laje de subpressão e cortinas)",
+          "Verificar desobstrução das esperas de manta dos blocos de fundação (em caso de laje de subpressão)",
+          "Verificar se o substrato está livre de vazios e superfícies pontiagudas (em caso de laje de subpressão)",
+          "Verificar escavação do bloco mantendo esquadro e prumo (em caso de bloco de fundação)",
+          "Verificar arrasamento de estaca mantendo espera de 10cm de concreto (em caso de bloco de fundação)",
+          "Verificar execução de lastro de concreto no piso, desempenado, com acabamento na espera da estaca (em caso de bloco de fundação)",
+          "Verificar execução do reboco desempenado na face inferior do gabarito (em caso de bloco de fundação)",
+          "Verificar regularização com reboco aprumado/alinhado ou formas de madeirite (em caso de contenção de estaca hélice contínua)",
+          "Verificar integridade dos pranchões de contenção (em caso de contenção com pranchões intertravados)",
+          "Verificar lixamento dos perfis metálicos com escova de aço (em caso de contenção com perfis metálicos)",
+          "Verificar limpeza dos restos de concreto dos pés dos perfis (em caso de contenção com perfis metálicos)"
+        ]
+      },
+      {
+        "nome": "Impermeabilização",
+        "itens": [
+          "Verificar se a 1ª e 2ª faixa da manta PEAD foram colocadas corretamente com transpasse mín. 10cm",
+          "Verificar aplicação do LM nas terminações da manta PEAD com o concreto",
+          "Verificar os transpasses da manta, feitos em fita dupla face existente ou aplicada",
+          "Verificar presença da manta amortecedora geotêxtil antes da manta PEAD (em caso de bloco de fundação)",
+          "Verificar aplicação da manta no piso com recorte perfeito do diâmetro das estacas (em caso de bloco de fundação)",
+          "Verificar aplicação de LM nas terminações com concreto na cabeça das estacas (em caso de bloco de fundação)",
+          "Aplicação de manta PEAD nas paredes com transpasse de 8cm, fixando no gabarito com espera mín. 10cm (em caso de bloco de fundação)",
+          "Garantir emendas da manta do piso com esperas de manta dos blocos de fundação",
+          "Verificar lixamento e tratamento dos perfis metálicos (em caso de contenção com perfis metálicos)",
+          "Verificar arremate do travamento das fixações de formas",
+          "Verificar esperas da manta para etapas futuras",
+          "Verificar aplicação do hidroexpansivo em ligações de concreto de idades diferentes (em caso de laje de subpressão e cortinas)",
+          "Verificar limpeza e área desimpedida para próximos serviços",
+          "Verificar em todos os acabamentos em metal ou concreto se houve aplicação do LM"
+        ]
+      }
+    ]
+  }
+}

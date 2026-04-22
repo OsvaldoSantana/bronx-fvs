@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#ffffff">
+  <title>FVS — Bronx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Google Sans','Roboto','sans-serif'] },
+        colors: {
+          g: { bg:'#f8f9fa',surface:'#ffffff',border:'#dadce0',divider:'#e8eaed',
+            text:'#202124',secondary:'#5f6368',hint:'#80868b',
+            blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',
+            green:'#1e8e3e',greenBg:'#e6f4ea',greenBorder:'#ceead6',
+            red:'#d93025',redBg:'#fce8e6',redBorder:'#f5c6cb',
+            amber:'#e37400',amberBg:'#fef7e0',amberBorder:'#fde293' }
+        },
+        boxShadow: { 'md1':'0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)', 'md2':'0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)' }
+      }}
+    }
+  </script>
+  <style>
+    *{-webkit-tap-highlight-color:transparent}body{overscroll-behavior:none}select,input,textarea{font-size:16px!important}
+    .input-field{width:100%;height:48px;padding:0 12px;background:#fff;border:1px solid #dadce0;border-radius:8px;font-size:14px;color:#202124;outline:none;transition:border .15s,box-shadow .15s}
+    .input-field:focus{border-color:#1a73e8;box-shadow:0 0 0 2px #e8f0fe}
+    .input-field.error{border-color:#d93025;box-shadow:0 0 0 2px #fce8e6}
+    .input-field::placeholder{color:#80868b}
+    textarea.input-field{height:auto;padding:12px;resize:none}
+    select.input-field{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+    .section-label{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:#5f6368;margin-bottom:12px}
+    .field-label{display:block;font-size:12px;font-weight:500;color:#5f6368;margin-bottom:6px}
+    .field-group{transition:opacity .2s}.field-group.disabled{opacity:.35;pointer-events:none}
+    .slide-up{animation:slideUp .3s ease both}@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .toast{animation:toastIn .25s ease,toastOut .25s ease 2.7s forwards}
+    @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
+    .btn-loading{position:relative;color:transparent!important}
+    .btn-loading::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .result-btn{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
+    .result-btn:hover{background:#f8f9fa}
+    .result-btn.selected-ok{background:#e6f4ea;border-color:#1e8e3e;color:#1e8e3e}
+    .result-btn.selected-fail{background:#fce8e6;border-color:#d93025;color:#d93025}
+    .result-btn.selected-fix{background:#fef7e0;border-color:#e37400;color:#e37400}
+    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
+    .step-dot.active{background:#1a73e8;color:#fff}
+    .step-dot.done{background:#1e8e3e;color:#fff}
+    .step-dot.pending{background:#e8eaed;color:#80868b}
+    .step-line{height:2px;flex:1;transition:background .2s}
+    .step-line.done{background:#1e8e3e}.step-line.pending{background:#e8eaed}
+  </style>
+</head>
+<body class="bg-g-bg font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white sticky top-0 z-50 border-b border-g-border">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAFFBEoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AIyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB//Z" alt="Bronx" class="h-6">
+        <div class="h-5 w-px bg-g-border hidden sm:block"></div>
+        <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
+      </div>
+      <div class="flex items-center gap-2 bg-g-greenBg px-3 py-1 rounded-full">
+        <div class="w-2 h-2 rounded-full bg-g-green"></div>
+        <span class="text-xs font-medium text-g-green">Online</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIEW: Identification -->
+  <main id="viewIdent" class="max-w-3xl mx-auto px-4 py-5">
+    <div class="text-center mb-6">
+      <h1 class="text-xl font-bold text-g-text">Ficha de Verificação de Serviços</h1>
+      <p class="text-sm text-g-secondary mt-1">Impermeabilização</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="bg-white rounded-lg shadow-md1 p-5 slide-up">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="field-label mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
+          <input type="text" id="responsavel" required placeholder="Seu nome" class="input-field h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 slide-up" style="animation-delay:.04s">
+        <p class="section-label mb-2">Localização</p>
+        <div class="field-group" id="fg-obra">
+          <label class="field-label">Obra <span class="text-g-red">*</span></label>
+          <select id="obra" required class="input-field"><option value="">Selecione a obra</option></select>
+        </div>
+        <div class="field-group disabled" id="fg-pavimento">
+          <label class="field-label">Pavimento <span class="text-g-red">*</span></label>
+          <select id="pavimento" required class="input-field"><option value="">Selecione o pavimento</option></select>
+        </div>
+        <div>
+          <label class="field-label">Ambiente <span class="text-g-red">*</span></label>
+          <input type="text" id="ambiente" required placeholder="Ex: Laje Subpressão, WCs, Jardins" class="input-field">
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 slide-up" style="animation-delay:.08s">
+        <p class="section-label mb-2">Serviço e Equipe</p>
+        <div>
+          <label class="field-label">Tipo de Serviço <span class="text-g-red">*</span></label>
+          <select id="servico" required class="input-field"><option value="">Selecione o serviço</option></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">Encarregado <span class="text-g-red">*</span></label>
+            <select id="encarregado" required class="input-field"><option value="">Selecione</option></select>
+          </div>
+          <div>
+            <label class="field-label">Executor <span class="text-g-red">*</span></label>
+            <select id="executor" required class="input-field"><option value="">Selecione</option></select>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="iniciarFVS()" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] slide-up" style="animation-delay:.12s">
+        Iniciar Verificação →
+      </button>
+    </div>
+  </main>
+
+  <!-- VIEW: Checklist -->
+  <main id="viewChecklist" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <!-- Stepper -->
+    <div id="stepper" class="flex items-center mb-6 px-2"></div>
+
+    <!-- Etapa Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs text-g-hint font-medium uppercase tracking-wide" id="etapaLabel">Etapa 1</p>
+        <h2 class="text-lg font-bold text-g-text" id="etapaNome">Liberação Frente de Serviço</h2>
+      </div>
+      <span class="text-xs font-medium text-g-hint bg-g-bg px-3 py-1 rounded-full" id="etapaProgress">0/7</span>
+    </div>
+
+    <!-- Checklist Items -->
+    <div id="checklistContainer" class="space-y-3"></div>
+
+    <!-- Bottom Actions -->
+    <div class="mt-6 space-y-3 pb-8">
+      <button onclick="avancarEtapa()" id="btnAvancar" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none" disabled>
+        Assinar e Avançar →
+      </button>
+      <div class="flex justify-between">
+        <button onclick="voltarEtapa()" id="btnVoltar" class="text-sm text-g-blue font-medium hover:underline hidden">← Etapa anterior</button>
+        <span></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW: Signature -->
+  <main id="viewSignature" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="bg-white rounded-lg shadow-md1 p-6 space-y-5">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-3">
+          <span class="text-g-green text-xl">✓</span>
+        </div>
+        <h2 class="text-lg font-bold text-g-text" id="sigEtapaNome">Liberação Frente de Serviço</h2>
+        <p class="text-sm text-g-secondary mt-1">Assinatura de conclusão da etapa</p>
+      </div>
+
+      <div id="sigResumo" class="flex justify-center gap-4 text-sm font-medium"></div>
+
+      <div>
+        <label class="field-label">Responsável Bronx <span class="text-g-red">*</span></label>
+        <select id="sigRespBronx" required class="input-field"><option value="">Selecione</option></select>
+      </div>
+      <div>
+        <label class="field-label">Responsável da Obra</label>
+        <input type="text" id="sigRespObra" placeholder="Nome do responsável" class="input-field">
+      </div>
+
+      <button onclick="confirmarAssinatura()" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">
+        Confirmar Assinatura
+      </button>
+    </div>
+  </main>
+
+  <!-- VIEW: Non-Conformities -->
+  <main id="viewNCs" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="text-center mb-6">
+      <div class="w-12 h-12 rounded-full bg-g-blueBg flex items-center justify-center mx-auto mb-3">
+        <span class="text-g-blue text-xl font-bold">✓</span>
+      </div>
+      <h2 class="text-lg font-bold text-g-text">Todas as etapas concluídas</h2>
+      <p class="text-sm text-g-secondary mt-1">Registre não conformidades encontradas (se houver)</p>
+    </div>
+
+    <div id="ncList" class="space-y-3 mb-4"></div>
+
+    <button onclick="addNC()" class="w-full h-11 border-2 border-dashed border-g-border rounded-lg text-sm font-medium text-g-blue hover:bg-g-blueBg transition-colors flex items-center justify-center gap-2 mb-4">
+      <span class="text-lg leading-none">+</span> Adicionar Não Conformidade
+    </button>
+
+    <div class="space-y-3 pb-8">
+      <button onclick="finalizarFVS()" id="btnFinalizar" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] btn-finalizar">
+        Finalizar FVS
+      </button>
+      <button onclick="finalizarFVS()" class="w-full text-sm text-g-hint font-medium hover:text-g-secondary text-center hidden" id="btnPular">
+        Pular (sem não conformidades)
+      </button>
+    </div>
+  </main>
+
+  <!-- VIEW: Done -->
+  <main id="viewDone" class="max-w-3xl mx-auto px-4 py-12 hidden">
+    <div class="text-center">
+      <div class="w-16 h-16 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-4">
+        <span class="text-g-green text-3xl">✓</span>
+      </div>
+      <h2 class="text-xl font-bold text-g-text">FVS Finalizada</h2>
+      <p class="text-sm text-g-secondary mt-2 mb-8" id="doneResumo"></p>
+      <button onclick="novaFVS()" class="h-12 px-8 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">
+        Nova FVS
+      </button>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toastContainer" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
+
+  <script>
+    const EP = "https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
+    let REF = null;
+    let FVS_CHECKLISTS = null;
+
+    // FVS state
+    let fvs = {
+      id: '', responsavel: '', obra: '', pavimento: '', ambiente: '',
+      servico: '', encarregado: '', executor: '', dataAbertura: '',
+      etapas: [], currentEtapa: 0, resultados: {}, assinaturas: [], ncs: []
+    };
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', async function() {
+      const saved = localStorage.getItem('bronx_fvs_resp');
+      if(saved) document.getElementById('responsavel').value = saved;
+
+      try {
+        const [refResp, fvsResp] = await Promise.all([
+          fetch('ref_fvs.json'), fetch('dados_fvs.json')
+        ]);
+        REF = await refResp.json();
+        FVS_CHECKLISTS = await fvsResp.json();
+
+        populateSelect('obra', REF.obras);
+        ['encarregado','executor'].forEach(id => populateSelect(id, REF.colaboradores));
+
+        // Populate servico with FVS services
+        const sel = document.getElementById('servico');
+        Object.keys(FVS_CHECKLISTS).sort().forEach(s => {
+          const o = document.createElement('option'); o.value=s; o.textContent=s; sel.appendChild(o);
+        });
+
+        // Populate signature dropdown
+        populateSelect('sigRespBronx', REF.colaboradores);
+      } catch(e) { showToast('Erro ao carregar dados','error'); console.error(e); }
+    });
+
+    function populateSelect(id, items) {
+      const sel = document.getElementById(id);
+      items.forEach(v => { const o = document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+    }
+
+    // CASCADE
+    document.getElementById('obra').addEventListener('change', function() {
+      const sp = document.getElementById('pavimento');
+      sp.innerHTML = '<option value="">Selecione o pavimento</option>';
+      if(!this.value) { document.getElementById('fg-pavimento').classList.add('disabled'); return; }
+      document.getElementById('fg-pavimento').classList.remove('disabled');
+      (REF.pavimentos[this.value]||[]).forEach(p => {
+        const o = document.createElement('option'); o.value=p; o.textContent=p; sp.appendChild(o);
+      });
+    });
+
+    // ==========================================
+    // START FVS
+    // ==========================================
+    function iniciarFVS() {
+      const fields = ['responsavel','obra','pavimento','ambiente','servico','encarregado','executor'];
+      let ok = true, first = null;
+      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if(!el.value.trim()) {
+          el.classList.add('error');
+          if(!first) first = el;
+          ok = false;
+        }
+      });
+
+      if(!ok) {
+        first.scrollIntoView({behavior:'smooth',block:'center'});
+        showToast('Preencha todos os campos obrigatórios','error');
+        return;
+      }
+
+      const servico = document.getElementById('servico').value;
+      const checklist = FVS_CHECKLISTS[servico];
+      if(!checklist) { showToast('Checklist não encontrado para este serviço','error'); return; }
+
+      fvs = {
+        id: 'FVS-' + Date.now(),
+        responsavel: document.getElementById('responsavel').value.trim(),
+        obra: document.getElementById('obra').value,
+        pavimento: document.getElementById('pavimento').value,
+        ambiente: document.getElementById('ambiente').value.trim(),
+        servico: servico,
+        encarregado: document.getElementById('encarregado').value,
+        executor: document.getElementById('executor').value,
+        dataAbertura: new Date().toISOString().split('T')[0],
+        etapas: checklist.etapas,
+        currentEtapa: 0,
+        resultados: {},
+        assinaturas: [],
+        ncs: []
+      };
+
+      showView('viewChecklist');
+      renderStepper();
+      renderEtapa();
+    }
+
+    // ==========================================
+    // STEPPER
+    // ==========================================
+    function renderStepper() {
+      const container = document.getElementById('stepper');
+      container.innerHTML = '';
+      fvs.etapas.forEach((etapa, i) => {
+        if(i > 0) {
+          const line = document.createElement('div');
+          line.className = 'step-line ' + (i <= fvs.currentEtapa ? 'done' : 'pending');
+          container.appendChild(line);
+        }
+        const dot = document.createElement('div');
+        dot.className = 'step-dot ' + (i < fvs.currentEtapa ? 'done' : i === fvs.currentEtapa ? 'active' : 'pending');
+        dot.textContent = i < fvs.currentEtapa ? '✓' : (i+1);
+        dot.title = etapa.nome;
+        container.appendChild(dot);
+      });
+    }
+
+    // ==========================================
+    // RENDER ETAPA
+    // ==========================================
+    function renderEtapa() {
+      const etapa = fvs.etapas[fvs.currentEtapa];
+      document.getElementById('etapaLabel').textContent = 'Etapa ' + (fvs.currentEtapa+1) + ' de ' + fvs.etapas.length;
+      document.getElementById('etapaNome').textContent = etapa.nome;
+
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = '';
+
+      etapa.itens.forEach((criterio, i) => {
+        const key = fvs.currentEtapa + '-' + i;
+        const r = fvs.resultados[key] || {};
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md1 p-4 slide-up';
+        card.style.animationDelay = (i * 0.03) + 's';
+        card.id = 'item-' + key;
+
+        let obsHtml = '';
+        if(r.resultado === 'Reprovado' || r.resultado === 'Aprovado após correções') {
+          obsHtml = '<div class="mt-3 space-y-2">' +
+            '<div><label class="field-label">Observação <span class="text-g-red">*</span></label>' +
+            '<textarea rows="2" class="input-field text-sm" placeholder="Descreva a não conformidade..." onchange="setObs(\''+key+'\',this.value)">'+(r.observacao||'')+'</textarea></div>';
+          if(r.resultado === 'Aprovado após correções') {
+            obsHtml += '<div><label class="field-label">Data Vistoria Final <span class="text-g-red">*</span></label>' +
+              '<input type="date" class="input-field h-10" value="'+(r.dataFinal||'')+'" onchange="setDataFinal(\''+key+'\',this.value)"></div>';
+          }
+          obsHtml += '</div>';
+        }
+
+        card.innerHTML =
+          '<div class="flex items-start gap-3 mb-3">' +
+            '<span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span>' +
+            '<p class="text-sm text-g-text leading-relaxed">' + criterio + '</p>' +
+          '</div>' +
+          '<div class="flex gap-2">' +
+            '<button onclick="setResultado(\''+key+'\',\'Aprovado\')" class="result-btn '+(r.resultado==='Aprovado'?'selected-ok':'')+'">✓ Aprovado</button>' +
+            '<button onclick="setResultado(\''+key+'\',\'Reprovado\')" class="result-btn '+(r.resultado==='Reprovado'?'selected-fail':'')+'">✕ Reprovado</button>' +
+            '<button onclick="setResultado(\''+key+'\',\'Aprovado após correções\')" class="result-btn '+(r.resultado==='Aprovado após correções'?'selected-fix':'')+'">⚠ Corrigido</button>' +
+          '</div>' +
+          obsHtml;
+
+        container.appendChild(card);
+      });
+
+      updateProgress();
+      document.getElementById('btnVoltar').classList.toggle('hidden', fvs.currentEtapa === 0);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function setResultado(key, valor) {
+      if(!fvs.resultados[key]) fvs.resultados[key] = {};
+      fvs.resultados[key].resultado = valor;
+      fvs.resultados[key].data1a = fvs.resultados[key].data1a || new Date().toISOString().split('T')[0];
+      renderEtapa();
+    }
+
+    function setObs(key, valor) {
+      if(!fvs.resultados[key]) fvs.resultados[key] = {};
+      fvs.resultados[key].observacao = valor;
+      updateProgress();
+    }
+
+    function setDataFinal(key, valor) {
+      if(!fvs.resultados[key]) fvs.resultados[key] = {};
+      fvs.resultados[key].dataFinal = valor;
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const etapa = fvs.etapas[fvs.currentEtapa];
+      let done = 0;
+      let allValid = true;
+
+      etapa.itens.forEach((_, i) => {
+        const key = fvs.currentEtapa + '-' + i;
+        const r = fvs.resultados[key];
+        if(r && r.resultado) {
+          if(r.resultado === 'Reprovado' && !r.observacao) allValid = false;
+          else if(r.resultado === 'Aprovado após correções' && (!r.observacao || !r.dataFinal)) allValid = false;
+          else done++;
+        } else {
+          allValid = false;
+        }
+      });
+
+      document.getElementById('etapaProgress').textContent = done + '/' + etapa.itens.length;
+      document.getElementById('btnAvancar').disabled = !allValid || done < etapa.itens.length;
+    }
+
+    // ==========================================
+    // NAVIGATE ETAPAS
+    // ==========================================
+    function avancarEtapa() {
+      showView('viewSignature');
+      const etapa = fvs.etapas[fvs.currentEtapa];
+      document.getElementById('sigEtapaNome').textContent = etapa.nome;
+
+      let ok=0, fail=0, fix=0;
+      etapa.itens.forEach((_, i) => {
+        const r = fvs.resultados[fvs.currentEtapa+'-'+i];
+        if(r) {
+          if(r.resultado==='Aprovado') ok++;
+          else if(r.resultado==='Reprovado') fail++;
+          else fix++;
+        }
+      });
+
+      document.getElementById('sigResumo').innerHTML =
+        '<span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">✓ '+ok+' aprovado(s)</span>' +
+        (fail?'<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">✕ '+fail+' reprovado(s)</span>':'') +
+        (fix?'<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">⚠ '+fix+' corrigido(s)</span>':'');
+    }
+
+    function voltarEtapa() {
+      if(fvs.currentEtapa > 0) {
+        fvs.currentEtapa--;
+        renderStepper();
+        renderEtapa();
+      }
+    }
+
+    function confirmarAssinatura() {
+      const resp = document.getElementById('sigRespBronx').value;
+      if(!resp) { showToast('Selecione o Responsável Bronx','error'); return; }
+
+      fvs.assinaturas[fvs.currentEtapa] = {
+        respBronx: resp,
+        respObra: document.getElementById('sigRespObra').value.trim(),
+        data: new Date().toISOString().split('T')[0]
+      };
+
+      fvs.currentEtapa++;
+
+      if(fvs.currentEtapa >= fvs.etapas.length) {
+        showView('viewNCs');
+        updateNCButtons();
+      } else {
+        showView('viewChecklist');
+        renderStepper();
+        renderEtapa();
+      }
+
+      // Reset signature fields
+      document.getElementById('sigRespObra').value = '';
+    }
+
+    // ==========================================
+    // NON-CONFORMITIES
+    // ==========================================
+    let ncCounter = 0;
+
+    function addNC() {
+      ncCounter++;
+      const id = ncCounter;
+      const list = document.getElementById('ncList');
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-lg shadow-md1 p-4 space-y-3 slide-up';
+      card.id = 'nc-'+id;
+      card.innerHTML =
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-bold text-g-secondary uppercase">NC #'+id+'</span>' +
+          '<button onclick="removeNC('+id+')" class="text-g-hint hover:text-g-red text-lg leading-none">✕</button>' +
+        '</div>' +
+        '<div><label class="field-label">Local <span class="text-g-red">*</span></label>' +
+        '<input type="text" id="nc-local-'+id+'" placeholder="Local da não conformidade" class="input-field h-10"></div>' +
+        '<div><label class="field-label">Descrição <span class="text-g-red">*</span></label>' +
+        '<textarea id="nc-desc-'+id+'" rows="2" placeholder="Descreva o problema" class="input-field text-sm"></textarea></div>' +
+        '<div><label class="field-label">Tratamento <span class="text-g-red">*</span></label>' +
+        '<textarea id="nc-trat-'+id+'" rows="2" placeholder="Ação corretiva" class="input-field text-sm"></textarea></div>';
+      list.appendChild(card);
+      updateNCButtons();
+    }
+
+    function removeNC(id) {
+      document.getElementById('nc-'+id).remove();
+      updateNCButtons();
+    }
+
+    function updateNCButtons() {
+      const hasNCs = document.querySelectorAll('[id^="nc-"][id$=""]').length > 0;
+      // Always show finalizar, show pular only if no NCs
+    }
+
+    function getNCData() {
+      const ncs = [];
+      document.querySelectorAll('[id^="nc-"]').forEach(card => {
+        if(!card.id.match(/^nc-\d+$/)) return;
+        const id = card.id.replace('nc-','');
+        const local = document.getElementById('nc-local-'+id)?.value?.trim();
+        const desc = document.getElementById('nc-desc-'+id)?.value?.trim();
+        const trat = document.getElementById('nc-trat-'+id)?.value?.trim();
+        if(local || desc || trat) {
+          ncs.push({local: local||'', descricao: desc||'', tratamento: trat||''});
+        }
+      });
+      return ncs;
+    }
+
+    // ==========================================
+    // FINALIZE FVS
+    // ==========================================
+    async function finalizarFVS() {
+      const btn = document.querySelector('.btn-finalizar');
+      btn.classList.add('btn-loading'); btn.disabled = true;
+
+      try {
+        // Build items payload
+        const itens = [];
+        fvs.etapas.forEach((etapa, ei) => {
+          etapa.itens.forEach((criterio, ii) => {
+            const key = ei+'-'+ii;
+            const r = fvs.resultados[key] || {};
+            itens.push({
+              etapa: etapa.nome,
+              numero: ii+1,
+              criterio: criterio,
+              resultado: r.resultado || '',
+              data1a: r.data1a || '',
+              dataFinal: r.dataFinal || '',
+              observacao: r.observacao || ''
+            });
+          });
+        });
+
+        // Send items
+        await fetch(EP, {
+          method:'POST', mode:'no-cors',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            tipo: 'itens',
+            fvsId: fvs.id,
+            responsavel: fvs.responsavel,
+            obra: fvs.obra,
+            pavimento: fvs.pavimento,
+            ambiente: fvs.ambiente,
+            servico: fvs.servico,
+            encarregado: fvs.encarregado,
+            executor: fvs.executor,
+            dataAbertura: fvs.dataAbertura,
+            itens: itens
+          })
+        });
+
+        // Send NCs if any
+        const ncs = getNCData();
+        if(ncs.length > 0) {
+          await fetch(EP, {
+            method:'POST', mode:'no-cors',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+              tipo: 'ncs',
+              fvsId: fvs.id,
+              obra: fvs.obra,
+              pavimento: fvs.pavimento,
+              ambiente: fvs.ambiente,
+              servico: fvs.servico,
+              ncs: ncs
+            })
+          });
+        }
+
+        // Count results
+        let totalOk=0, totalFail=0, totalFix=0;
+        Object.values(fvs.resultados).forEach(r => {
+          if(r.resultado==='Aprovado') totalOk++;
+          else if(r.resultado==='Reprovado') totalFail++;
+          else totalFix++;
+        });
+
+        document.getElementById('doneResumo').textContent =
+          fvs.servico + ' — ' + fvs.obra + '\n' +
+          totalOk + ' aprovados, ' + totalFail + ' reprovados, ' + totalFix + ' corrigidos' +
+          (ncs.length ? ', ' + ncs.length + ' NC(s)' : '');
+
+        showView('viewDone');
+        showToast('FVS finalizada com sucesso!','success');
+
+      } catch(e) {
+        showToast('Erro ao enviar. Tente novamente.','error');
+        console.error(e);
+      } finally {
+        btn.classList.remove('btn-loading'); btn.disabled = false;
+      }
+    }
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+    function showView(id) {
+      ['viewIdent','viewChecklist','viewSignature','viewNCs','viewDone'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
+      });
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function novaFVS() {
+      fvs = { id:'',responsavel:'',obra:'',pavimento:'',ambiente:'',servico:'',
+        encarregado:'',executor:'',dataAbertura:'',etapas:[],currentEtapa:0,
+        resultados:{},assinaturas:[],ncs:[] };
+      ncCounter = 0;
+      document.getElementById('ncList').innerHTML = '';
+      showView('viewIdent');
+    }
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+    function showToast(msg,type) {
+      const c=document.getElementById('toastContainer'),t=document.createElement('div');
+      const bg=type==='success'?'bg-g-green':'bg-g-red';
+      const icon=type==='success'?'✓':'✕';
+      t.className='toast '+bg+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';
+      t.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+icon+'</span><span>'+msg+'</span>';
+      c.appendChild(t); setTimeout(()=>t.remove(),3200);
+    }
+  </script>
+</body>
+</html>
