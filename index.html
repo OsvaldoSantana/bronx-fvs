@@ -53,7 +53,7 @@
         <div class="h-5 w-px bg-g-border hidden sm:block"></div>
         <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
       </div>
-      <button onclick="showView('viewDashboard')" class="text-xs text-g-blue font-medium hover:underline" id="btnHome">Início</button>
+      <button onclick="showView('viewDashboard');renderDashboard();fetchSharedFVS()" class="text-xs text-g-blue font-medium hover:underline" id="btnHome">Início</button>
     </div>
   </header>
 
@@ -74,10 +74,56 @@
     <p class="section-label">Nova FVS</p>
     <div id="fvsCards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
 
-    <!-- Saved FVS -->
+    <!-- Saved FVS (local) -->
     <div id="savedSection" class="hidden">
-      <p class="section-label">FVS em andamento</p>
+      <p class="section-label">FVS em andamento (local)</p>
       <div id="savedList" class="space-y-3 mb-6"></div>
+    </div>
+
+    <!-- Shared FVS History (from Google Sheets) -->
+    <div id="sharedSection">
+      <div class="flex items-center justify-between mb-3">
+        <p class="section-label mb-0">Histórico de FVS</p>
+        <button onclick="fetchSharedFVS()" class="text-xs text-g-blue font-medium hover:underline">↻ Atualizar</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex gap-2 mb-3 flex-wrap">
+        <select id="filterObra" onchange="renderSharedFVS()" class="input-field h-9 text-xs w-auto min-w-[140px]"><option value="">Todas obras</option></select>
+        <select id="filterStatus" onchange="renderSharedFVS()" class="input-field h-9 text-xs w-auto min-w-[140px]">
+          <option value="">Todos status</option>
+          <option value="aprovada">✓ Aprovadas</option>
+          <option value="pendente">⚠ Pendente revistoria</option>
+        </select>
+        <span id="sharedCount" class="text-xs text-g-hint ml-auto self-center font-medium"></span>
+      </div>
+
+      <div id="sharedList" class="space-y-3 mb-6"></div>
+      <div id="sharedLoading" class="text-center py-8 text-sm text-g-hint">Carregando histórico...</div>
+      <div id="sharedEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS registrada ainda</div>
+    </div>
+
+    <!-- Shared FVS History (from Sheets) -->
+    <div id="sharedSection">
+      <div class="flex items-center justify-between mb-3">
+        <p class="section-label mb-0">Histórico de FVS</p>
+        <button onclick="fetchSharedFVS()" class="text-xs text-g-blue font-medium hover:underline">↻ Atualizar</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex gap-2 mb-3 flex-wrap">
+        <button onclick="setHistFilter('todas')" id="filt-todas" class="text-xs font-medium px-3 py-1.5 rounded-full border border-g-blue bg-g-blueBg text-g-blue">Todas</button>
+        <button onclick="setHistFilter('pendentes')" id="filt-pendentes" class="text-xs font-medium px-3 py-1.5 rounded-full border border-g-border text-g-hint">⚠ Pendentes</button>
+        <button onclick="setHistFilter('aprovadas')" id="filt-aprovadas" class="text-xs font-medium px-3 py-1.5 rounded-full border border-g-border text-g-hint">✓ Aprovadas</button>
+        <select id="filtObra" onchange="renderSharedFVS()" class="text-xs font-medium px-3 py-1.5 rounded-full border border-g-border text-g-secondary bg-white outline-none">
+          <option value="">Todas as obras</option>
+        </select>
+      </div>
+
+      <div id="sharedLoading" class="text-center py-8 text-g-hint text-sm">Carregando histórico...</div>
+      <div id="sharedList" class="space-y-3 mb-6 hidden"></div>
+      <div id="sharedEmpty" class="text-center py-8 text-g-hint text-sm hidden">Nenhuma FVS encontrada</div>
+      <div id="sharedCount" class="text-xs text-g-hint text-center mb-6 hidden"></div>
     </div>
   </main>
 
@@ -178,7 +224,7 @@
       <div class="w-16 h-16 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-4"><span class="text-g-green text-3xl">✓</span></div>
       <h2 class="text-xl font-bold text-g-text">FVS Finalizada</h2>
       <p class="text-sm text-g-secondary mt-2 mb-8" id="doneResumo"></p>
-      <button onclick="showView('viewDashboard');renderDashboard()" class="h-12 px-8 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Voltar ao Início</button>
+      <button onclick="showView('viewDashboard');renderDashboard();fetchSharedFVS()" class="h-12 px-8 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Voltar ao Início</button>
     </div>
   </main>
 
@@ -193,6 +239,18 @@
     <button onclick="salvarRevisita()" id="btnRevisit" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mt-6 mb-8 btn-finalizar">Salvar Revistoria</button>
   </main>
 
+  <!-- ===================== DETAIL VIEW ===================== -->
+  <main id="viewDetail" class="hidden"></main>
+
+  <!-- ===================== FVS DETAIL VIEW ===================== -->
+  <main id="viewDetail" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="flex items-center gap-3 mb-5">
+      <button onclick="showView('viewDashboard');renderDashboard()" class="text-sm text-g-blue font-medium hover:underline">← Voltar</button>
+    </div>
+    <div id="detailHeader" class="bg-white rounded-lg shadow-md1 p-5 mb-4"></div>
+    <div id="detailItens" class="space-y-3 mb-6"></div>
+  </main>
+
   <div id="toastContainer" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
 
   <script>
@@ -200,6 +258,8 @@
     let REF=null, FVS_CK=null;
     let fvs={id:'',responsavel:'',obra:'',pavimento:'',ambiente:'',servico:'',encarregado:'',executor:'',dataAbertura:'',etapas:[],currentEtapa:0,resultados:{},assinaturas:[],ncs:[]};
     let ncCounter=0;
+    let sharedFVS=[];
+    let histFilter='todas';
 
     // ====== INIT ======
     document.addEventListener('DOMContentLoaded', async function(){
@@ -209,6 +269,7 @@
         const[r1,r2]=await Promise.all([fetch('ref_fvs.json'),fetch('dados_fvs.json')]);
         REF=await r1.json(); FVS_CK=await r2.json();
         renderDashboard();
+        fetchSharedFVS();
       }catch(e){showToast('Erro ao carregar dados','error');console.error(e);}
     });
 
@@ -282,6 +343,175 @@
       const all=getSavedFVS().filter(s=>s.id!==id);
       localStorage.setItem('bronx_fvs_saved',JSON.stringify(all));
       renderDashboard();
+    }
+
+    // ====== SHARED FVS (from Google Sheets) ======
+    async function fetchSharedFVS(){
+      document.getElementById('sharedLoading').classList.remove('hidden');
+      document.getElementById('sharedList').classList.add('hidden');
+      document.getElementById('sharedEmpty').classList.add('hidden');
+      document.getElementById('sharedCount').classList.add('hidden');
+      try{
+        const resp=await fetch(EP);
+        sharedFVS=await resp.json();
+        if(!Array.isArray(sharedFVS)) sharedFVS=[];
+        // Populate obra filter
+        const filtObra=document.getElementById('filtObra');
+        const currentVal=filtObra.value;
+        filtObra.innerHTML='<option value="">Todas as obras</option>';
+        const obras=new Set(sharedFVS.map(f=>f.obra).filter(Boolean));
+        [...obras].sort().forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;filtObra.appendChild(op);});
+        filtObra.value=currentVal;
+      }catch(e){console.error('Erro histórico:',e);sharedFVS=[];}
+      document.getElementById('sharedLoading').classList.add('hidden');
+      renderSharedFVS();
+    }
+
+    function setHistFilter(f){
+      histFilter=f;
+      ['todas','pendentes','aprovadas'].forEach(t=>{
+        const btn=document.getElementById('filt-'+t);
+        if(t===f){btn.className='text-xs font-medium px-3 py-1.5 rounded-full border border-g-blue bg-g-blueBg text-g-blue';}
+        else{btn.className='text-xs font-medium px-3 py-1.5 rounded-full border border-g-border text-g-hint';}
+      });
+      renderSharedFVS();
+    }
+
+    function renderSharedFVS(){
+      const list=document.getElementById('sharedList');
+      const empty=document.getElementById('sharedEmpty');
+      const countEl=document.getElementById('sharedCount');
+      list.innerHTML='';
+
+      // Filter
+      let filtered=sharedFVS.filter(f=>!f.fvsId.endsWith('-REV')); // Exclude revisit entries
+      const obraFilter=document.getElementById('filtObra').value;
+      if(obraFilter) filtered=filtered.filter(f=>f.obra===obraFilter);
+      if(histFilter==='pendentes') filtered=filtered.filter(f=>f.reprovados>0);
+      if(histFilter==='aprovadas') filtered=filtered.filter(f=>f.reprovados===0);
+
+      countEl.textContent=filtered.length+' FVS encontrada(s)';
+      countEl.classList.remove('hidden');
+
+      if(filtered.length===0){
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      list.classList.remove('hidden');
+
+      filtered.slice(0,30).forEach((f,i)=>{
+        const isPendente=f.reprovados>0;
+        const card=document.createElement('div');
+        card.className='bg-white rounded-lg shadow-md1 p-4 slide-up';
+        card.style.animationDelay=(i*0.02)+'s';
+
+        // Status badge
+        let statusHtml='';
+        if(isPendente){
+          statusHtml='<span class="text-xs font-medium px-2 py-1 rounded-full bg-g-amberBg text-g-amber">⚠ '+f.reprovados+' reprovado(s)</span>';
+        }else{
+          statusHtml='<span class="text-xs font-medium px-2 py-1 rounded-full bg-g-greenBg text-g-green">✓ Aprovada</span>';
+        }
+
+        // Results summary
+        let resultsHtml=
+          '<span class="text-xs text-g-green">✓'+f.aprovados+'</span>';
+        if(f.reprovados>0) resultsHtml+=' <span class="text-xs text-g-red">✕'+f.reprovados+'</span>';
+        if(f.corrigidos>0) resultsHtml+=' <span class="text-xs text-g-amber">⚠'+f.corrigidos+'</span>';
+
+        // Date formatting
+        let dateStr=f.dataAbertura||'';
+        if(dateStr.includes('-')){const p=dateStr.split('-');dateStr=p[2]+'/'+p[1]+'/'+p[0];}
+
+        card.innerHTML=
+          '<div class="flex items-start justify-between gap-3">'+
+            '<div class="min-w-0 flex-1">'+
+              '<div class="flex items-center gap-2 mb-1">'+
+                '<p class="text-sm font-bold text-g-text truncate">'+f.servico+'</p>'+
+                statusHtml+
+              '</div>'+
+              '<p class="text-xs text-g-secondary">'+f.obra+' · '+f.pavimento+(f.ambiente?' · '+f.ambiente:'')+'</p>'+
+              '<div class="flex items-center gap-3 mt-1.5">'+
+                '<span class="text-xs text-g-hint">'+dateStr+'</span>'+
+                '<span class="text-xs text-g-hint">'+f.responsavel+'</span>'+
+                '<span class="text-xs text-g-hint">'+resultsHtml+'</span>'+
+              '</div>'+
+            '</div>'+
+            '<button onclick="verDetalhesFVS('+i+')" class="text-xs text-g-blue font-medium hover:underline flex-shrink-0">Detalhes</button>'+
+          '</div>';
+        list.appendChild(card);
+      });
+    }
+
+    function verDetalhesFVS(idx){
+      const f=sharedFVS.filter(f=>!f.fvsId.endsWith('-REV'))[idx];
+      if(!f) return;
+
+      // Build detail view
+      let html='<div class="max-w-3xl mx-auto px-4 py-5">'+
+        '<button onclick="showView(\'viewDashboard\');renderDashboard();fetchSharedFVS()" class="text-sm text-g-blue font-medium hover:underline mb-4 block">← Voltar</button>'+
+        '<div class="bg-white rounded-lg shadow-md1 p-5 mb-4">'+
+          '<h2 class="text-lg font-bold text-g-text">'+f.servico+'</h2>'+
+          '<p class="text-sm text-g-secondary mt-1">'+f.obra+' · '+f.pavimento+(f.ambiente?' · '+f.ambiente:'')+'</p>'+
+          '<div class="flex gap-4 mt-3 text-sm">'+
+            '<span class="text-g-green font-medium">✓ '+f.aprovados+' aprovados</span>'+
+            (f.reprovados>0?'<span class="text-g-red font-medium">✕ '+f.reprovados+' reprovados</span>':'')+
+            (f.corrigidos>0?'<span class="text-g-amber font-medium">⚠ '+f.corrigidos+' corrigidos</span>':'')+
+          '</div>'+
+          '<div class="flex gap-4 mt-2 text-xs text-g-hint">'+
+            '<span>Responsável: '+f.responsavel+'</span>'+
+            '<span>Encarregado: '+f.encarregado+'</span>'+
+            '<span>Executor: '+f.executor+'</span>'+
+          '</div>'+
+        '</div>';
+
+      // Group items by etapa
+      const etapas={};
+      f.itens.forEach(item=>{
+        if(!etapas[item.etapa]) etapas[item.etapa]=[];
+        etapas[item.etapa].push(item);
+      });
+
+      Object.keys(etapas).forEach(etapaNome=>{
+        html+='<div class="mb-4"><p class="section-label">'+etapaNome+'</p><div class="space-y-2">';
+        etapas[etapaNome].forEach(item=>{
+          let resClass='text-g-green';
+          let resIcon='✓';
+          if(item.resultado==='Reprovado'){resClass='text-g-red';resIcon='✕';}
+          else if(item.resultado==='Aprovado após correções'){resClass='text-g-amber';resIcon='⚠';}
+
+          let dateStr='';
+          if(item.data1a){dateStr=fmtDate(item.data1a);}
+          if(item.dataFinal){dateStr+=' → '+fmtDate(item.dataFinal);}
+
+          html+='<div class="bg-white rounded-lg shadow-md1 p-3 flex items-start gap-3">'+
+            '<span class="'+resClass+' text-sm font-bold mt-0.5">'+resIcon+'</span>'+
+            '<div class="flex-1 min-w-0">'+
+              '<p class="text-sm text-g-text">'+item.criterio+'</p>'+
+              (item.observacao?'<p class="text-xs text-g-secondary mt-1 italic">'+item.observacao+'</p>':'')+
+              (dateStr?'<p class="text-xs text-g-hint mt-1">'+dateStr+'</p>':'')+
+            '</div>'+
+          '</div>';
+        });
+        html+='</div></div>';
+      });
+
+      html+='</div>';
+
+      // Use viewRevisit as a generic detail container
+      document.getElementById('viewDetail').innerHTML=html;
+      showView('viewDetail');
+    }
+
+    function fmtDate(d){
+      if(!d)return'';
+      d=String(d);
+      if(d.includes('T'))d=d.split('T')[0];
+      if(d.includes('-')){const p=d.split('-');return p[2]+'/'+p[1];}
+      return d.substring(0,10);
     }
 
     // ====== SELECT FVS TYPE ======
@@ -535,6 +765,7 @@
         document.getElementById('doneResumo').textContent=fvs.servico+' — '+fvs.obra+'\n'+tOk+' aprovados, '+tFail+' reprovados, '+tFix+' corrigidos'+(ncs.length?', '+ncs.length+' NC(s)':'')+(hasReprovado?'\n\nFVS salva para revistoria dos itens reprovados.':'');
         showView('viewDone');
         showToast('FVS finalizada!','success');
+        setTimeout(()=>fetchSharedFVS(), 2000);
       }catch(e){showToast('Erro ao enviar','error');console.error(e);}
       finally{btn.classList.remove('btn-loading');btn.disabled=false;}
     }
@@ -647,13 +878,176 @@
         }
         showView('viewDashboard');
         renderDashboard();
+        setTimeout(()=>fetchSharedFVS(), 2000);
       }catch(e){showToast('Erro ao salvar','error');console.error(e);}
       finally{btn.classList.remove('btn-loading');btn.disabled=false;}
     }
 
+    // ====== SHARED FVS (Google Sheets) ======
+    let sharedFVS = [];
+
+    async function fetchSharedFVS() {
+      document.getElementById('sharedLoading').classList.remove('hidden');
+      document.getElementById('sharedList').innerHTML = '';
+      document.getElementById('sharedEmpty').classList.add('hidden');
+      try {
+        const resp = await fetch(EP);
+        sharedFVS = await resp.json();
+        if (!Array.isArray(sharedFVS)) sharedFVS = [];
+        // Populate filter
+        const filterObra = document.getElementById('filterObra');
+        const currentFilter = filterObra.value;
+        filterObra.innerHTML = '<option value="">Todas obras</option>';
+        const obras = [...new Set(sharedFVS.map(f => f.obra).filter(Boolean))].sort();
+        obras.forEach(o => { const op = document.createElement('option'); op.value = o; op.textContent = o; filterObra.appendChild(op); });
+        filterObra.value = currentFilter;
+      } catch(e) { console.error('Erro ao buscar FVS:', e); sharedFVS = []; }
+      document.getElementById('sharedLoading').classList.add('hidden');
+      renderSharedFVS();
+    }
+
+    function renderSharedFVS() {
+      const list = document.getElementById('sharedList');
+      const empty = document.getElementById('sharedEmpty');
+      list.innerHTML = '';
+
+      const filterObra = document.getElementById('filterObra').value;
+      const filterStatus = document.getElementById('filterStatus').value;
+
+      let filtered = sharedFVS;
+      if (filterObra) filtered = filtered.filter(f => f.obra === filterObra);
+      if (filterStatus === 'aprovada') filtered = filtered.filter(f => f.reprovados === 0);
+      if (filterStatus === 'pendente') filtered = filtered.filter(f => f.reprovados > 0);
+
+      document.getElementById('sharedCount').textContent = filtered.length + ' FVS';
+
+      if (filtered.length === 0) { empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+
+      filtered.slice(0, 30).forEach((f, i) => {
+        const isRev = String(f.fvsId).includes('-REV');
+        const hasFail = f.reprovados > 0;
+        const statusBg = isRev ? 'bg-g-blueBg text-g-blue' : hasFail ? 'bg-g-amberBg text-g-amber' : 'bg-g-greenBg text-g-green';
+        const statusText = isRev ? '↻ Revistoria' : hasFail ? '⚠ Pendente' : '✓ Aprovada';
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md1 p-4 slide-up fvs-card';
+        card.style.animationDelay = (i * 0.02) + 's';
+        card.onclick = () => showFVSDetail(f);
+        card.innerHTML =
+          '<div class="flex items-start justify-between gap-3">' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="flex items-center gap-2 mb-1">' +
+                '<span class="text-xs font-medium px-2 py-0.5 rounded-full ' + statusBg + '">' + statusText + '</span>' +
+                (isRev ? '' : '') +
+              '</div>' +
+              '<p class="text-sm font-bold text-g-text truncate">' + (f.servico || '') + '</p>' +
+              '<p class="text-xs text-g-secondary mt-0.5">' + (f.obra || '') + ' · ' + (f.pavimento || '') + ' · ' + (f.ambiente || '') + '</p>' +
+              '<p class="text-xs text-g-hint mt-0.5">Por: ' + (f.responsavel || '-') + ' · ' + fmtDateFull(f.dataAbertura) + '</p>' +
+            '</div>' +
+            '<div class="flex flex-col items-end gap-1 flex-shrink-0">' +
+              '<div class="flex gap-1.5 text-xs font-medium">' +
+                '<span class="text-g-green">' + f.aprovados + '✓</span>' +
+                (f.corrigidos ? '<span class="text-g-amber">' + f.corrigidos + '⚠</span>' : '') +
+                (f.reprovados ? '<span class="text-g-red">' + f.reprovados + '✕</span>' : '') +
+              '</div>' +
+              '<span class="text-xs text-g-hint">' + f.total + ' itens</span>' +
+              '<span class="text-g-blue text-xs font-medium mt-1">Ver detalhes →</span>' +
+            '</div>' +
+          '</div>';
+        list.appendChild(card);
+      });
+    }
+
+    function showFVSDetail(f) {
+      const header = document.getElementById('detailHeader');
+      const hasFail = f.reprovados > 0;
+      const isRev = String(f.fvsId).includes('-REV');
+      const statusBg = isRev ? 'bg-g-blueBg text-g-blue' : hasFail ? 'bg-g-amberBg text-g-amber' : 'bg-g-greenBg text-g-green';
+      const statusText = isRev ? '↻ Revistoria' : hasFail ? '⚠ Pendente revistoria' : '✓ Aprovada';
+
+      header.innerHTML =
+        '<div class="flex items-center gap-2 mb-3">' +
+          '<span class="text-xs font-medium px-2 py-0.5 rounded-full ' + statusBg + '">' + statusText + '</span>' +
+          '<span class="text-xs text-g-hint">ID: ' + (f.fvsId || '') + '</span>' +
+        '</div>' +
+        '<h2 class="text-lg font-bold text-g-text">' + (f.servico || '') + '</h2>' +
+        '<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3 text-xs">' +
+          '<div><span class="text-g-hint block">Obra</span><span class="text-g-text font-medium">' + (f.obra || '') + '</span></div>' +
+          '<div><span class="text-g-hint block">Pavimento</span><span class="text-g-text font-medium">' + (f.pavimento || '') + '</span></div>' +
+          '<div><span class="text-g-hint block">Ambiente</span><span class="text-g-text font-medium">' + (f.ambiente || '') + '</span></div>' +
+          '<div><span class="text-g-hint block">Encarregado</span><span class="text-g-text font-medium">' + (f.encarregado || '') + '</span></div>' +
+          '<div><span class="text-g-hint block">Executor</span><span class="text-g-text font-medium">' + (f.executor || '') + '</span></div>' +
+          '<div><span class="text-g-hint block">Abertura</span><span class="text-g-text font-medium">' + fmtDateFull(f.dataAbertura) + '</span></div>' +
+        '</div>' +
+        '<div class="flex gap-3 mt-4 text-sm font-medium">' +
+          '<span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">' + f.aprovados + ' aprovados</span>' +
+          (f.corrigidos ? '<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">' + f.corrigidos + ' corrigidos</span>' : '') +
+          (f.reprovados ? '<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">' + f.reprovados + ' reprovados</span>' : '') +
+        '</div>';
+
+      // Render items grouped by etapa
+      const container = document.getElementById('detailItens');
+      container.innerHTML = '';
+
+      if (!f.itens || f.itens.length === 0) {
+        container.innerHTML = '<p class="text-sm text-g-hint text-center py-6">Sem detalhes disponíveis</p>';
+        showView('viewDetail');
+        return;
+      }
+
+      // Group by etapa
+      const etapas = {};
+      f.itens.forEach(item => {
+        if (!etapas[item.etapa]) etapas[item.etapa] = [];
+        etapas[item.etapa].push(item);
+      });
+
+      Object.entries(etapas).forEach(([etapaNome, itens]) => {
+        const section = document.createElement('div');
+        section.className = 'mb-4';
+        section.innerHTML = '<p class="section-label">' + etapaNome + '</p>';
+
+        itens.sort((a, b) => a.numero - b.numero).forEach(item => {
+          const resBg = item.resultado === 'Aprovado' ? 'bg-g-greenBg text-g-green border-g-green' :
+                        item.resultado === 'Reprovado' ? 'bg-g-redBg text-g-red border-g-red' :
+                        'bg-g-amberBg text-g-amber border-g-amber';
+          const resIcon = item.resultado === 'Aprovado' ? '✓' : item.resultado === 'Reprovado' ? '✕' : '⚠';
+
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-lg shadow-md1 p-4 mb-2';
+          card.innerHTML =
+            '<div class="flex items-start gap-3">' +
+              '<span class="text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 border ' + resBg + '">' + resIcon + '</span>' +
+              '<div class="flex-1 min-w-0">' +
+                '<p class="text-sm text-g-text">' + (item.criterio || '') + '</p>' +
+                (item.observacao ? '<p class="text-xs text-g-secondary mt-1 italic">Obs: ' + item.observacao + '</p>' : '') +
+                '<div class="flex gap-3 mt-1.5 text-xs text-g-hint">' +
+                  (item.data1a ? '<span>1ª vistoria: ' + fmtDateFull(item.data1a) + '</span>' : '') +
+                  (item.dataFinal ? '<span>Vistoria final: ' + fmtDateFull(item.dataFinal) + '</span>' : '') +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          section.appendChild(card);
+        });
+
+        container.appendChild(section);
+      });
+
+      showView('viewDetail');
+    }
+
+    function fmtDateFull(d) {
+      if (!d) return '-';
+      d = String(d);
+      if (d.includes('T')) d = d.split('T')[0];
+      if (d.includes('-')) { const p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+      return d;
+    }
+
     // ====== UTILS ======
     function showView(id){
-      ['viewDashboard','viewIdent','viewChecklist','viewSignature','viewNCs','viewDone','viewRevisit'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));
+      ['viewDashboard','viewIdent','viewChecklist','viewSignature','viewNCs','viewDone','viewRevisit','viewDetail'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
