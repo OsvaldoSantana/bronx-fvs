@@ -10,7 +10,7 @@
   <script>
     tailwind.config={theme:{extend:{
       fontFamily:{sans:['Google Sans','Roboto','sans-serif']},
-      colors:{g:{bg:'#f8f9fa',surface:'#fff',border:'#dadce0',divider:'#e8eaed',text:'#202124',secondary:'#5f6368',hint:'#80868b',blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',green:'#1e8e3e',greenBg:'#e6f4ea',red:'#d93025',redBg:'#fce8e6',amber:'#e37400',amberBg:'#fef7e0'}},
+      colors:{g:{bg:'#f8f9fa',surface:'#fff',border:'#dadce0',divider:'#e8eaed',text:'#202124',secondary:'#5f6368',hint:'#80868b',blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',green:'#137333',greenBg:'#ceead6',red:'#c5221f',redBg:'#f4c7c3',amber:'#b06000',amberBg:'#fde293'}},
       boxShadow:{'md1':'0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)','md2':'0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)'}
     }}}
   </script>
@@ -27,11 +27,27 @@
     .toast{animation:ti .25s ease,to .25s ease 2.7s forwards}@keyframes ti{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
     .bl{position:relative;color:transparent!important}.bl::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
     .rb{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
-    .rb:hover{background:#f8f9fa}.rb.sok{background:#e6f4ea;border-color:#1e8e3e;color:#1e8e3e}.rb.sfl{background:#fce8e6;border-color:#d93025;color:#d93025}.rb.sfx{background:#fef7e0;border-color:#e37400;color:#e37400}
+    .rb:hover{background:#f8f9fa}.rb.sok{background:#ceead6;border-color:#137333;color:#137333;font-weight:700}.rb.sfl{background:#f4c7c3;border-color:#c5221f;color:#c5221f;font-weight:700}.rb.sfx{background:#fde293;border-color:#b06000;color:#b06000;font-weight:700}
     .sd{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
     .sd.active{background:#1a73e8;color:#fff}.sd.done{background:#1e8e3e;color:#fff}.sd.pending{background:#e8eaed;color:#80868b}
     .sln{height:2px;flex:1;transition:background .2s}.sln.done{background:#1e8e3e}.sln.pending{background:#e8eaed}
     .fc{transition:all .15s;cursor:pointer}.fc:hover{box-shadow:0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15);transform:translateY(-1px)}
+    @media print{
+      body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      header,.no-print{display:none!important}
+      main{max-width:100%!important;padding:0!important;margin:0!important}
+      main:not(#vDetail){display:none!important}
+      #vDetail{display:block!important;padding:10px!important}
+      .shadow-md1,.shadow-md2{box-shadow:none!important}
+      .rounded-lg{border-radius:4px!important}
+      .bg-white{border:1px solid #e0e0e0!important}
+      #printHeader{display:flex!important}
+      .print-footer{display:block!important}
+      .su{animation:none!important}
+      @page{margin:15mm 10mm;size:A4}
+    }
+    #printHeader{display:none}
+    .print-footer{display:none}
   </style>
 </head>
 <body class="bg-g-bg font-sans min-h-screen">
@@ -105,11 +121,28 @@
 
   <!-- ===== CHECKLIST ===== -->
   <main id="vCK" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div id="stepper" class="flex items-center mb-5 px-2"></div>
+    <div id="stepper" class="flex items-center mb-4 px-2"></div>
+
+    <!-- Global Progress Bar -->
+    <div id="globalBar" class="bg-white rounded-lg shadow-md1 p-3 mb-4 flex items-center justify-between">
+      <div class="flex gap-3 text-sm font-bold">
+        <span class="text-g-green" id="gOk">0 ✓</span>
+        <span class="text-g-amber" id="gFx">0 ⚠</span>
+        <span class="text-g-red" id="gFl">0 ✕</span>
+      </div>
+      <span class="text-xs text-g-hint" id="gPend">0 pendentes</span>
+    </div>
+
     <div class="flex items-center justify-between mb-4">
       <div><p class="text-xs text-g-hint font-medium uppercase tracking-wide" id="eLbl"></p><h2 class="text-lg font-bold text-g-text" id="eNome"></h2></div>
       <span class="text-xs font-medium text-g-hint bg-g-bg px-3 py-1 rounded-full" id="eProg">0/0</span>
     </div>
+
+    <!-- Approve All Button -->
+    <button onclick="approveAll()" id="btnApproveAll" class="w-full h-11 bg-g-greenBg border-2 border-g-green text-g-green font-bold text-sm rounded-lg mb-4 transition-all hover:bg-g-green hover:text-white active:scale-[0.98] flex items-center justify-center gap-2">
+      ✓ Aprovar todos os itens desta etapa
+    </button>
+
     <div id="ckCont" class="space-y-3"></div>
     <div class="mt-6 space-y-3 pb-8">
       <button onclick="advance()" id="btnAdv" disabled class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none">Assinar e Avançar →</button>
@@ -141,7 +174,22 @@
     </div>
     <div id="ncL" class="space-y-3 mb-4"></div>
     <button onclick="addNC()" class="w-full h-11 border-2 border-dashed border-g-border rounded-lg text-sm font-medium text-g-blue hover:bg-g-blueBg transition-colors flex items-center justify-center gap-2 mb-4">+ Adicionar NC</button>
-    <button onclick="finalize()" id="btnFin" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mb-8">Finalizar FVS</button>
+    <button onclick="showReview()" id="btnFin" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mb-8">Revisar e Finalizar →</button>
+  </main>
+
+  <!-- ===== REVIEW ===== -->
+  <main id="vReview" class="max-w-3xl mx-auto px-4 py-5 hidden">
+    <div class="text-center mb-5">
+      <h2 class="text-lg font-bold text-g-text">Revisão Final</h2>
+      <p class="text-sm text-g-secondary mt-1">Confirme os dados antes de enviar</p>
+    </div>
+    <div id="reviewSummary" class="bg-white rounded-lg shadow-md1 p-5 mb-4"></div>
+    <div id="reviewItens" class="space-y-2 mb-4"></div>
+    <div id="reviewNCs" class="mb-4"></div>
+    <div class="space-y-3 pb-8">
+      <button onclick="finalize()" id="btnConfirmFin" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-bold text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">✓ Confirmar e Enviar FVS</button>
+      <button onclick="show('vNC')" class="w-full text-sm text-g-blue font-medium hover:underline text-center">← Voltar para editar</button>
+    </div>
   </main>
 
   <!-- ===== DONE ===== -->
@@ -167,9 +215,29 @@
 
   <!-- ===== DETAIL ===== -->
   <main id="vDetail" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <button onclick="goHome()" class="text-sm text-g-blue font-medium hover:underline mb-4 block">← Voltar</button>
+    <div class="flex items-center justify-between mb-4 no-print">
+      <button onclick="goHome()" class="text-sm text-g-blue font-medium hover:underline">← Voltar</button>
+      <button onclick="window.print()" class="flex items-center gap-2 h-10 px-4 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir
+      </button>
+    </div>
+    <div id="printHeader" class="items-center justify-between mb-4 pb-3 border-b-2 border-g-text">
+      <div class="flex items-center gap-3">
+        <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-8" onerror="this.style.display='none'">
+        <div><p class="text-base font-bold text-g-text">Ficha de Verificação de Serviços</p><p class="text-xs text-g-secondary">Impermeabilização</p></div>
+      </div>
+      <p class="text-xs text-g-hint" id="printDate"></p>
+    </div>
     <div id="dtHead" class="bg-white rounded-lg shadow-md1 p-5 mb-4"></div>
-    <div id="dtItens" class="space-y-2 mb-6"></div>
+    <div id="dtItens" class="space-y-2 mb-4"></div>
+    <div class="print-footer border-t-2 border-g-text pt-4 mt-8">
+      <div class="grid grid-cols-2 gap-8">
+        <div><p class="text-xs text-g-hint mb-8">Responsável Bronx</p><div class="border-b border-g-text"></div></div>
+        <div><p class="text-xs text-g-hint mb-8">Responsável da Obra</p><div class="border-b border-g-text"></div></div>
+      </div>
+      <p class="text-[10px] text-g-hint text-center mt-6">Bronx Impermeabilizações · FVS gerada em <span id="printDateFooter"></span></p>
+    </div>
   </main>
 
   <div id="toastC" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
@@ -178,7 +246,7 @@
     const EP="https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
     let REF=null,CK=null,shared=[],ncC=0;
     let fvs={id:'',resp:'',obra:'',pav:'',amb:'',svc:'',enc:'',exe:'',dt:'',etapas:[],cur:0,res:{},sigs:[],ncs:[]};
-    const VIEWS=['vDash','vIdent','vCK','vSig','vNC','vDone','vRev','vDetail'];
+    const VIEWS=['vDash','vIdent','vCK','vSig','vNC','vReview','vDone','vRev','vDetail'];
 
     function show(id){VIEWS.forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));window.scrollTo({top:0,behavior:'smooth'});}
     function goHome(){show('vDash');renderDash();fetchShared();}
@@ -264,7 +332,7 @@
       const st=isR?'↻ Revistoria':hr?'⚠ Pendente':'✓ Aprovada';
       h.innerHTML='<div class="flex items-center gap-2 mb-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span><span class="text-xs text-g-hint">'+f.fvsId+'</span></div><h2 class="text-lg font-bold text-g-text">'+f.servico+'</h2><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3 text-xs"><div><span class="text-g-hint block">Obra</span><span class="text-g-text font-medium">'+f.obra+'</span></div><div><span class="text-g-hint block">Pavimento</span><span class="text-g-text font-medium">'+f.pavimento+'</span></div><div><span class="text-g-hint block">Ambiente</span><span class="text-g-text font-medium">'+f.ambiente+'</span></div><div><span class="text-g-hint block">Encarregado</span><span class="text-g-text font-medium">'+(f.encarregado||'-')+'</span></div><div><span class="text-g-hint block">Executor</span><span class="text-g-text font-medium">'+(f.executor||'-')+'</span></div><div><span class="text-g-hint block">Abertura</span><span class="text-g-text font-medium">'+fmtD(f.dataAbertura)+'</span></div></div><div class="flex gap-3 mt-4 text-sm font-medium"><span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">'+f.aprovados+' aprov.</span>'+(f.corrigidos?'<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">'+f.corrigidos+' corrig.</span>':'')+(f.reprovados?'<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">'+f.reprovados+' reprov.</span>':'')+'</div>';
       const c=document.getElementById('dtItens');c.innerHTML='';
-      if(!f.itens||!f.itens.length){c.innerHTML='<p class="text-sm text-g-hint text-center py-6">Sem detalhes</p>';show('vDetail');return;}
+      if(!f.itens||!f.itens.length){c.innerHTML='<p class="text-sm text-g-hint text-center py-6">Sem detalhes</p>';show('vDetail');var now2=new Date();document.getElementById('printDate').textContent=now2.toLocaleDateString('pt-BR');document.getElementById('printDateFooter').textContent=now2.toLocaleDateString('pt-BR');return;}
       const etapas={};f.itens.forEach(it=>{if(!etapas[it.etapa])etapas[it.etapa]=[];etapas[it.etapa].push(it);});
       Object.entries(etapas).forEach(([en,its])=>{
         const sec=document.createElement('div');sec.className='mb-4';sec.innerHTML='<p class="sl">'+en+'</p>';
@@ -278,6 +346,9 @@
         c.appendChild(sec);
       });
       show('vDetail');
+      var now=new Date();var pd=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('printDate').textContent=pd;
+      document.getElementById('printDateFooter').textContent=pd;
     }
 
     // ===== SELECT FVS TYPE =====
@@ -332,26 +403,97 @@
         const k=fvs.cur+'-'+i,r=fvs.res[k]||{};
         let ex='';
         if(r.resultado==='Reprovado'||r.resultado==='Aprovado após correções'){
-          ex='<div class="mt-3 space-y-2"><div><label class="fl">Observação <span class="text-g-red">*</span></label><textarea rows="2" class="f text-sm" placeholder="Descreva..." onchange="setObs(\''+k+'\',this.value)">'+(r.observacao||'')+'</textarea></div>';
-          if(r.resultado==='Aprovado após correções')ex+='<div><label class="fl">Data Vistoria Final <span class="text-g-red">*</span></label><input type="date" class="f h-10" value="'+(r.dataFinal||'')+'" onchange="setDF(\''+k+'\',this.value)"></div>';
+          const missingObs=!r.observacao;
+          const missingDate=r.resultado==='Aprovado após correções'&&!r.dataFinal;
+          ex='<div class="mt-3 space-y-2"><div><label class="fl">Observação <span class="text-g-red">*</span></label><textarea rows="2" class="f text-sm'+(missingObs?' error':'')+'" placeholder="Descreva a não conformidade..." onchange="setObs(\''+k+'\',this.value)">'+(r.observacao||'')+'</textarea>'+(missingObs?'<p class="text-xs text-g-red mt-1 font-medium">Obrigatório para itens reprovados</p>':'')+'</div>';
+          if(r.resultado==='Aprovado após correções')ex+='<div><label class="fl">Data Vistoria Final <span class="text-g-red">*</span></label><input type="date" class="f h-10'+(missingDate?' error':'')+'" value="'+(r.dataFinal||'')+'" onchange="setDF(\''+k+'\',this.value)">'+(missingDate?'<p class="text-xs text-g-red mt-1 font-medium">Informe a data da vistoria final</p>':'')+'</div>';
           ex+='</div>';
         }
         const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 su';cd.style.animationDelay=(i*.03)+'s';
+        cd.id='item-'+k;
         cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+cr+'</p></div><div class="flex gap-2"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button></div>'+ex;
         c.appendChild(cd);
       });
       updProg();document.getElementById('btnBk').classList.toggle('hidden',fvs.cur===0);window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    function setRes(k,v){if(!fvs.res[k])fvs.res[k]={};fvs.res[k].resultado=v;fvs.res[k].data1a=fvs.res[k].data1a||new Date().toISOString().split('T')[0];saveFVS();renderEtapa();}
+    function setRes(k,v){
+      if(!fvs.res[k])fvs.res[k]={};
+      fvs.res[k].resultado=v;
+      fvs.res[k].data1a=fvs.res[k].data1a||new Date().toISOString().split('T')[0];
+      saveFVS();
+      renderEtapa();
+      // Auto-scroll to next pending item
+      if(v==='Aprovado'){
+        const et=fvs.etapas[fvs.cur];
+        for(let i=0;i<et.itens.length;i++){
+          const nk=fvs.cur+'-'+i;
+          if(!fvs.res[nk]||!fvs.res[nk].resultado){
+            setTimeout(()=>{const el=document.getElementById('item-'+nk);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},150);
+            break;
+          }
+        }
+      }
+    }
     function setObs(k,v){if(!fvs.res[k])fvs.res[k]={};fvs.res[k].observacao=v;saveFVS();updProg();}
     function setDF(k,v){if(!fvs.res[k])fvs.res[k]={};fvs.res[k].dataFinal=v;saveFVS();updProg();}
+
+    function approveAll(){
+      const et=fvs.etapas[fvs.cur];
+      const today=new Date().toISOString().split('T')[0];
+      et.itens.forEach((_,i)=>{
+        const k=fvs.cur+'-'+i;
+        if(!fvs.res[k]||!fvs.res[k].resultado){
+          fvs.res[k]={resultado:'Aprovado',data1a:today};
+        }
+      });
+      saveFVS();renderEtapa();
+      toast('Todos os itens aprovados. Desmarque os que precisam de atenção.','success');
+    }
+
+    function updateGlobal(){
+      let gO=0,gF=0,gX=0,gP=0,gT=0;
+      fvs.etapas.forEach((et,ei)=>{
+        et.itens.forEach((_,ii)=>{
+          gT++;
+          const r=fvs.res[ei+'-'+ii];
+          if(!r||!r.resultado)gP++;
+          else if(r.resultado==='Aprovado')gO++;
+          else if(r.resultado==='Reprovado')gF++;
+          else gX++;
+        });
+      });
+      document.getElementById('gOk').textContent=gO+' ✓';
+      document.getElementById('gFx').textContent=gX+' ⚠';
+      document.getElementById('gFl').textContent=gF+' ✕';
+      document.getElementById('gPend').textContent=gP+' de '+gT+' pendentes';
+      // Hide approve all if all items in current etapa already have results
+      const et=fvs.etapas[fvs.cur];
+      const allDone=et.itens.every((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];return r&&r.resultado;});
+      document.getElementById('btnApproveAll').classList.toggle('hidden',allDone);
+    }
 
     function updProg(){
       const et=fvs.etapas[fvs.cur];let dn=0,ok=true;
       et.itens.forEach((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];if(r&&r.resultado){if(r.resultado==='Reprovado'&&!r.observacao)ok=false;else if(r.resultado==='Aprovado após correções'&&(!r.observacao||!r.dataFinal))ok=false;else dn++;}else ok=false;});
       document.getElementById('eProg').textContent=dn+'/'+et.itens.length;
       document.getElementById('btnAdv').disabled=!ok||dn<et.itens.length;
+      // Update button text with hint if incomplete
+      const btn=document.getElementById('btnAdv');
+      if(!ok&&dn>0){
+        // Find first incomplete item
+        for(let i=0;i<et.itens.length;i++){
+          const r=fvs.res[fvs.cur+'-'+i];
+          if(r&&r.resultado==='Reprovado'&&!r.observacao){btn.textContent='⚠ Preencha observação do item '+(i+1);break;}
+          else if(r&&r.resultado==='Aprovado após correções'&&(!r.observacao||!r.dataFinal)){btn.textContent='⚠ Complete os dados do item '+(i+1);break;}
+          else if(!r||!r.resultado){btn.textContent='Avalie o item '+(i+1)+' para continuar';break;}
+        }
+      } else if(dn<et.itens.length){
+        btn.textContent='Avalie todos os itens para avançar';
+      } else {
+        btn.textContent='Assinar e Avançar →';
+      }
+      updateGlobal();
     }
 
     // ===== NAVIGATE =====
@@ -381,14 +523,78 @@
       const ncs=[];document.querySelectorAll('#ncL > div').forEach(c=>{const id=c.id.replace('nc-','');const l=document.getElementById('ncl-'+id)?.value?.trim(),d=document.getElementById('ncd-'+id)?.value?.trim(),t=document.getElementById('nct-'+id)?.value?.trim();if(l||d||t)ncs.push({local:l||'',descricao:d||'',tratamento:t||''});});return ncs;
     }
 
+    // ===== REVIEW =====
+    function showReview(){
+      // Collect NCs before showing review
+      fvs.ncs=getNCs();
+
+      // Summary
+      let tO=0,tF=0,tX=0;
+      Object.values(fvs.res).forEach(r=>{if(r.resultado==='Aprovado')tO++;else if(r.resultado==='Reprovado')tF++;else tX++;});
+      const total=tO+tF+tX;
+
+      const sum=document.getElementById('reviewSummary');
+      sum.innerHTML=
+        '<div class="flex items-center justify-between mb-3"><h3 class="text-sm font-bold text-g-text">'+fvs.svc+'</h3><span class="text-xs text-g-hint">'+fvs.id+'</span></div>'+
+        '<div class="grid grid-cols-3 gap-2 text-xs mb-3">'+
+          '<div><span class="text-g-hint block">Obra</span><span class="font-medium text-g-text">'+fvs.obra+'</span></div>'+
+          '<div><span class="text-g-hint block">Pavimento</span><span class="font-medium text-g-text">'+fvs.pav+'</span></div>'+
+          '<div><span class="text-g-hint block">Ambiente</span><span class="font-medium text-g-text">'+fvs.amb+'</span></div>'+
+        '</div>'+
+        '<div class="flex gap-3 text-sm font-bold">'+
+          '<span class="text-g-green bg-g-greenBg px-3 py-1.5 rounded-full">'+tO+' ✓ Aprovados</span>'+
+          (tX?'<span class="text-g-amber bg-g-amberBg px-3 py-1.5 rounded-full">'+tX+' ⚠ Corrigidos</span>':'')+
+          (tF?'<span class="text-g-red bg-g-redBg px-3 py-1.5 rounded-full">'+tF+' ✕ Reprovados</span>':'')+
+        '</div>'+
+        (tF?'<p class="text-xs text-g-red mt-3 font-medium">⚠ Esta FVS ficará pendente de revistoria para os '+tF+' item(ns) reprovado(s).</p>':'');
+
+      // Items grouped by etapa — only show non-approved
+      const c=document.getElementById('reviewItens');c.innerHTML='';
+      let hasNonApproved=false;
+      fvs.etapas.forEach((et,ei)=>{
+        const nonApproved=[];
+        et.itens.forEach((cr,ii)=>{
+          const r=fvs.res[ei+'-'+ii]||{};
+          if(r.resultado&&r.resultado!=='Aprovado')nonApproved.push({num:ii+1,cr,r});
+        });
+        if(nonApproved.length>0){
+          hasNonApproved=true;
+          const sec=document.createElement('div');sec.className='mb-3';
+          sec.innerHTML='<p class="sl">'+et.nome+' — Itens não aprovados</p>';
+          nonApproved.forEach(it=>{
+            const rb=it.r.resultado==='Reprovado'?'bg-g-redBg text-g-red border-g-red':'bg-g-amberBg text-g-amber border-g-amber';
+            const ri=it.r.resultado==='Reprovado'?'✕':'⚠';
+            const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-3 mb-2';
+            cd.innerHTML='<div class="flex items-start gap-2"><span class="text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border '+rb+'">'+ri+'</span><div class="flex-1"><p class="text-sm text-g-text">Item '+it.num+': '+it.cr+'</p>'+(it.r.observacao?'<p class="text-xs text-g-secondary mt-1">'+it.r.observacao+'</p>':'')+'</div></div>';
+            sec.appendChild(cd);
+          });
+          c.appendChild(sec);
+        }
+      });
+      if(!hasNonApproved){c.innerHTML='<p class="text-sm text-g-green text-center py-3 font-medium">✓ Todos os '+total+' itens aprovados</p>';}
+
+      // NCs
+      const ncDiv=document.getElementById('reviewNCs');
+      if(fvs.ncs.length>0){
+        ncDiv.innerHTML='<p class="sl">Não Conformidades ('+fvs.ncs.length+')</p>';
+        fvs.ncs.forEach((nc,i)=>{
+          ncDiv.innerHTML+='<div class="bg-white rounded-lg shadow-md1 p-3 mb-2 text-sm"><span class="font-bold text-g-text">NC #'+(i+1)+':</span> '+nc.local+' — '+nc.descricao+'</div>';
+        });
+      } else {
+        ncDiv.innerHTML='<p class="text-xs text-g-hint text-center py-2">Sem não conformidades registradas</p>';
+      }
+
+      show('vReview');
+    }
+
     // ===== FINALIZE =====
     async function finalize(){
-      const btn=document.getElementById('btnFin');btn.classList.add('bl');btn.disabled=true;
+      const btn=document.getElementById('btnConfirmFin');btn.classList.add('bl');btn.disabled=true;
       try{
         const itens=[];fvs.etapas.forEach((et,ei)=>{et.itens.forEach((cr,ii)=>{const r=fvs.res[ei+'-'+ii]||{};itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:r.resultado||'',data1a:r.data1a||'',dataFinal:r.dataFinal||'',observacao:r.observacao||''});});});
-        await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
-        const ncs=getNCs();
-        if(ncs.length>0)await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:'ncs',fvsId:fvs.id,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,ncs:ncs})});
+        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
+        const ncs=fvs.ncs||[];
+        if(ncs.length>0)await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'ncs',fvsId:fvs.id,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,ncs:ncs})});
         const hr=Object.values(fvs.res).some(r=>r.resultado==='Reprovado');
         if(hr){fvs.cur=fvs.etapas.length;saveFVS();}else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));}
         let tO=0,tF=0,tX=0;Object.values(fvs.res).forEach(r=>{if(r.resultado==='Aprovado')tO++;else if(r.resultado==='Reprovado')tF++;else tX++;});
@@ -423,7 +629,7 @@
         ritens.push({etapa:et.nome,numero:parseInt(ps[1])+1,criterio:et.itens[parseInt(ps[1])],resultado:res,data1a:fvs.res[k].data1a||'',dataFinal:dt,observacao:fvs.res[k].observacao||''});
       });
       try{
-        if(ritens.length>0)await fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:'itens',fvsId:fvs.id+'-REV',responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:ritens})});
+        if(ritens.length>0)await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id+'-REV',responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:ritens})});
         const still=Object.values(fvs.res).some(r=>r.resultado==='Reprovado');
         if(still){saveFVS();toast('Revistoria salva. Ainda há reprovados.','error');}
         else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));toast('Revistoria concluída!','success');}
