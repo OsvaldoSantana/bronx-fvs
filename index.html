@@ -27,7 +27,7 @@
     .toast{animation:ti .25s ease,to .25s ease 2.7s forwards}@keyframes ti{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
     .bl{position:relative;color:transparent!important}.bl::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
     .rb{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
-    .rb:hover{background:#f8f9fa}.rb.sok{background:#ceead6;border-color:#137333;color:#137333;font-weight:700}.rb.sfl{background:#f4c7c3;border-color:#c5221f;color:#c5221f;font-weight:700}.rb.sfx{background:#fde293;border-color:#b06000;color:#b06000;font-weight:700}
+    .rb:hover{background:#f8f9fa}.rb.sok{background:#ceead6;border-color:#137333;color:#137333;font-weight:700}.rb.sfl{background:#f4c7c3;border-color:#c5221f;color:#c5221f;font-weight:700}.rb.sfx{background:#fde293;border-color:#b06000;color:#b06000;font-weight:700}.rb.sna{background:#e8eaed;border-color:#5f6368;color:#5f6368;font-weight:700}
     .sd{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
     .sd.active{background:#1a73e8;color:#fff}.sd.done{background:#1e8e3e;color:#fff}.sd.pending{background:#e8eaed;color:#80868b}
     .sln{height:2px;flex:1;transition:background .2s}.sln.done{background:#1e8e3e}.sln.pending{background:#e8eaed}
@@ -54,11 +54,11 @@
 
   <header class="bg-white sticky top-0 z-50 border-b border-g-border">
     <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
-        <div class="h-5 w-px bg-g-border hidden sm:block"></div>
-        <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
-      </div>
+        <a href="#" onclick="goHome();return false" class="flex items-center gap-3">
+          <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
+          <div class="h-5 w-px bg-g-border hidden sm:block"></div>
+          <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
+        </a>
       <button onclick="goHome()" class="text-xs text-g-blue font-medium hover:underline">Início</button>
     </div>
   </header>
@@ -162,6 +162,7 @@
       <div><label class="fl">Responsável Bronx <span class="text-g-red">*</span></label><select id="sigRB" required class="f"><option value="">Selecione</option></select></div>
       <div><label class="fl">Responsável da Obra</label><input type="text" id="sigRO" placeholder="Nome" class="f"></div>
       <button onclick="confirmSig()" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Confirmar Assinatura</button>
+      <button onclick="confirmSigAndHome()" class="w-full text-sm text-g-blue font-medium hover:underline text-center mt-3">Assinar e voltar ao início (continuar depois)</button>
     </div>
   </main>
 
@@ -437,7 +438,7 @@
         }
         const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 su';cd.style.animationDelay=(i*.03)+'s';
         cd.id='item-'+k;
-        cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+cr+'</p></div><div class="flex gap-2"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button></div>'+ex;
+        cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+cr+'</p></div><div class="flex gap-2 flex-wrap"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button><button onclick="setRes(\''+k+'\',\'Não se aplica\')" class="rb '+(r.resultado==='Não se aplica'?'sna':'')+'">— N/A</button></div>'+ex;
         c.appendChild(cd);
       });
       updProg();document.getElementById('btnBk').classList.toggle('hidden',fvs.cur===0);window.scrollTo({top:0,behavior:'smooth'});
@@ -478,7 +479,7 @@
     }
 
     function updateGlobal(){
-      let gO=0,gF=0,gX=0,gP=0,gT=0;
+      let gO=0,gF=0,gX=0,gN=0,gP=0,gT=0;
       fvs.etapas.forEach((et,ei)=>{
         et.itens.forEach((_,ii)=>{
           gT++;
@@ -486,13 +487,14 @@
           if(!r||!r.resultado)gP++;
           else if(r.resultado==='Aprovado')gO++;
           else if(r.resultado==='Reprovado')gF++;
+          else if(r.resultado==='Não se aplica')gN++;
           else gX++;
         });
       });
       document.getElementById('gOk').textContent=gO+' ✓';
       document.getElementById('gFx').textContent=gX+' ⚠';
       document.getElementById('gFl').textContent=gF+' ✕';
-      document.getElementById('gPend').textContent=gP+' de '+gT+' pendentes';
+      document.getElementById('gPend').textContent=gP+' de '+gT+' pendentes'+(gN?' · '+gN+' N/A':'');
       // Hide approve all if all items in current etapa already have results
       const et=fvs.etapas[fvs.cur];
       const allDone=et.itens.every((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];return r&&r.resultado;});
@@ -551,6 +553,26 @@
       fvs.cur++;saveFVS();document.getElementById('sigRO').value='';
       if(fvs.cur>=fvs.etapas.length){show('vNC');}else{show('vCK');renderStep();renderEtapa();}
       setTimeout(()=>fetchShared(),2000);
+    }
+
+    async function confirmSigAndHome(){
+      const r=document.getElementById('sigRB').value;if(!r){toast('Selecione o Responsável Bronx','error');return;}
+      fvs.sigs[fvs.cur]={rb:r,ro:document.getElementById('sigRO').value.trim(),dt:new Date().toISOString().split('T')[0]};
+      const et=fvs.etapas[fvs.cur];
+      const itens=[];
+      et.itens.forEach((cr,ii)=>{
+        const res=fvs.res[fvs.cur+'-'+ii]||{};
+        itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:res.resultado||'',data1a:res.data1a||'',dataFinal:res.dataFinal||'',observacao:res.observacao||''});
+      });
+      try{
+        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
+        if(!fvs.sentEtapas)fvs.sentEtapas=[];
+        fvs.sentEtapas.push(fvs.cur);
+        toast('Etapa "'+ et.nome +'" salva!','success');
+      }catch(e){console.error(e);}
+      fvs.cur++;saveFVS();document.getElementById('sigRO').value='';
+      setTimeout(()=>fetchShared(),2000);
+      goHome();
     }
 
     // ===== NCs =====
