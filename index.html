@@ -86,7 +86,7 @@
     <div class="flex gap-2 mb-3 flex-wrap">
       <select id="fOb" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]"><option value="">Todas obras</option></select>
       <select id="fSt" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]">
-        <option value="">Todos status</option><option value="ok">✓ Aprovadas</option><option value="pend">⚠ Pendentes</option>
+        <option value="">Todos status</option><option value="ok">✓ Aprovadas</option><option value="pend">⚠ Pendentes</option><option value="and">⏳ Em andamento</option>
       </select>
       <span id="shCnt" class="text-xs text-g-hint ml-auto self-center font-medium"></span>
     </div>
@@ -284,9 +284,21 @@
       if(!sv.length){sec.classList.add('hidden');return;}
       sec.classList.remove('hidden');
       sv.forEach((s,i)=>{
-        const hr=Object.values(s.res).some(r=>r.resultado==='Reprovado');
+        const isRevistoria=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');
+        const isComplete=s.cur>=s.etapas.length;
+        const etapasTotal=s.etapas.length;
+        const etapasDone=Math.min(s.cur,etapasTotal);
+        
+        let statusBg,statusText,actionText,actionFn;
+        if(isRevistoria&&isComplete){
+          statusBg='bg-g-amberBg text-g-amber';statusText='⚠ Revistoria pendente';actionText='Revistar';actionFn='openRev(\''+s.id+'\')';
+        }else{
+          statusBg='bg-g-blueBg text-g-blue';statusText='Etapa '+etapasDone+'/'+etapasTotal+' concluída'+(etapasDone===1?'':'s');actionText='Continuar →';actionFn='contFVS(\''+s.id+'\')';
+        }
+        
+        const sentInfo=s.sentEtapas&&s.sentEtapas.length?' · '+s.sentEtapas.length+' etapa(s) salva(s) na planilha':'';
         const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su';c.style.animationDelay=(i*.03)+'s';
-        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+s.svc+'</p><p class="text-xs text-g-secondary mt-0.5">'+s.obra+' · '+s.pav+' · '+s.amb+'</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full '+(hr?'bg-g-amberBg text-g-amber':'bg-g-blueBg text-g-blue')+'">'+(hr?'⚠ Revistoria':'Etapa '+(s.cur+1)+'/'+s.etapas.length)+'</span><button onclick="event.stopPropagation();'+(hr?'openRev(\''+s.id+'\')':'contFVS(\''+s.id+'\')')+'" class="text-sm font-medium text-g-blue hover:underline">'+(hr?'Revistar':'Continuar →')+'</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
+        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+s.svc+'</p><p class="text-xs text-g-secondary mt-0.5">'+s.obra+' · '+s.pav+' · '+s.amb+'</p><p class="text-xs text-g-hint mt-0.5">'+fmtD(s.dt)+sentInfo+'</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full '+statusBg+'">'+statusText+'</span><button onclick="event.stopPropagation();'+actionFn+'" class="text-sm font-medium text-g-blue hover:underline">'+actionText+'</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
         list.appendChild(c);
       });
     }
@@ -309,18 +321,32 @@
 
     function renderShared(){
       const list=document.getElementById('shList'),empty=document.getElementById('shEmpty');list.innerHTML='';
-      let d=shared;const fo=document.getElementById('fOb').value,fs=document.getElementById('fSt').value;
+      let d=shared.filter(f=>!String(f.fvsId).includes('-REV')); // exclude REV entries from main list
+      const fo=document.getElementById('fOb').value,fs=document.getElementById('fSt').value;
       if(fo)d=d.filter(f=>f.obra===fo);
-      if(fs==='ok')d=d.filter(f=>f.reprovados===0);if(fs==='pend')d=d.filter(f=>f.reprovados>0);
+      
+      // Determine status for each FVS
+      d.forEach(f=>{
+        const svcDef=CK?CK[f.servico]:null;
+        const expectedEtapas=svcDef?svcDef.etapas.length:99;
+        const actualEtapas=f.itens?[...new Set(f.itens.map(it=>it.etapa))].length:0;
+        f._isPartial=actualEtapas<expectedEtapas;
+        f._etapasDone=actualEtapas;
+        f._etapasTotal=expectedEtapas;
+        f._status=f._isPartial?'andamento':f.reprovados>0?'pendente':'aprovada';
+      });
+      
+      if(fs==='ok')d=d.filter(f=>f._status==='aprovada');
+      if(fs==='pend')d=d.filter(f=>f._status==='pendente');
+      if(fs==='and')d=d.filter(f=>f._status==='andamento');
       document.getElementById('shCnt').textContent=d.length+' FVS';
       if(!d.length){empty.classList.remove('hidden');return;}empty.classList.add('hidden');
       d.slice(0,30).forEach((f,i)=>{
-        const isR=String(f.fvsId).includes('-REV'),hr=f.reprovados>0;
-        const sb=isR?'bg-g-blueBg text-g-blue':hr?'bg-g-amberBg text-g-amber':'bg-g-greenBg text-g-green';
-        const st=isR?'↻ Revistoria':hr?'⚠ Pendente':'✓ Aprovada';
+        const sb=f._status==='aprovada'?'bg-g-greenBg text-g-green':f._status==='pendente'?'bg-g-amberBg text-g-amber':'bg-g-blueBg text-g-blue';
+        const st=f._status==='aprovada'?'✓ Aprovada':f._status==='pendente'?'⚠ Pendente revistoria':'⏳ Etapa '+f._etapasDone+'/'+f._etapasTotal;
         const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su fc';c.style.animationDelay=(i*.02)+'s';
         c.onclick=()=>showDetail(f);
-        c.innerHTML='<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span></div><p class="text-sm font-bold text-g-text truncate">'+f.servico+'</p><p class="text-xs text-g-secondary mt-0.5">'+f.obra+' · '+f.pavimento+' · '+f.ambiente+'</p><p class="text-xs text-g-hint mt-0.5">Por: '+f.responsavel+' · '+fmtD(f.dataAbertura)+'</p></div><div class="flex flex-col items-end gap-1 flex-shrink-0"><div class="flex gap-1.5 text-xs font-medium"><span class="text-g-green">'+f.aprovados+'✓</span>'+(f.corrigidos?'<span class="text-g-amber">'+f.corrigidos+'⚠</span>':'')+(f.reprovados?'<span class="text-g-red">'+f.reprovados+'✕</span>':'')+'</div><span class="text-xs text-g-hint">'+f.total+' itens</span><span class="text-g-blue text-xs font-medium mt-1">Detalhes →</span></div></div>';
+        c.innerHTML='<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span></div><p class="text-sm font-bold text-g-text truncate">'+f.servico+'</p><p class="text-xs text-g-secondary mt-0.5">'+f.obra+' · '+f.pavimento+' · '+f.ambiente+'</p><p class="text-xs text-g-hint mt-0.5">Por: '+(f.responsavel||'-')+' · '+fmtD(f.dataAbertura)+'</p></div><div class="flex flex-col items-end gap-1 flex-shrink-0"><div class="flex gap-1.5 text-xs font-medium"><span class="text-g-green">'+f.aprovados+'✓</span>'+(f.corrigidos?'<span class="text-g-amber">'+f.corrigidos+'⚠</span>':'')+(f.reprovados?'<span class="text-g-red">'+f.reprovados+'✕</span>':'')+'</div><span class="text-xs text-g-hint">'+f.total+' itens</span><span class="text-g-blue text-xs font-medium mt-1">Detalhes →</span></div></div>';
         list.appendChild(c);
       });
     }
@@ -504,11 +530,27 @@
     }
     function goBack(){if(fvs.cur>0){fvs.cur--;renderStep();renderEtapa();}}
 
-    function confirmSig(){
+    async function confirmSig(){
       const r=document.getElementById('sigRB').value;if(!r){toast('Selecione o Responsável Bronx','error');return;}
       fvs.sigs[fvs.cur]={rb:r,ro:document.getElementById('sigRO').value.trim(),dt:new Date().toISOString().split('T')[0]};
+      
+      // Send current etapa items to Sheets immediately
+      const et=fvs.etapas[fvs.cur];
+      const itens=[];
+      et.itens.forEach((cr,ii)=>{
+        const res=fvs.res[fvs.cur+'-'+ii]||{};
+        itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:res.resultado||'',data1a:res.data1a||'',dataFinal:res.dataFinal||'',observacao:res.observacao||''});
+      });
+      try{
+        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
+        if(!fvs.sentEtapas)fvs.sentEtapas=[];
+        fvs.sentEtapas.push(fvs.cur);
+        toast('Etapa "'+ et.nome +'" salva!','success');
+      }catch(e){console.error(e);toast('Etapa salva localmente. Será enviada ao finalizar.','error');}
+      
       fvs.cur++;saveFVS();document.getElementById('sigRO').value='';
       if(fvs.cur>=fvs.etapas.length){show('vNC');}else{show('vCK');renderStep();renderEtapa();}
+      setTimeout(()=>fetchShared(),2000);
     }
 
     // ===== NCs =====
@@ -591,12 +633,23 @@
     async function finalize(){
       const btn=document.getElementById('btnConfirmFin');btn.classList.add('bl');btn.disabled=true;
       try{
-        const itens=[];fvs.etapas.forEach((et,ei)=>{et.itens.forEach((cr,ii)=>{const r=fvs.res[ei+'-'+ii]||{};itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:r.resultado||'',data1a:r.data1a||'',dataFinal:r.dataFinal||'',observacao:r.observacao||''});});});
-        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
+        // Only send etapas that weren't already sent during signing
+        const sent=fvs.sentEtapas||[];
+        const unsentItens=[];
+        fvs.etapas.forEach((et,ei)=>{
+          if(sent.includes(ei))return; // already sent
+          et.itens.forEach((cr,ii)=>{const r=fvs.res[ei+'-'+ii]||{};unsentItens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:r.resultado||'',data1a:r.data1a||'',dataFinal:r.dataFinal||'',observacao:r.observacao||''});});
+        });
+        if(unsentItens.length>0){
+          await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:unsentItens})});
+        }
+        // Send NCs
         const ncs=fvs.ncs||[];
         if(ncs.length>0)await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'ncs',fvsId:fvs.id,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,ncs:ncs})});
+        // Handle completion
         const hr=Object.values(fvs.res).some(r=>r.resultado==='Reprovado');
-        if(hr){fvs.cur=fvs.etapas.length;saveFVS();}else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));}
+        if(hr){fvs.cur=fvs.etapas.length;fvs.status='revistoria';saveFVS();}
+        else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));}
         let tO=0,tF=0,tX=0;Object.values(fvs.res).forEach(r=>{if(r.resultado==='Aprovado')tO++;else if(r.resultado==='Reprovado')tF++;else tX++;});
         document.getElementById('doneRes').textContent=fvs.svc+' — '+fvs.obra+'\n'+tO+' aprovados, '+tF+' reprovados, '+tX+' corrigidos'+(ncs.length?', '+ncs.length+' NC(s)':'')+(hr?'\n\nFVS salva para revistoria.':'');
         show('vDone');toast('FVS finalizada!','success');setTimeout(()=>fetchShared(),2000);
