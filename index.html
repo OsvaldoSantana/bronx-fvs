@@ -26,7 +26,7 @@
     .su{animation:su .3s ease both}@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .toast{animation:ti .25s ease,to .25s ease 2.7s forwards}@keyframes ti{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
     .bl{position:relative;color:transparent!important}.bl::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-    .rb{min-height:44px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;flex:1;text-align:center}
+    .rb{min-height:52px;padding:10px 8px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;text-align:center}
     .rb:hover{background:#f8f9fa}.rb.sok{background:#ceead6;border-color:#137333;color:#137333;font-weight:700}.rb.sfl{background:#f4c7c3;border-color:#c5221f;color:#c5221f;font-weight:700}.rb.sfx{background:#fde293;border-color:#b06000;color:#b06000;font-weight:700}.rb.sna{background:#e8eaed;border-color:#5f6368;color:#5f6368;font-weight:700}
     .sd{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
     .sd.active{background:#1a73e8;color:#fff}.sd.done{background:#1e8e3e;color:#fff}.sd.pending{background:#e8eaed;color:#80868b}
@@ -75,24 +75,44 @@
     </div>
     <p class="sl">Nova FVS</p>
     <div id="fvsCards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
-    <div id="savedSection" class="hidden mb-6">
-      <p class="sl">FVS em andamento</p>
-      <div id="savedList" class="space-y-3"></div>
+
+    <!-- Dashboard Tabs -->
+    <div class="flex border-b border-g-border mb-4">
+      <button onclick="dashTab('and')" id="dtAnd" class="px-4 pb-3 text-sm font-medium border-b-2 border-g-blue text-g-blue transition-all">Em Andamento <span id="cntAnd" class="bg-g-blueBg text-g-blue text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
+      <button onclick="dashTab('rev')" id="dtRev" class="px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all">Revistoria <span id="cntRev" class="bg-g-bg text-g-hint text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
+      <button onclick="dashTab('hist')" id="dtHist" class="px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all">Histórico <span id="cntHist" class="bg-g-bg text-g-hint text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
     </div>
-    <div class="flex items-center justify-between mb-3">
-      <p class="sl mb-0">Histórico de FVS</p>
-      <button onclick="fetchShared()" class="text-xs text-g-blue font-medium hover:underline">↻ Atualizar</button>
+
+    <!-- Tab: Em Andamento (local + shared partial) -->
+    <div id="tabAnd">
+      <div id="savedSection" class="mb-4">
+        <div id="savedList" class="space-y-3"></div>
+        <div id="savedEmpty" class="text-center py-8 text-sm text-g-hint">Nenhuma FVS em andamento</div>
+      </div>
     </div>
-    <div class="flex gap-2 mb-3 flex-wrap">
-      <select id="fOb" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]"><option value="">Todas obras</option></select>
-      <select id="fSt" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]">
-        <option value="">Todos status</option><option value="ok">✓ Aprovadas</option><option value="pend">⚠ Pendentes</option><option value="and">⏳ Em andamento</option>
-      </select>
-      <span id="shCnt" class="text-xs text-g-hint ml-auto self-center font-medium"></span>
+
+    <!-- Tab: Revistoria -->
+    <div id="tabRev" class="hidden">
+      <div id="revList" class="space-y-3 mb-4"></div>
+      <div id="revEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS pendente de revistoria</div>
     </div>
-    <div id="shList" class="space-y-3 mb-6"></div>
-    <div id="shLoad" class="text-center py-8 text-sm text-g-hint">Carregando histórico...</div>
-    <div id="shEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS registrada</div>
+
+    <!-- Tab: Histórico -->
+    <div id="tabHistC" class="hidden">
+      <div class="flex items-center justify-between mb-3">
+        <button onclick="fetchShared()" class="text-xs text-g-blue font-medium hover:underline">↻ Atualizar</button>
+      </div>
+      <div class="flex gap-2 mb-3 flex-wrap">
+        <select id="fOb" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]"><option value="">Todas obras</option></select>
+        <select id="fSt" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]">
+          <option value="">Todos status</option><option value="ok">✓ Aprovadas</option><option value="pend">⚠ Pendentes</option><option value="and">⏳ Em andamento</option>
+        </select>
+        <span id="shCnt" class="text-xs text-g-hint ml-auto self-center font-medium"></span>
+      </div>
+      <div id="shList" class="space-y-3 mb-6"></div>
+      <div id="shLoad" class="text-center py-8 text-sm text-g-hint">Carregando histórico...</div>
+      <div id="shEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS registrada</div>
+    </div>
   </main>
 
   <!-- ===== IDENTIFICATION ===== -->
@@ -245,12 +265,21 @@
 
   <script>
     const EP="https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
+    // XSS sanitization
+    function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
     let REF=null,CK=null,shared=[],ncC=0;
     let fvs={id:'',resp:'',obra:'',pav:'',amb:'',svc:'',enc:'',exe:'',dt:'',etapas:[],cur:0,res:{},sigs:[],ncs:[]};
     const VIEWS=['vDash','vIdent','vCK','vSig','vNC','vReview','vDone','vRev','vDetail'];
 
     function show(id){VIEWS.forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));window.scrollTo({top:0,behavior:'smooth'});}
-    function goHome(){show('vDash');renderDash();fetchShared();}
+    function goHome(){
+      // Confirm if FVS is in progress
+      const isInProgress=!document.getElementById('vDash').classList.contains('hidden')===false && (fvs.id && fvs.cur<fvs.etapas.length);
+      if(isInProgress && Object.keys(fvs.res).length>0){
+        if(!confirm('Seu progresso está salvo localmente. Deseja voltar ao início?'))return;
+      }
+      show('vDash');renderDash();fetchShared();
+    }
     function toast(m,t){const c=document.getElementById('toastC'),d=document.createElement('div');d.className='toast '+(t==='success'?'bg-g-green':'bg-g-red')+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';d.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+(t==='success'?'✓':'✕')+'</span><span>'+m+'</span>';c.appendChild(d);setTimeout(()=>d.remove(),3200);}
     function pop(id,items){const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o);});}
     function fmtD(d){if(!d)return'-';d=String(d);if(d.includes('T'))d=d.split('T')[0];if(d.includes('-')){const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}return d;}
@@ -267,6 +296,15 @@
     });
 
     // ===== DASHBOARD =====
+    function dashTab(tab){
+      ['And','Rev','Hist'].forEach(t=>{
+        document.getElementById('tab'+t+(t==='Hist'?'C':'')).classList.toggle('hidden',t.toLowerCase()!==tab);
+        const btn=document.getElementById('dt'+t);
+        if(t.toLowerCase()===tab){btn.className='px-4 pb-3 text-sm font-medium border-b-2 border-g-blue text-g-blue transition-all';}
+        else{btn.className='px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all';}
+      });
+    }
+
     function renderDash(){
       if(!CK)return;
       const cards=document.getElementById('fvsCards');cards.innerHTML='';
@@ -279,28 +317,34 @@
         c.innerHTML='<div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg '+cls[i%4]+' flex items-center justify-center text-lg flex-shrink-0">'+icons[i%4]+'</div><div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-g-text">'+svc+'</h3><p class="text-xs text-g-hint mt-1">'+ck.etapas.length+' etapas · '+tot+' itens</p></div><span class="text-g-blue text-lg">→</span></div>';
         cards.appendChild(c);
       });
-      // Saved
-      const sv=getSaved(),sec=document.getElementById('savedSection'),list=document.getElementById('savedList');
-      list.innerHTML='';
-      if(!sv.length){sec.classList.add('hidden');return;}
-      sec.classList.remove('hidden');
-      sv.forEach((s,i)=>{
-        const isRevistoria=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');
-        const isComplete=s.cur>=s.etapas.length;
-        const etapasTotal=s.etapas.length;
-        const etapasDone=Math.min(s.cur,etapasTotal);
-        
-        let statusBg,statusText,actionText,actionFn;
-        if(isRevistoria&&isComplete){
-          statusBg='bg-g-amberBg text-g-amber';statusText='⚠ Revistoria pendente';actionText='Revistar';actionFn='openRev(\''+s.id+'\')';
-        }else{
-          statusBg='bg-g-blueBg text-g-blue';statusText='Etapa '+etapasDone+'/'+etapasTotal+' concluída'+(etapasDone===1?'':'s');actionText='Continuar →';actionFn='contFVS(\''+s.id+'\')';
-        }
-        
-        const sentInfo=s.sentEtapas&&s.sentEtapas.length?' · '+s.sentEtapas.length+' etapa(s) salva(s) na planilha':'';
+      // Saved FVS - split into Andamento and Revistoria
+      const sv=getSaved();
+      const andamento=sv.filter(s=>{const isRev=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');return !(isRev&&s.cur>=s.etapas.length);});
+      const revistoria=sv.filter(s=>{const isRev=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');return isRev&&s.cur>=s.etapas.length;});
+      
+      // Update tab counts
+      document.getElementById('cntAnd').textContent=andamento.length;
+      document.getElementById('cntRev').textContent=revistoria.length;
+      
+      // Render "Em Andamento" tab
+      const andList=document.getElementById('savedList');andList.innerHTML='';
+      document.getElementById('savedEmpty').classList.toggle('hidden',andamento.length>0);
+      andamento.forEach((s,i)=>{
+        const etT=s.etapas.length,etD=Math.min(s.cur,etT);
+        const sent=s.sentEtapas&&s.sentEtapas.length?' · '+s.sentEtapas.length+' salva(s)':'';
         const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su';c.style.animationDelay=(i*.03)+'s';
-        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+s.svc+'</p><p class="text-xs text-g-secondary mt-0.5">'+s.obra+' · '+s.pav+' · '+s.amb+'</p><p class="text-xs text-g-hint mt-0.5">'+fmtD(s.dt)+sentInfo+'</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full '+statusBg+'">'+statusText+'</span><button onclick="event.stopPropagation();'+actionFn+'" class="text-sm font-medium text-g-blue hover:underline">'+actionText+'</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
-        list.appendChild(c);
+        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+esc(s.svc)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(s.obra)+' · '+esc(s.pav)+' · '+esc(s.amb)+'</p><p class="text-xs text-g-hint mt-0.5">'+fmtD(s.dt)+sent+'</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-g-blueBg text-g-blue">Etapa '+etD+'/'+etT+'</span><button onclick="event.stopPropagation();contFVS(\''+s.id+'\')" class="text-sm font-medium text-g-blue hover:underline">Continuar →</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
+        andList.appendChild(c);
+      });
+      
+      // Render "Revistoria" tab
+      const revList=document.getElementById('revList');revList.innerHTML='';
+      document.getElementById('revEmpty').classList.toggle('hidden',revistoria.length>0);
+      revistoria.forEach((s,i)=>{
+        const nRep=Object.values(s.res).filter(r=>r.resultado==='Reprovado').length;
+        const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su';c.style.animationDelay=(i*.03)+'s';
+        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+esc(s.svc)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(s.obra)+' · '+esc(s.pav)+' · '+esc(s.amb)+'</p><p class="text-xs text-g-red mt-0.5 font-medium">'+nRep+' item(ns) reprovado(s)</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-g-amberBg text-g-amber">⚠ Revistoria</span><button onclick="event.stopPropagation();openRev(\''+s.id+'\')" class="text-sm font-medium text-g-amber hover:underline">Revistar</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
+        revList.appendChild(c);
       });
     }
 
@@ -341,13 +385,14 @@
       if(fs==='pend')d=d.filter(f=>f._status==='pendente');
       if(fs==='and')d=d.filter(f=>f._status==='andamento');
       document.getElementById('shCnt').textContent=d.length+' FVS';
+      document.getElementById('cntHist').textContent=shared.length;
       if(!d.length){empty.classList.remove('hidden');return;}empty.classList.add('hidden');
       d.slice(0,30).forEach((f,i)=>{
         const sb=f._status==='aprovada'?'bg-g-greenBg text-g-green':f._status==='pendente'?'bg-g-amberBg text-g-amber':'bg-g-blueBg text-g-blue';
         const st=f._status==='aprovada'?'✓ Aprovada':f._status==='pendente'?'⚠ Pendente revistoria':'⏳ Etapa '+f._etapasDone+'/'+f._etapasTotal;
         const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su fc';c.style.animationDelay=(i*.02)+'s';
         c.onclick=()=>showDetail(f);
-        c.innerHTML='<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span></div><p class="text-sm font-bold text-g-text truncate">'+f.servico+'</p><p class="text-xs text-g-secondary mt-0.5">'+f.obra+' · '+f.pavimento+' · '+f.ambiente+'</p><p class="text-xs text-g-hint mt-0.5">Por: '+(f.responsavel||'-')+' · '+fmtD(f.dataAbertura)+'</p></div><div class="flex flex-col items-end gap-1 flex-shrink-0"><div class="flex gap-1.5 text-xs font-medium"><span class="text-g-green">'+f.aprovados+'✓</span>'+(f.corrigidos?'<span class="text-g-amber">'+f.corrigidos+'⚠</span>':'')+(f.reprovados?'<span class="text-g-red">'+f.reprovados+'✕</span>':'')+'</div><span class="text-xs text-g-hint">'+f.total+' itens</span><span class="text-g-blue text-xs font-medium mt-1">Detalhes →</span></div></div>';
+        c.innerHTML='<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span></div><p class="text-sm font-bold text-g-text truncate">'+esc(f.servico)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(f.obra)+' · '+esc(f.pavimento)+' · '+esc(f.ambiente)+'</p><p class="text-xs text-g-hint mt-0.5">Por: '+esc(f.responsavel||'-')+' · '+fmtD(f.dataAbertura)+'</p></div><div class="flex flex-col items-end gap-1 flex-shrink-0"><div class="flex gap-1.5 text-xs font-medium"><span class="text-g-green">'+f.aprovados+'✓</span>'+(f.corrigidos?'<span class="text-g-amber">'+f.corrigidos+'⚠</span>':'')+(f.reprovados?'<span class="text-g-red">'+f.reprovados+'✕</span>':'')+'</div><span class="text-xs text-g-hint">'+f.total+' itens</span><span class="text-g-blue text-xs font-medium mt-1">Detalhes →</span></div></div>';
         list.appendChild(c);
       });
     }
@@ -438,7 +483,7 @@
         }
         const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 su';cd.style.animationDelay=(i*.03)+'s';
         cd.id='item-'+k;
-        cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+cr+'</p></div><div class="flex gap-2 flex-wrap"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button><button onclick="setRes(\''+k+'\',\'Não se aplica\')" class="rb '+(r.resultado==='Não se aplica'?'sna':'')+'">— N/A</button></div>'+ex;
+        cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+esc(cr)+'</p></div><div class="grid grid-cols-2 gap-2"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button><button onclick="setRes(\''+k+'\',\'Não se aplica\')" class="rb '+(r.resultado==='Não se aplica'?'sna':'')+'">— N/A</button></div>'+ex;
         c.appendChild(cd);
       });
       updProg();document.getElementById('btnBk').classList.toggle('hidden',fvs.cur===0);window.scrollTo({top:0,behavior:'smooth'});
