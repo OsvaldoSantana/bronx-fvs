@@ -72,9 +72,20 @@ select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image
   <div id="dashEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS aqui ainda</div>
 </main>
 
+<!-- ===== SELEÇÃO DE SERVIÇO (cards) ===== -->
+<main id="vSvc" class="max-w-3xl mx-auto px-4 py-5 hidden">
+  <button onclick="goHome()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao início</button>
+  <p class="sl">Escolha o serviço a verificar</p>
+  <div id="svcCards" class="space-y-3"></div>
+</main>
+
 <!-- ===== IDENTIFICAÇÃO ===== -->
 <main id="vIdent" class="max-w-3xl mx-auto px-4 py-5 hidden">
-  <button onclick="goHome()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao início</button>
+  <button onclick="show('vSvc')" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Trocar serviço</button>
+  <div id="identSvcBadge" class="bg-g-blueBg rounded-lg p-3 mb-4 flex items-center gap-3">
+    <div id="identSvcIcon" class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-lg flex-shrink-0"></div>
+    <div><p class="text-xs text-g-secondary">Serviço selecionado</p><p id="identSvcName" class="text-sm font-bold text-g-blue"></p></div>
+  </div>
   <div class="bg-white rounded-lg shadow-md1 p-4 flex items-center gap-3 mb-4">
     <span class="fl mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
     <input type="text" id="resp" placeholder="Seu nome" class="f h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
@@ -86,7 +97,6 @@ select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image
     </div>
     <div class="fg disabled" id="fgP"><label class="fl">Pavimento <span class="text-g-red">*</span></label><select id="pav" class="f"><option value="">Selecione o pavimento</option></select></div>
     <div><label class="fl">Ambiente <span class="text-g-red">*</span></label><input type="text" id="amb" placeholder="Ex: Banheiros, Laje, Jardins" class="f"></div>
-    <div><label class="fl">Serviço <span class="text-g-red">*</span></label><select id="svc" class="f"><option value="">Selecione o serviço</option></select></div>
     <div>
       <label class="fl">Profissionais da frente</label>
       <div class="flex gap-2">
@@ -179,7 +189,7 @@ let REF=null,fvs=null,allFvs=[],dashFilter='andamento',profEditOpen=false,saving
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toast(m,t){const c=document.getElementById('toastC'),d=document.createElement('div');d.className='toast '+(t==='success'?'bg-g-green':t==='error'?'bg-g-red':'bg-g-text')+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';d.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+(t==='success'?'✓':t==='error'?'✕':'i')+'</span><span>'+esc(m)+'</span>';c.appendChild(d);setTimeout(()=>d.remove(),3700);}
 function fmtD(d){if(!d)return'-';d=String(d).split('T')[0];const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-const VIEWS=['vDash','vIdent','vCK','vReview','vDetail'];
+const VIEWS=['vDash','vSvc','vIdent','vCK','vReview','vDetail'];
 function show(v){VIEWS.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==v));window.scrollTo({top:0,behavior:'smooth'});}
 function goHome(){fvs=null;show('vDash');loadDash();}
 
@@ -191,8 +201,6 @@ document.addEventListener('DOMContentLoaded',async function(){
     const r=await fetch('ref_fvs.json');REF=await r.json();
     const obraSel=document.getElementById('obra');
     REF.obras.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;obraSel.appendChild(op);});
-    const svcSel=document.getElementById('svc');
-    Object.keys(REF.checklists).forEach(s=>{const op=document.createElement('option');op.value=s;op.textContent=s;svcSel.appendChild(op);});
     [document.getElementById('profSel'),document.getElementById('ckProfSel')].forEach(sel=>{
       REF.colaboradores.forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;sel.appendChild(op);});
     });
@@ -287,21 +295,44 @@ async function excluirFVS(id,cod){
   catch(e){toast('Erro ao excluir: '+(e.message||e),'error');console.error(e);}
 }
 
-// ===== NOVA FVS =====
+// ===== NOVA FVS: seleção de serviço com cards =====
+const SVC_ICONS={'Argamassa Polimérica':['🧪','bg-g-blueBg'],'Manta Asfáltica':['🔥','bg-g-amberBg'],'Membrana Acrílica':['💧','bg-g-greenBg'],'Manta PEAD':['🛡','bg-g-redBg']};
+let selectedSvc=null;
 function startNew(){
+  renderSvcCards();
+  show('vSvc');
+}
+function renderSvcCards(){
+  const wrap=document.getElementById('svcCards');wrap.innerHTML='';
+  Object.keys(REF.checklists).forEach((svc,i)=>{
+    const ck=REF.checklists[svc];
+    const tot=ck.etapas.reduce((s,e)=>s+e.itens.length,0);
+    const ic=SVC_ICONS[svc]||['📋','bg-g-bg'];
+    const c=document.createElement('button');c.className='w-full bg-white rounded-lg shadow-md1 p-4 text-left card su';c.style.animationDelay=(i*.04)+'s';
+    c.onclick=()=>selSvc(svc);
+    c.innerHTML='<div class="flex items-center gap-3"><div class="w-12 h-12 rounded-lg '+ic[1]+' flex items-center justify-center text-2xl flex-shrink-0">'+ic[0]+'</div><div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-g-text">'+esc(svc)+'</h3><p class="text-xs text-g-hint mt-1">'+ck.etapas.length+' etapas · '+tot+' itens de verificação</p></div><span class="text-g-blue text-xl">→</span></div>';
+    wrap.appendChild(c);
+  });
+}
+function selSvc(svc){
+  selectedSvc=svc;
   profList=[];renderProfChips();
   document.getElementById('obra').value='';document.getElementById('pav').innerHTML='<option value="">Selecione o pavimento</option>';
   document.getElementById('fgP').classList.add('disabled');document.getElementById('encBadge').classList.add('hidden');
-  document.getElementById('amb').value='';document.getElementById('svc').value='';
+  document.getElementById('amb').value='';
   document.getElementById('dtAb').value=new Date().toISOString().split('T')[0];
+  const ic=SVC_ICONS[svc]||['📋','bg-g-bg'];
+  document.getElementById('identSvcIcon').textContent=ic[0];
+  document.getElementById('identSvcName').textContent=svc;
   show('vIdent');
 }
 
 async function createFVS(){
   document.querySelectorAll('.error').forEach(e=>e.classList.remove('error'));
   if(!document.getElementById('resp').value.trim()){toast('Preencha "Preenchido por"','error');return;}
+  if(!selectedSvc){toast('Selecione o serviço','error');show('vSvc');return;}
   let ok=true,first=null;
-  ['obra','pav','amb','svc','dtAb'].forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('error');if(!first)first=el;ok=false;}});
+  ['obra','pav','amb','dtAb'].forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('error');if(!first)first=el;ok=false;}});
   if(!ok){if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return;}
   const obra=document.getElementById('obra').value;
   const enc=(REF.encarregados&&REF.encarregados[obra])||[null,null];
@@ -310,7 +341,7 @@ async function createFVS(){
     const codigo='FVS-'+Date.now().toString().slice(-8);
     const {data,error}=await db.from('fvs').insert({
       fvs_codigo:codigo,obra:obra,pavimento:document.getElementById('pav').value,
-      ambiente:document.getElementById('amb').value.trim(),servico:document.getElementById('svc').value,
+      ambiente:document.getElementById('amb').value.trim(),servico:selectedSvc,
       encarregado:enc[0],coordenador:enc[1],profissionais:profList,
       preenchido_por:document.getElementById('resp').value.trim(),
       data_abertura:document.getElementById('dtAb').value,etapa_atual:0,status:'em_andamento'
