@@ -1,762 +1,579 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#ffffff">
-  <title>FVS — Bronx</title>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config={theme:{extend:{
-      fontFamily:{sans:['Google Sans','Roboto','sans-serif']},
-      colors:{g:{bg:'#f8f9fa',surface:'#fff',border:'#dadce0',divider:'#e8eaed',text:'#202124',secondary:'#5f6368',hint:'#80868b',blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',green:'#137333',greenBg:'#ceead6',red:'#c5221f',redBg:'#f4c7c3',amber:'#b06000',amberBg:'#fde293'}},
-      boxShadow:{'md1':'0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)','md2':'0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)'}
-    }}}
-  </script>
-  <style>
-    *{-webkit-tap-highlight-color:transparent}body{overscroll-behavior:none}select,input,textarea{font-size:16px!important}
-    .f{width:100%;height:48px;padding:0 12px;background:#fff;border:1px solid #dadce0;border-radius:8px;font-size:14px;color:#202124;outline:none;transition:border .15s,box-shadow .15s}
-    .f:focus{border-color:#1a73e8;box-shadow:0 0 0 2px #e8f0fe}.f.error{border-color:#d93025;box-shadow:0 0 0 2px #fce8e6}.f::placeholder{color:#80868b}
-    textarea.f{height:auto;padding:12px;resize:none}
-    select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
-    .sl{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:#5f6368;margin-bottom:12px}
-    .fl{display:block;font-size:12px;font-weight:500;color:#5f6368;margin-bottom:6px}
-    .fg{transition:opacity .2s}.fg.disabled{opacity:.35;pointer-events:none}
-    .su{animation:su .3s ease both}@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .toast{animation:ti .25s ease,to .25s ease 2.7s forwards}@keyframes ti{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
-    .bl{position:relative;color:transparent!important}.bl::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-    .rb{min-height:52px;padding:10px 8px;border-radius:8px;font-size:13px;font-weight:500;border:2px solid #dadce0;background:#fff;cursor:pointer;transition:all .15s;text-align:center}
-    .rb:hover{background:#f8f9fa}.rb.sok{background:#ceead6;border-color:#137333;color:#137333;font-weight:700}.rb.sfl{background:#f4c7c3;border-color:#c5221f;color:#c5221f;font-weight:700}.rb.sfx{background:#fde293;border-color:#b06000;color:#b06000;font-weight:700}.rb.sna{background:#e8eaed;border-color:#5f6368;color:#5f6368;font-weight:700}
-    .sd{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .2s}
-    .sd.active{background:#1a73e8;color:#fff}.sd.done{background:#1e8e3e;color:#fff}.sd.pending{background:#e8eaed;color:#80868b}
-    .sln{height:2px;flex:1;transition:background .2s}.sln.done{background:#1e8e3e}.sln.pending{background:#e8eaed}
-    .fc{transition:all .15s;cursor:pointer}.fc:hover{box-shadow:0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15);transform:translateY(-1px)}
-    @media print{
-      body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      header,.no-print{display:none!important}
-      main{max-width:100%!important;padding:0!important;margin:0!important}
-      main:not(#vDetail){display:none!important}
-      #vDetail{display:block!important;padding:10px!important}
-      .shadow-md1,.shadow-md2{box-shadow:none!important}
-      .rounded-lg{border-radius:4px!important}
-      .bg-white{border:1px solid #e0e0e0!important}
-      #printHeader{display:flex!important}
-      .print-footer{display:block!important}
-      .su{animation:none!important}
-      @page{margin:15mm 10mm;size:A4}
-    }
-    #printHeader{display:none}
-    .print-footer{display:none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, interactive-widget=resizes-visual">
+<meta name="theme-color" content="#ffffff">
+<title>FVS — Bronx</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+tailwind.config={theme:{extend:{
+  fontFamily:{sans:['Google Sans','Roboto','sans-serif']},
+  colors:{g:{bg:'#f8f9fa',surface:'#fff',border:'#dadce0',divider:'#e8eaed',text:'#202124',secondary:'#5f6368',hint:'#80868b',blue:'#1a73e8',blueHover:'#1557b0',blueBg:'#e8f0fe',green:'#137333',greenBg:'#e6f4ea',red:'#c5221f',redBg:'#fce8e6',amber:'#b06000',amberBg:'#fef7e0',purple:'#8430ce',purpleBg:'#f3e8fd'}},
+  boxShadow:{'md1':'0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15)','md2':'0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)'}
+}}}
+</script>
+<style>
+*{-webkit-tap-highlight-color:transparent}body{overscroll-behavior:none}select,input,textarea{font-size:16px!important}
+.f{width:100%;height:48px;padding:0 12px;background:#fff;border:1px solid #dadce0;border-radius:8px;font-size:14px;color:#202124;outline:none;transition:border .15s,box-shadow .15s}
+.f:focus{border-color:#1a73e8;box-shadow:0 0 0 2px #e8f0fe}.f.error{border-color:#c5221f;box-shadow:0 0 0 2px #fce8e6}.f::placeholder{color:#80868b}
+textarea.f{height:auto;padding:12px;resize:none}
+select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235f6368' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.fg{transition:opacity .2s}.fg.disabled{opacity:.35;pointer-events:none}
+.sl{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:#5f6368;margin-bottom:12px}
+.fl{display:block;font-size:12px;font-weight:500;color:#5f6368;margin-bottom:6px}
+.su{animation:su .3s ease both}@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.toast{animation:ti .25s ease,to .25s ease 3.2s forwards}@keyframes ti{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-20px)}}
+.bl{position:relative;color:transparent!important}.bl::after{content:'';position:absolute;width:20px;height:20px;top:50%;left:50%;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.tab{padding:10px 14px;font-size:13px;font-weight:500;border-bottom:2px solid transparent;color:#5f6368;cursor:pointer;white-space:nowrap;transition:all .15s}
+.tab.active{border-bottom-color:#1a73e8;color:#1a73e8}
+.tabs-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.tabs-scroll::-webkit-scrollbar{display:none}
+.card{transition:all .15s}.card:hover{box-shadow:0 1px 3px 0 rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)}
+.opt{flex:1;height:44px;border:2px solid #dadce0;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#5f6368;cursor:pointer;transition:all .12s}
+.opt.aprovado.sel{background:#e6f4ea;border-color:#137333;color:#137333}
+.opt.reprovado.sel{background:#fce8e6;border-color:#c5221f;color:#c5221f}
+.opt.corrigido.sel{background:#fef7e0;border-color:#b06000;color:#b06000}
+.opt.na.sel{background:#f1f3f4;border-color:#5f6368;color:#5f6368}
+.prog{height:6px;background:#e8eaed;border-radius:3px;overflow:hidden}.prog>div{height:100%;background:#1a73e8;transition:width .3s}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#e8f0fe;color:#1a73e8;padding:5px 10px;border-radius:16px;font-size:12px;font-weight:500;margin:2px}
+.chip button{background:none;border:none;color:#1a73e8;cursor:pointer;font-size:14px;line-height:1;padding:0}
+.stepdot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.stepdot.done{background:#137333;color:#fff}.stepdot.cur{background:#1a73e8;color:#fff}.stepdot.todo{background:#e8eaed;color:#80868b}
+</style>
 </head>
 <body class="bg-g-bg font-sans min-h-screen">
 
-  <header class="bg-white sticky top-0 z-50 border-b border-g-border">
-    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="#" onclick="goHome();return false" class="flex items-center gap-3">
-          <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
-          <div class="h-5 w-px bg-g-border hidden sm:block"></div>
-          <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS</span>
-        </a>
-      <button onclick="goHome()" class="text-xs text-g-blue font-medium hover:underline">Início</button>
+<header class="bg-white sticky top-0 z-50 border-b border-g-border">
+  <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="#" onclick="goHome();return false" class="flex items-center gap-3">
+      <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-6" onerror="this.style.display='none'">
+      <div class="h-5 w-px bg-g-border hidden sm:block"></div>
+      <span class="text-sm font-medium text-g-secondary hidden sm:block">FVS — Verificação de Serviço</span>
+    </a>
+    <div class="flex items-center gap-2" id="connStatus">
+      <div class="w-2 h-2 rounded-full bg-g-hint"></div>
+      <span class="text-xs font-medium text-g-hint">Conectando...</span>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- ===== DASHBOARD ===== -->
-  <main id="vDash" class="max-w-3xl mx-auto px-4 py-5">
-    <div class="text-center mb-6">
-      <h1 class="text-xl font-bold text-g-text">Ficha de Verificação de Serviços</h1>
-      <p class="text-sm text-g-secondary mt-1">Selecione o tipo de FVS para iniciar</p>
-    </div>
-    <div class="bg-white rounded-lg shadow-md1 p-4 flex items-center gap-3 mb-5 su">
-      <span class="fl mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
-      <input type="text" id="responsavel" required placeholder="Seu nome" class="f h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
-    </div>
-    <p class="sl">Nova FVS</p>
-    <div id="fvsCards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
+<!-- ===== DASHBOARD ===== -->
+<main id="vDash" class="max-w-3xl mx-auto px-4 py-5">
+  <button onclick="startNew()" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mb-5 flex items-center justify-center gap-2">+ Nova Verificação (FVS)</button>
+  <div class="tabs-scroll mb-4 border-b border-g-border"><div class="flex">
+    <button onclick="dashTab('andamento')" id="dt-andamento" class="tab active">Em Andamento <span id="cAnd" class="text-xs bg-g-bg px-1.5 rounded-full ml-1">0</span></button>
+    <button onclick="dashTab('revistoria')" id="dt-revistoria" class="tab">Revistoria <span id="cRev" class="text-xs bg-g-bg px-1.5 rounded-full ml-1">0</span></button>
+    <button onclick="dashTab('historico')" id="dt-historico" class="tab">Histórico</button>
+  </div></div>
+  <div id="dashList" class="space-y-3"></div>
+  <div id="dashLoad" class="text-center py-8 text-sm text-g-hint">Carregando...</div>
+  <div id="dashEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS aqui ainda</div>
+</main>
 
-    <!-- Dashboard Tabs -->
-    <div class="flex border-b border-g-border mb-4">
-      <button onclick="dashTab('and')" id="dtAnd" class="px-4 pb-3 text-sm font-medium border-b-2 border-g-blue text-g-blue transition-all">Em Andamento <span id="cntAnd" class="bg-g-blueBg text-g-blue text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
-      <button onclick="dashTab('rev')" id="dtRev" class="px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all">Revistoria <span id="cntRev" class="bg-g-bg text-g-hint text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
-      <button onclick="dashTab('hist')" id="dtHist" class="px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all">Histórico <span id="cntHist" class="bg-g-bg text-g-hint text-xs px-1.5 py-0.5 rounded-full ml-1">0</span></button>
+<!-- ===== IDENTIFICAÇÃO ===== -->
+<main id="vIdent" class="max-w-3xl mx-auto px-4 py-5 hidden">
+  <button onclick="goHome()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao início</button>
+  <div class="bg-white rounded-lg shadow-md1 p-4 flex items-center gap-3 mb-4">
+    <span class="fl mb-0 whitespace-nowrap">Preenchido por <span class="text-g-red">*</span></span>
+    <input type="text" id="resp" placeholder="Seu nome" class="f h-10" oninput="localStorage.setItem('bronx_fvs_resp',this.value)">
+  </div>
+  <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4">
+    <p class="sl mb-2">Identificação da Frente</p>
+    <div class="fg" id="fgO"><label class="fl">Obra <span class="text-g-red">*</span></label><select id="obra" class="f"><option value="">Selecione a obra</option></select>
+      <p id="encBadge" class="text-xs text-g-secondary mt-1.5 bg-g-bg rounded-md px-2 py-1.5 hidden"></p>
     </div>
-
-    <!-- Tab: Em Andamento (local + shared partial) -->
-    <div id="tabAnd">
-      <div id="savedSection" class="mb-4">
-        <div id="savedList" class="space-y-3"></div>
-        <div id="savedEmpty" class="text-center py-8 text-sm text-g-hint">Nenhuma FVS em andamento</div>
+    <div class="fg disabled" id="fgP"><label class="fl">Pavimento <span class="text-g-red">*</span></label><select id="pav" class="f"><option value="">Selecione o pavimento</option></select></div>
+    <div><label class="fl">Ambiente <span class="text-g-red">*</span></label><input type="text" id="amb" placeholder="Ex: Banheiros, Laje, Jardins" class="f"></div>
+    <div><label class="fl">Serviço <span class="text-g-red">*</span></label><select id="svc" class="f"><option value="">Selecione o serviço</option></select></div>
+    <div>
+      <label class="fl">Profissionais da frente</label>
+      <div class="flex gap-2">
+        <select id="profSel" class="f flex-1"><option value="">Selecione para adicionar</option></select>
+        <button onclick="addProf()" class="h-12 px-4 bg-g-blueBg text-g-blue rounded-lg text-sm font-medium whitespace-nowrap">+ Add</button>
       </div>
+      <div id="profChips" class="mt-2"></div>
+      <p class="text-xs text-g-hint mt-1">Pode adicionar mais de um e alterar a qualquer momento.</p>
     </div>
+    <div><label class="fl">Data de Abertura <span class="text-g-red">*</span></label><input type="date" id="dtAb" class="f"></div>
+  </div>
+  <button onclick="createFVS()" id="btnCreate" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mt-5 mb-8">Iniciar Verificação</button>
+</main>
 
-    <!-- Tab: Revistoria -->
-    <div id="tabRev" class="hidden">
-      <div id="revList" class="space-y-3 mb-4"></div>
-      <div id="revEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS pendente de revistoria</div>
+<!-- ===== CHECKLIST ===== -->
+<main id="vCK" class="max-w-3xl mx-auto px-4 py-5 hidden">
+  <!-- Header info -->
+  <div class="bg-white rounded-lg shadow-md1 p-4 mb-4">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <button onclick="goHome()" class="text-xs text-g-blue font-medium flex items-center gap-1">← Início</button>
+      <span id="ckCode" class="text-xs text-g-hint"></span>
     </div>
-
-    <!-- Tab: Histórico -->
-    <div id="tabHistC" class="hidden">
-      <div class="flex items-center justify-between mb-3">
-        <button onclick="fetchShared()" class="text-xs text-g-blue font-medium hover:underline">↻ Atualizar</button>
+    <h2 id="ckSvc" class="text-base font-bold text-g-text"></h2>
+    <p id="ckLoc" class="text-xs text-g-secondary mt-0.5"></p>
+    <!-- Profissionais editáveis -->
+    <div class="mt-3 pt-3 border-t border-g-divider">
+      <div class="flex items-center justify-between mb-1">
+        <span class="fl mb-0">Profissionais</span>
+        <button onclick="toggleProfEdit()" id="profEditBtn" class="text-xs text-g-blue font-medium">Editar</button>
       </div>
-      <div class="flex gap-2 mb-3 flex-wrap">
-        <select id="fOb" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]"><option value="">Todas obras</option></select>
-        <select id="fSt" onchange="renderShared()" class="f h-9 text-xs w-auto min-w-[140px]">
-          <option value="">Todos status</option><option value="ok">✓ Aprovadas</option><option value="pend">⚠ Pendentes</option><option value="and">⏳ Em andamento</option>
-        </select>
-        <span id="shCnt" class="text-xs text-g-hint ml-auto self-center font-medium"></span>
-      </div>
-      <div id="shList" class="space-y-3 mb-6"></div>
-      <div id="shLoad" class="text-center py-8 text-sm text-g-hint">Carregando histórico...</div>
-      <div id="shEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS registrada</div>
-    </div>
-  </main>
-
-  <!-- ===== IDENTIFICATION ===== -->
-  <main id="vIdent" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="text-center mb-5">
-      <h2 class="text-lg font-bold text-g-text" id="idTitle"></h2>
-      <p class="text-sm text-g-secondary mt-1" id="idSub"></p>
-    </div>
-    <div class="space-y-4">
-      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 su">
-        <p class="sl mb-2">Localização</p>
-        <div class="fg" id="fgO"><label class="fl">Obra <span class="text-g-red">*</span></label><select id="obra" required class="f"><option value="">Selecione a obra</option></select></div>
-        <div class="fg disabled" id="fgP"><label class="fl">Pavimento <span class="text-g-red">*</span></label><select id="pavimento" required class="f"><option value="">Selecione o pavimento</option></select></div>
-        <div><label class="fl">Ambiente <span class="text-g-red">*</span></label><input type="text" id="ambiente" required placeholder="Ex: Laje Subpressão, WCs, Jardins" class="f"></div>
-      </div>
-      <div class="bg-white rounded-lg shadow-md1 p-5 space-y-4 su" style="animation-delay:.04s">
-        <p class="sl mb-2">Equipe</p>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="fl">Encarregado <span class="text-g-red">*</span></label><select id="encarregado" required class="f"><option value="">Selecione</option></select></div>
-          <div><label class="fl">Executor <span class="text-g-red">*</span></label><select id="executor" required class="f"><option value="">Selecione</option></select></div>
+      <div id="ckProfChips"></div>
+      <div id="ckProfEdit" class="hidden mt-2">
+        <div class="flex gap-2">
+          <select id="ckProfSel" class="f h-10 flex-1 text-sm"><option value="">Selecione para adicionar</option></select>
+          <button onclick="addProfCK()" class="h-10 px-3 bg-g-blueBg text-g-blue rounded-lg text-xs font-medium whitespace-nowrap">+ Add</button>
         </div>
       </div>
-      <button onclick="startCK()" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] su" style="animation-delay:.08s">Iniciar Verificação →</button>
     </div>
-  </main>
+  </div>
 
-  <!-- ===== CHECKLIST ===== -->
-  <main id="vCK" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div id="stepper" class="flex items-center mb-4 px-2"></div>
+  <!-- Stepper -->
+  <div id="stepper" class="flex items-center gap-1 mb-4 overflow-x-auto tabs-scroll py-1"></div>
 
-    <!-- Global Progress Bar -->
-    <div id="globalBar" class="bg-white rounded-lg shadow-md1 p-3 mb-4 flex items-center justify-between">
-      <div class="flex gap-3 text-sm font-bold">
-        <span class="text-g-green" id="gOk">0 ✓</span>
-        <span class="text-g-amber" id="gFx">0 ⚠</span>
-        <span class="text-g-red" id="gFl">0 ✕</span>
-      </div>
-      <span class="text-xs text-g-hint" id="gPend">0 pendentes</span>
-    </div>
+  <!-- Progress -->
+  <div class="mb-4">
+    <div class="flex justify-between text-xs text-g-secondary mb-1"><span id="progTxt">0 de 0</span><span id="progPct">0%</span></div>
+    <div class="prog"><div id="progBar" style="width:0%"></div></div>
+  </div>
 
-    <div class="flex items-center justify-between mb-4">
-      <div><p class="text-xs text-g-hint font-medium uppercase tracking-wide" id="eLbl"></p><h2 class="text-lg font-bold text-g-text" id="eNome"></h2></div>
-      <span class="text-xs font-medium text-g-hint bg-g-bg px-3 py-1 rounded-full" id="eProg">0/0</span>
-    </div>
+  <!-- Etapa atual -->
+  <div class="mb-3">
+    <p class="sl mb-1" id="etapaNome">Etapa</p>
+  </div>
+  <div id="ckItems" class="space-y-3"></div>
 
-    <!-- Approve All Button -->
-    <button onclick="approveAll()" id="btnApproveAll" class="w-full h-11 bg-g-greenBg border-2 border-g-green text-g-green font-bold text-sm rounded-lg mb-4 transition-all hover:bg-g-green hover:text-white active:scale-[0.98] flex items-center justify-center gap-2">
-      ✓ Aprovar todos os itens desta etapa
-    </button>
+  <!-- Navegação entre etapas -->
+  <div class="flex gap-2 mt-5 mb-8">
+    <button onclick="prevEtapa()" id="btnPrev" class="flex-1 h-12 border border-g-border rounded-lg text-sm font-medium text-g-secondary disabled:opacity-40">← Etapa anterior</button>
+    <button onclick="nextEtapa()" id="btnNext" class="flex-1 h-12 bg-g-blue text-white rounded-lg text-sm font-medium">Próxima etapa →</button>
+  </div>
+</main>
 
-    <div id="ckCont" class="space-y-3"></div>
-    <div class="mt-6 space-y-3 pb-8">
-      <button onclick="advance()" id="btnAdv" disabled class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none">Assinar e Avançar →</button>
-      <button onclick="goBack()" id="btnBk" class="w-full text-sm text-g-blue font-medium hover:underline text-center hidden">← Etapa anterior</button>
-    </div>
-  </main>
+<!-- ===== REVIEW (antes de finalizar) ===== -->
+<main id="vReview" class="max-w-3xl mx-auto px-4 py-5 hidden">
+  <button onclick="backToChecklist()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao checklist</button>
+  <h2 class="text-lg font-bold text-g-text mb-1">Revisão Final</h2>
+  <p class="text-sm text-g-secondary mb-4" id="reviewSummary"></p>
+  <div id="reviewList" class="space-y-2 mb-4"></div>
+  <div id="ncSection" class="hidden">
+    <p class="sl">Não-conformidades (reprovados)</p>
+    <div id="ncList" class="space-y-3 mb-3"></div>
+  </div>
+  <button onclick="finalizeFVS()" id="btnFinalize" class="w-full h-12 bg-g-green text-white font-medium text-sm rounded-lg shadow-md1 mt-2 mb-8">Finalizar e Salvar</button>
+</main>
 
-  <!-- ===== SIGNATURE ===== -->
-  <main id="vSig" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="bg-white rounded-lg shadow-md1 p-6 space-y-5">
-      <div class="text-center">
-        <div class="w-12 h-12 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-3"><span class="text-g-green text-xl">✓</span></div>
-        <h2 class="text-lg font-bold text-g-text" id="sigNm"></h2>
-        <p class="text-sm text-g-secondary mt-1">Assinatura de conclusão</p>
-      </div>
-      <div id="sigRes" class="flex justify-center gap-3 flex-wrap text-sm font-medium"></div>
-      <div><label class="fl">Responsável Bronx <span class="text-g-red">*</span></label><select id="sigRB" required class="f"><option value="">Selecione</option></select></div>
-      <div><label class="fl">Responsável da Obra</label><input type="text" id="sigRO" placeholder="Nome" class="f"></div>
-      <button onclick="confirmSig()" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Confirmar Assinatura</button>
-      <button onclick="confirmSigAndHome()" class="w-full text-sm text-g-blue font-medium hover:underline text-center mt-3">Assinar e voltar ao início (continuar depois)</button>
-    </div>
-  </main>
+<!-- ===== DETAIL (histórico) ===== -->
+<main id="vDetail" class="max-w-3xl mx-auto px-4 py-5 hidden">
+  <button onclick="goHome()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao início</button>
+  <div id="detailContent"></div>
+</main>
 
-  <!-- ===== NCs ===== -->
-  <main id="vNC" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="text-center mb-5">
-      <div class="w-12 h-12 rounded-full bg-g-blueBg flex items-center justify-center mx-auto mb-3"><span class="text-g-blue text-xl font-bold">✓</span></div>
-      <h2 class="text-lg font-bold text-g-text">Etapas concluídas</h2>
-      <p class="text-sm text-g-secondary mt-1">Registre não conformidades (se houver)</p>
-    </div>
-    <div id="ncL" class="space-y-3 mb-4"></div>
-    <button onclick="addNC()" class="w-full h-11 border-2 border-dashed border-g-border rounded-lg text-sm font-medium text-g-blue hover:bg-g-blueBg transition-colors flex items-center justify-center gap-2 mb-4">+ Adicionar NC</button>
-    <button onclick="showReview()" id="btnFin" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mb-8">Revisar e Finalizar →</button>
-  </main>
+<div id="toastC" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
 
-  <!-- ===== REVIEW ===== -->
-  <main id="vReview" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="text-center mb-5">
-      <h2 class="text-lg font-bold text-g-text">Revisão Final</h2>
-      <p class="text-sm text-g-secondary mt-1">Confirme os dados antes de enviar</p>
-    </div>
-    <div id="reviewSummary" class="bg-white rounded-lg shadow-md1 p-5 mb-4"></div>
-    <div id="reviewItens" class="space-y-2 mb-4"></div>
-    <div id="reviewNCs" class="mb-4"></div>
-    <div class="space-y-3 pb-8">
-      <button onclick="finalize()" id="btnConfirmFin" class="w-full h-12 bg-g-green hover:opacity-90 text-white font-bold text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">✓ Confirmar e Enviar FVS</button>
-      <button onclick="show('vNC')" class="w-full text-sm text-g-blue font-medium hover:underline text-center">← Voltar para editar</button>
-    </div>
-  </main>
+<script>
+const SB_URL="https://vjykaegxqbpupkcvlnpo.supabase.co";
+const SB_KEY="sb_publishable_bkvDYXXBk_OA9dWBSnK6lw_0DeOou9N";
+const db=supabase.createClient(SB_URL,SB_KEY);
+let REF=null,fvs=null,allFvs=[],dashFilter='andamento',profEditOpen=false,savingFlag=false;
 
-  <!-- ===== DONE ===== -->
-  <main id="vDone" class="max-w-3xl mx-auto px-4 py-12 hidden">
-    <div class="text-center">
-      <div class="w-16 h-16 rounded-full bg-g-greenBg flex items-center justify-center mx-auto mb-4"><span class="text-g-green text-3xl">✓</span></div>
-      <h2 class="text-xl font-bold text-g-text">FVS Finalizada</h2>
-      <p class="text-sm text-g-secondary mt-2 mb-8 whitespace-pre-line" id="doneRes"></p>
-      <button onclick="goHome()" class="h-12 px-8 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">Voltar ao Início</button>
-    </div>
-  </main>
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function toast(m,t){const c=document.getElementById('toastC'),d=document.createElement('div');d.className='toast '+(t==='success'?'bg-g-green':t==='error'?'bg-g-red':'bg-g-text')+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';d.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+(t==='success'?'✓':t==='error'?'✕':'i')+'</span><span>'+esc(m)+'</span>';c.appendChild(d);setTimeout(()=>d.remove(),3700);}
+function fmtD(d){if(!d)return'-';d=String(d).split('T')[0];const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+const VIEWS=['vDash','vIdent','vCK','vReview','vDetail'];
+function show(v){VIEWS.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==v));window.scrollTo({top:0,behavior:'smooth'});}
+function goHome(){fvs=null;show('vDash');loadDash();}
 
-  <!-- ===== REVISIT ===== -->
-  <main id="vRev" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="text-center mb-5">
-      <div class="w-12 h-12 rounded-full bg-g-amberBg flex items-center justify-center mx-auto mb-3"><span class="text-g-amber text-xl">⚠</span></div>
-      <h2 class="text-lg font-bold text-g-text">Revistoria</h2>
-      <p class="text-sm text-g-secondary mt-1" id="revInfo"></p>
-    </div>
-    <div id="revCont" class="space-y-3"></div>
-    <button onclick="saveRevisit()" id="btnRev" class="w-full h-12 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98] mt-6 mb-8">Salvar Revistoria</button>
-  </main>
-
-  <!-- ===== DETAIL ===== -->
-  <main id="vDetail" class="max-w-3xl mx-auto px-4 py-5 hidden">
-    <div class="flex items-center justify-between mb-4 no-print">
-      <button onclick="goHome()" class="text-sm text-g-blue font-medium hover:underline">← Voltar</button>
-      <button onclick="window.print()" class="flex items-center gap-2 h-10 px-4 bg-g-blue hover:bg-g-blueHover text-white font-medium text-sm rounded-lg shadow-md1 transition-all active:scale-[0.98]">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Imprimir
-      </button>
-    </div>
-    <div id="printHeader" class="items-center justify-between mb-4 pb-3 border-b-2 border-g-text">
-      <div class="flex items-center gap-3">
-        <img src="https://i.ibb.co/hx1fxsqp/Outlook-sw1reuxp.png" alt="Bronx" class="h-8" onerror="this.style.display='none'">
-        <div><p class="text-base font-bold text-g-text">Ficha de Verificação de Serviços</p><p class="text-xs text-g-secondary">Impermeabilização</p></div>
-      </div>
-      <p class="text-xs text-g-hint" id="printDate"></p>
-    </div>
-    <div id="dtHead" class="bg-white rounded-lg shadow-md1 p-5 mb-4"></div>
-    <div id="dtItens" class="space-y-2 mb-4"></div>
-    <div class="print-footer border-t-2 border-g-text pt-4 mt-8">
-      <div class="grid grid-cols-2 gap-8">
-        <div><p class="text-xs text-g-hint mb-8">Responsável Bronx</p><div class="border-b border-g-text"></div></div>
-        <div><p class="text-xs text-g-hint mb-8">Responsável da Obra</p><div class="border-b border-g-text"></div></div>
-      </div>
-      <p class="text-[10px] text-g-hint text-center mt-6">Bronx Impermeabilizações · FVS gerada em <span id="printDateFooter"></span></p>
-    </div>
-  </main>
-
-  <div id="toastC" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
-
-  <script>
-    const EP="https://script.google.com/macros/s/AKfycbwORyyBysG_QksxyGpA2130aFHuzQ3L1MNqjWjnlKUCflKVREN_t5zRbKe9BrGDYb0d/exec";
-    // XSS sanitization
-    function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-    let REF=null,CK=null,shared=[],ncC=0;
-    let fvs={id:'',resp:'',obra:'',pav:'',amb:'',svc:'',enc:'',exe:'',dt:'',etapas:[],cur:0,res:{},sigs:[],ncs:[]};
-    const VIEWS=['vDash','vIdent','vCK','vSig','vNC','vReview','vDone','vRev','vDetail'];
-
-    function show(id){VIEWS.forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));window.scrollTo({top:0,behavior:'smooth'});}
-    function goHome(){
-      // Confirm if FVS is in progress
-      const isInProgress=!document.getElementById('vDash').classList.contains('hidden')===false && (fvs.id && fvs.cur<fvs.etapas.length);
-      if(isInProgress && Object.keys(fvs.res).length>0){
-        if(!confirm('Seu progresso está salvo localmente. Deseja voltar ao início?'))return;
-      }
-      show('vDash');renderDash();fetchShared();
-    }
-    function toast(m,t){const c=document.getElementById('toastC'),d=document.createElement('div');d.className='toast '+(t==='success'?'bg-g-green':'bg-g-red')+' text-white px-5 py-3 rounded-lg shadow-md2 flex items-center gap-3 text-sm font-medium pointer-events-auto mb-2 max-w-md';d.innerHTML='<span class="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">'+(t==='success'?'✓':'✕')+'</span><span>'+m+'</span>';c.appendChild(d);setTimeout(()=>d.remove(),3200);}
-    function pop(id,items){const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o);});}
-    function fmtD(d){if(!d)return'-';d=String(d);if(d.includes('T'))d=d.split('T')[0];if(d.includes('-')){const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}return d;}
-
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded',async function(){
-      const s=localStorage.getItem('bronx_fvs_resp');
-      if(s)document.getElementById('responsavel').value=s;
-      try{
-        const[r1,r2]=await Promise.all([fetch('ref_fvs.json'),fetch('dados_fvs.json')]);
-        REF=await r1.json();CK=await r2.json();
-        renderDash();fetchShared();
-      }catch(e){toast('Erro ao carregar dados','error');console.error(e);}
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',async function(){
+  const s=localStorage.getItem('bronx_fvs_resp');if(s)document.getElementById('resp').value=s;
+  document.getElementById('dtAb').value=new Date().toISOString().split('T')[0];
+  try{
+    const r=await fetch('ref_fvs.json');REF=await r.json();
+    const obraSel=document.getElementById('obra');
+    REF.obras.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;obraSel.appendChild(op);});
+    const svcSel=document.getElementById('svc');
+    Object.keys(REF.checklists).forEach(s=>{const op=document.createElement('option');op.value=s;op.textContent=s;svcSel.appendChild(op);});
+    [document.getElementById('profSel'),document.getElementById('ckProfSel')].forEach(sel=>{
+      REF.colaboradores.forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;sel.appendChild(op);});
     });
+  }catch(e){toast('Erro ao carregar referência','error');console.error(e);}
+  try{
+    const {error}=await db.from('fvs').select('id',{count:'exact',head:true});
+    if(error)throw error;
+    document.getElementById('connStatus').innerHTML='<div class="w-2 h-2 rounded-full bg-g-green"></div><span class="text-xs font-medium text-g-green">Online</span>';
+  }catch(e){
+    document.getElementById('connStatus').innerHTML='<div class="w-2 h-2 rounded-full bg-g-red"></div><span class="text-xs font-medium text-g-red">Offline</span>';
+    console.error('Conn:',e);
+  }
+  loadDash();
+});
 
-    // ===== DASHBOARD =====
-    function dashTab(tab){
-      ['And','Rev','Hist'].forEach(t=>{
-        document.getElementById('tab'+t+(t==='Hist'?'C':'')).classList.toggle('hidden',t.toLowerCase()!==tab);
-        const btn=document.getElementById('dt'+t);
-        if(t.toLowerCase()===tab){btn.className='px-4 pb-3 text-sm font-medium border-b-2 border-g-blue text-g-blue transition-all';}
-        else{btn.className='px-4 pb-3 text-sm font-medium border-b-2 border-transparent text-g-hint transition-all';}
-      });
+// ===== CASCADE obra -> encarregado + pavimentos =====
+document.getElementById('obra').addEventListener('change',function(){
+  const sp=document.getElementById('pav');sp.innerHTML='<option value="">Selecione o pavimento</option>';
+  const enc=(REF.encarregados&&REF.encarregados[this.value])||null;
+  const badge=document.getElementById('encBadge');
+  if(enc){badge.innerHTML='👷 Encarregado: <b>'+esc(enc[0])+'</b> · Coord.: <b>'+esc(enc[1])+'</b>';badge.classList.remove('hidden');}
+  else badge.classList.add('hidden');
+  if(!this.value){document.getElementById('fgP').classList.add('disabled');return;}
+  document.getElementById('fgP').classList.remove('disabled');
+  (REF.pavimentos[this.value]||[]).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sp.appendChild(o);});
+});
+
+// ===== PROFISSIONAIS (identificação) =====
+let profList=[];
+function addProf(){const sel=document.getElementById('profSel');const v=sel.value;if(!v||profList.includes(v))return;profList.push(v);sel.value='';renderProfChips();}
+function rmProf(n){profList=profList.filter(p=>p!==n);renderProfChips();}
+function renderProfChips(){
+  document.getElementById('profChips').innerHTML=profList.map(p=>'<span class="chip">'+esc(p)+'<button onclick="rmProf(\''+esc(p).replace(/'/g,"")+'\')">✕</button></span>').join('');
+}
+
+// ===== DASHBOARD =====
+function dashTab(t){dashFilter=t;document.querySelectorAll('[id^="dt-"]').forEach(b=>b.classList.remove('active'));document.getElementById('dt-'+t).classList.add('active');renderDash();}
+async function loadDash(){
+  document.getElementById('dashLoad').classList.remove('hidden');
+  document.getElementById('dashList').innerHTML='';document.getElementById('dashEmpty').classList.add('hidden');
+  try{
+    const {data,error}=await db.from('fvs').select('*, fvs_itens(resultado,is_revistoria)').order('created_at',{ascending:false});
+    if(error)throw error;allFvs=data||[];
+    const nA=allFvs.filter(f=>f.status==='em_andamento').length;
+    const nR=allFvs.filter(f=>f.status==='revistoria').length;
+    document.getElementById('cAnd').textContent=nA;document.getElementById('cRev').textContent=nR;
+  }catch(e){console.error(e);allFvs=[];}
+  document.getElementById('dashLoad').classList.add('hidden');renderDash();
+}
+function fvsStats(f){
+  const its=(f.fvs_itens||[]);let ap=0,rp=0,co=0;
+  its.forEach(i=>{const r=String(i.resultado||'').toLowerCase();if(r==='aprovado')ap++;else if(r==='reprovado')rp++;else if(r.indexOf('corrig')>-1||r.indexOf('correç')>-1)co++;});
+  return {ap,rp,co,total:its.length};
+}
+function renderDash(){
+  const list=document.getElementById('dashList');list.innerHTML='';
+  let d=allFvs;
+  if(dashFilter==='andamento')d=allFvs.filter(f=>f.status==='em_andamento');
+  else if(dashFilter==='revistoria')d=allFvs.filter(f=>f.status==='revistoria');
+  else d=allFvs.filter(f=>f.status==='concluida');
+  if(!d.length){document.getElementById('dashEmpty').classList.remove('hidden');return;}
+  document.getElementById('dashEmpty').classList.add('hidden');
+  d.forEach((f,i)=>{
+    const s=fvsStats(f);
+    const stColors={em_andamento:'bg-g-blueBg text-g-blue',revistoria:'bg-g-amberBg text-g-amber',concluida:'bg-g-greenBg text-g-green'};
+    const stLabel={em_andamento:'Em Andamento',revistoria:'Revistoria',concluida:'Concluída'};
+    const profs=(f.profissionais||[]).join(', ')||'-';
+    const card=document.createElement('div');card.className='bg-white rounded-lg shadow-md1 p-4 su card';card.style.animationDelay=(i*.03)+'s';
+    let actions='';
+    if(f.status==='em_andamento'||f.status==='revistoria'){
+      actions='<button onclick="continuarFVS('+f.id+')" class="h-9 px-3 bg-g-blue text-white text-xs font-medium rounded-lg">Continuar</button>';
+    }else{
+      actions='<button onclick="verDetalhe('+f.id+')" class="h-9 px-3 bg-g-bg text-g-secondary text-xs font-medium rounded-lg border border-g-border">Ver</button>';
     }
+    card.innerHTML='<div class="flex items-center gap-2 mb-2"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+stColors[f.status]+'">'+stLabel[f.status]+'</span><span class="text-xs text-g-hint">'+esc(f.fvs_codigo)+'</span></div>'+
+      '<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1">'+
+      '<h3 class="text-sm font-bold text-g-text">'+esc(f.servico)+'</h3>'+
+      '<p class="text-xs text-g-secondary mt-0.5">'+esc(f.obra)+' · '+esc(f.pavimento||'')+' · '+esc(f.ambiente||'')+'</p>'+
+      '<p class="text-xs text-g-hint mt-1">👷 '+esc(f.encarregado||'-')+' · 🔧 '+esc(profs)+'</p>'+
+      '<p class="text-xs text-g-hint">Por: '+esc(f.preenchido_por||'-')+' · '+fmtD(f.data_abertura)+'</p>'+
+      '<div class="flex gap-2 mt-2 text-xs font-medium">'+(s.ap?'<span class="text-g-green">'+s.ap+' aprov.</span>':'')+(s.co?'<span class="text-g-amber">'+s.co+' corrig.</span>':'')+(s.rp?'<span class="text-g-red">'+s.rp+' reprov.</span>':'')+'</div>'+
+      '</div><div class="flex flex-col gap-2 flex-shrink-0">'+actions+
+      (f.status!=='concluida'?'<button onclick="excluirFVS('+f.id+',\''+esc(f.fvs_codigo).replace(/'/g,"")+'\')" class="h-9 px-3 bg-g-redBg text-g-red text-xs font-medium rounded-lg">Excluir</button>':'')+
+      '</div></div>';
+    list.appendChild(card);
+  });
+}
 
-    function renderDash(){
-      if(!CK)return;
-      const cards=document.getElementById('fvsCards');cards.innerHTML='';
-      const icons=['🧪','🔥','💧','🛡'],cls=['bg-g-blueBg','bg-g-amberBg','bg-g-greenBg','bg-g-redBg'];
-      Object.keys(CK).forEach((svc,i)=>{
-        const ck=CK[svc],tot=ck.etapas.reduce((s,e)=>s+e.itens.length,0);
-        const c=document.createElement('div');
-        c.className='fc bg-white rounded-lg shadow-md1 p-5 su';c.style.animationDelay=(i*.05)+'s';
-        c.onclick=()=>selFVS(svc);
-        c.innerHTML='<div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg '+cls[i%4]+' flex items-center justify-center text-lg flex-shrink-0">'+icons[i%4]+'</div><div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-g-text">'+svc+'</h3><p class="text-xs text-g-hint mt-1">'+ck.etapas.length+' etapas · '+tot+' itens</p></div><span class="text-g-blue text-lg">→</span></div>';
-        cards.appendChild(c);
-      });
-      // Saved FVS - split into Andamento and Revistoria
-      const sv=getSaved();
-      const andamento=sv.filter(s=>{const isRev=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');return !(isRev&&s.cur>=s.etapas.length);});
-      const revistoria=sv.filter(s=>{const isRev=s.status==='revistoria'||Object.values(s.res).some(r=>r.resultado==='Reprovado');return isRev&&s.cur>=s.etapas.length;});
-      
-      // Update tab counts
-      document.getElementById('cntAnd').textContent=andamento.length;
-      document.getElementById('cntRev').textContent=revistoria.length;
-      
-      // Render "Em Andamento" tab
-      const andList=document.getElementById('savedList');andList.innerHTML='';
-      document.getElementById('savedEmpty').classList.toggle('hidden',andamento.length>0);
-      andamento.forEach((s,i)=>{
-        const etT=s.etapas.length,etD=Math.min(s.cur,etT);
-        const sent=s.sentEtapas&&s.sentEtapas.length?' · '+s.sentEtapas.length+' salva(s)':'';
-        const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su';c.style.animationDelay=(i*.03)+'s';
-        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+esc(s.svc)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(s.obra)+' · '+esc(s.pav)+' · '+esc(s.amb)+'</p><p class="text-xs text-g-hint mt-0.5">'+fmtD(s.dt)+sent+'</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-g-blueBg text-g-blue">Etapa '+etD+'/'+etT+'</span><button onclick="event.stopPropagation();contFVS(\''+s.id+'\')" class="text-sm font-medium text-g-blue hover:underline">Continuar →</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
-        andList.appendChild(c);
-      });
-      
-      // Render "Revistoria" tab
-      const revList=document.getElementById('revList');revList.innerHTML='';
-      document.getElementById('revEmpty').classList.toggle('hidden',revistoria.length>0);
-      revistoria.forEach((s,i)=>{
-        const nRep=Object.values(s.res).filter(r=>r.resultado==='Reprovado').length;
-        const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su';c.style.animationDelay=(i*.03)+'s';
-        c.innerHTML='<div class="flex items-center justify-between"><div class="min-w-0 flex-1"><p class="text-sm font-bold text-g-text truncate">'+esc(s.svc)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(s.obra)+' · '+esc(s.pav)+' · '+esc(s.amb)+'</p><p class="text-xs text-g-red mt-0.5 font-medium">'+nRep+' item(ns) reprovado(s)</p></div><div class="flex items-center gap-2 flex-shrink-0 ml-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-g-amberBg text-g-amber">⚠ Revistoria</span><button onclick="event.stopPropagation();openRev(\''+s.id+'\')" class="text-sm font-medium text-g-amber hover:underline">Revistar</button><button onclick="event.stopPropagation();remFVS(\''+s.id+'\')" class="text-g-hint hover:text-g-red text-lg leading-none ml-1">✕</button></div></div>';
-        revList.appendChild(c);
-      });
+async function excluirFVS(id,cod){
+  if(!confirm('Excluir a FVS "'+cod+'"?\n\nRemove a verificação e todos os itens. Use para corrigir erros.'))return;
+  try{const {error}=await db.from('fvs').delete().eq('id',id);if(error)throw error;toast('FVS excluída.','success');loadDash();}
+  catch(e){toast('Erro ao excluir: '+(e.message||e),'error');console.error(e);}
+}
+
+// ===== NOVA FVS =====
+function startNew(){
+  profList=[];renderProfChips();
+  document.getElementById('obra').value='';document.getElementById('pav').innerHTML='<option value="">Selecione o pavimento</option>';
+  document.getElementById('fgP').classList.add('disabled');document.getElementById('encBadge').classList.add('hidden');
+  document.getElementById('amb').value='';document.getElementById('svc').value='';
+  document.getElementById('dtAb').value=new Date().toISOString().split('T')[0];
+  show('vIdent');
+}
+
+async function createFVS(){
+  document.querySelectorAll('.error').forEach(e=>e.classList.remove('error'));
+  if(!document.getElementById('resp').value.trim()){toast('Preencha "Preenchido por"','error');return;}
+  let ok=true,first=null;
+  ['obra','pav','amb','svc','dtAb'].forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('error');if(!first)first=el;ok=false;}});
+  if(!ok){if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  const obra=document.getElementById('obra').value;
+  const enc=(REF.encarregados&&REF.encarregados[obra])||[null,null];
+  const btn=document.getElementById('btnCreate');if(savingFlag)return;savingFlag=true;btn.classList.add('bl');btn.disabled=true;
+  try{
+    const codigo='FVS-'+Date.now().toString().slice(-8);
+    const {data,error}=await db.from('fvs').insert({
+      fvs_codigo:codigo,obra:obra,pavimento:document.getElementById('pav').value,
+      ambiente:document.getElementById('amb').value.trim(),servico:document.getElementById('svc').value,
+      encarregado:enc[0],coordenador:enc[1],profissionais:profList,
+      preenchido_por:document.getElementById('resp').value.trim(),
+      data_abertura:document.getElementById('dtAb').value,etapa_atual:0,status:'em_andamento'
+    }).select().single();
+    if(error)throw error;
+    // create checklist items from template
+    const ck=REF.checklists[data.servico];
+    const itens=[];
+    ck.etapas.forEach(et=>{et.itens.forEach((crit,idx)=>{itens.push({fvs_id:data.id,etapa:et.nome,numero:idx+1,criterio:crit,resultado:null,is_revistoria:false});});});
+    const {error:e2}=await db.from('fvs_itens').insert(itens);
+    if(e2)throw e2;
+    toast('FVS '+codigo+' criada!','success');
+    await openFVS(data.id);
+  }catch(e){toast('Erro: '+(e.message||e),'error');console.error(e);}
+  finally{savingFlag=false;btn.classList.remove('bl');btn.disabled=false;}
+}
+
+// ===== ABRIR / CONTINUAR FVS =====
+async function continuarFVS(id){await openFVS(id);}
+async function openFVS(id){
+  try{
+    const {data,error}=await db.from('fvs').select('*, fvs_itens(*)').eq('id',id).single();
+    if(error)throw error;
+    fvs=data;
+    fvs.fvs_itens.sort((a,b)=>{if(a.is_revistoria!==b.is_revistoria)return a.is_revistoria?1:-1;return a.id-b.id;});
+    fvs.etapasList=REF.checklists[fvs.servico].etapas.map(e=>e.nome);
+    fvs.curEtapa=Math.min(fvs.etapa_atual||0,fvs.etapasList.length-1);
+    profEditOpen=false;
+    if(fvs.status==='revistoria'){
+      // Revistoria: mostra só os reprovados para reavaliar
+      renderRevistoria();
+      show('vCK');
+    }else{
+      renderCK();
+      show('vCK');
     }
+  }catch(e){toast('Erro ao abrir FVS: '+(e.message||e),'error');console.error(e);}
+}
 
-    // ===== SAVED FVS =====
-    function getSaved(){try{return JSON.parse(localStorage.getItem('bronx_fvs_sv')||'[]');}catch(e){return[];}}
-    function saveFVS(){const a=getSaved().filter(s=>s.id!==fvs.id);a.unshift({...fvs});localStorage.setItem('bronx_fvs_sv',JSON.stringify(a.slice(0,20)));}
-    function remFVS(id){const a=getSaved().filter(s=>s.id!==id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));renderDash();}
-
-    // ===== SHARED FVS =====
-    async function fetchShared(){
-      document.getElementById('shLoad').classList.remove('hidden');
-      document.getElementById('shList').innerHTML='';document.getElementById('shEmpty').classList.add('hidden');
-      try{const r=await fetch(EP);shared=await r.json();if(!Array.isArray(shared))shared=[];
-        const sel=document.getElementById('fOb'),cv=sel.value;sel.innerHTML='<option value="">Todas obras</option>';
-        [...new Set(shared.map(f=>f.obra).filter(Boolean))].sort().forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op);});sel.value=cv;
-      }catch(e){console.error(e);shared=[];}
-      document.getElementById('shLoad').classList.add('hidden');renderShared();
+// ===== REVISTORIA (reavaliar reprovados) =====
+function renderRevistoria(){
+  document.getElementById('ckCode').textContent=fvs.fvs_codigo+' · REVISTORIA';
+  document.getElementById('ckSvc').textContent=fvs.servico;
+  document.getElementById('ckLoc').textContent=fvs.obra+' · '+(fvs.pavimento||'')+' · '+(fvs.ambiente||'');
+  renderCKProfs();
+  document.getElementById('stepper').innerHTML='<span class="text-xs text-g-amber font-medium">Reavaliação dos itens reprovados</span>';
+  const reprovados=fvs.fvs_itens.filter(it=>it.resultado==='Reprovado'&&!it.is_revistoria);
+  const all=fvs.fvs_itens.filter(it=>!it.is_revistoria);
+  const corrigidos=all.filter(it=>it.resultado==='Corrigido'||it.resultado==='Aprovado').length;
+  document.getElementById('progTxt').textContent=reprovados.length+' reprovado(s) a reavaliar';
+  document.getElementById('progPct').textContent='';
+  document.getElementById('progBar').style.width=(all.length?corrigidos/all.length*100:0)+'%';
+  document.getElementById('etapaNome').textContent='Itens reprovados — marque como Corrigido após o reparo';
+  const wrap=document.getElementById('ckItems');wrap.innerHTML='';
+  if(!reprovados.length){wrap.innerHTML='<p class="text-sm text-g-hint text-center py-4">Nenhum item reprovado pendente.</p>';}
+  reprovados.forEach(it=>{
+    const card=document.createElement('div');card.className='bg-white rounded-lg shadow-md1 p-4 su border-l-4 border-g-red';
+    const r=it.resultado||'';
+    card.innerHTML='<p class="text-sm text-g-text mb-1">'+esc(it.criterio)+'</p>'+(it.observacao?'<p class="text-xs text-g-hint mb-3">Tratamento: '+esc(it.observacao)+'</p>':'<div class="mb-3"></div>')+
+      '<div class="flex gap-2">'+
+      '<button class="opt corrigido'+(r==='Corrigido'?' sel':'')+'" onclick="setRevRes('+it.id+',\'Corrigido\')">Corrigido</button>'+
+      '<button class="opt reprovado'+(r==='Reprovado'?' sel':'')+'" onclick="setRevRes('+it.id+',\'Reprovado\')">Continua Reprovado</button>'+
+      '</div>';
+    wrap.appendChild(card);
+  });
+  // Nav buttons -> finalize revistoria
+  document.getElementById('btnPrev').style.display='none';
+  document.getElementById('btnNext').textContent='Finalizar Revistoria';
+  document.getElementById('btnNext').onclick=finalizeRevistoria;
+}
+function setRevRes(itemId,res){
+  const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;
+  it.resultado=res;if(res==='Corrigido')it.data_final=new Date().toISOString().split('T')[0];
+  renderRevistoria();
+  db.from('fvs_itens').update({resultado:res,data_final:it.data_final}).eq('id',itemId);
+}
+async function finalizeRevistoria(){
+  const aindaReprovado=fvs.fvs_itens.some(it=>it.resultado==='Reprovado'&&!it.is_revistoria);
+  const btn=document.getElementById('btnNext');if(savingFlag)return;savingFlag=true;btn.classList.add('bl');
+  try{
+    if(aindaReprovado){
+      toast('Ainda há itens reprovados. Corrija para concluir.','error');
+      savingFlag=false;btn.classList.remove('bl');return;
     }
+    await db.from('fvs').update({status:'concluida',updated_at:new Date().toISOString()}).eq('id',fvs.id);
+    // reset nav button handler
+    document.getElementById('btnNext').onclick=nextEtapa;document.getElementById('btnPrev').style.display='';
+    toast('Revistoria concluída! FVS finalizada.','success');
+    goHome();
+  }catch(e){toast('Erro: '+(e.message||e),'error');console.error(e);}
+  finally{savingFlag=false;btn.classList.remove('bl');}
+}
 
-    function renderShared(){
-      const list=document.getElementById('shList'),empty=document.getElementById('shEmpty');list.innerHTML='';
-      let d=shared.filter(f=>!String(f.fvsId).includes('-REV')); // exclude REV entries from main list
-      const fo=document.getElementById('fOb').value,fs=document.getElementById('fSt').value;
-      if(fo)d=d.filter(f=>f.obra===fo);
-      
-      // Determine status for each FVS
-      d.forEach(f=>{
-        const svcDef=CK?CK[f.servico]:null;
-        const expectedEtapas=svcDef?svcDef.etapas.length:99;
-        const actualEtapas=f.itens?[...new Set(f.itens.map(it=>it.etapa))].length:0;
-        f._isPartial=actualEtapas<expectedEtapas;
-        f._etapasDone=actualEtapas;
-        f._etapasTotal=expectedEtapas;
-        f._status=f._isPartial?'andamento':f.reprovados>0?'pendente':'aprovada';
+// ===== RENDER CHECKLIST =====
+function renderCK(){
+  document.getElementById('btnNext').onclick=nextEtapa;
+  document.getElementById('btnPrev').style.display='';
+  document.getElementById('progPct').style.display='';
+  document.getElementById('ckCode').textContent=fvs.fvs_codigo;
+  document.getElementById('ckSvc').textContent=fvs.servico;
+  document.getElementById('ckLoc').textContent=fvs.obra+' · '+(fvs.pavimento||'')+' · '+(fvs.ambiente||'')+' · 👷 '+(fvs.encarregado||'-');
+  renderCKProfs();
+  renderStepper();
+  renderEtapaItems();
+  updateProgress();
+  updateNavButtons();
+}
+function renderCKProfs(){
+  document.getElementById('ckProfChips').innerHTML=(fvs.profissionais||[]).map(p=>'<span class="chip">'+esc(p)+(profEditOpen?'<button onclick="rmProfCK(\''+esc(p).replace(/'/g,"")+'\')">✕</button>':'')+'</span>').join('')||'<span class="text-xs text-g-hint">Nenhum profissional</span>';
+}
+function toggleProfEdit(){profEditOpen=!profEditOpen;document.getElementById('ckProfEdit').classList.toggle('hidden',!profEditOpen);document.getElementById('profEditBtn').textContent=profEditOpen?'Concluir':'Editar';renderCKProfs();}
+async function addProfCK(){
+  const sel=document.getElementById('ckProfSel');const v=sel.value;if(!v||(fvs.profissionais||[]).includes(v))return;
+  fvs.profissionais=[...(fvs.profissionais||[]),v];sel.value='';
+  await db.from('fvs').update({profissionais:fvs.profissionais,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+  renderCKProfs();
+}
+async function rmProfCK(n){
+  fvs.profissionais=(fvs.profissionais||[]).filter(p=>p!==n);
+  await db.from('fvs').update({profissionais:fvs.profissionais,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+  renderCKProfs();
+}
+function renderStepper(){
+  const wrap=document.getElementById('stepper');wrap.innerHTML='';
+  fvs.etapasList.forEach((nome,i)=>{
+    const cls=i<fvs.curEtapa?'done':i===fvs.curEtapa?'cur':'todo';
+    const dot=document.createElement('div');dot.className='flex items-center gap-1 flex-shrink-0';
+    dot.innerHTML='<div class="stepdot '+cls+'" onclick="jumpEtapa('+i+')" style="cursor:pointer">'+(i<fvs.curEtapa?'✓':(i+1))+'</div>'+(i<fvs.etapasList.length-1?'<div class="w-4 h-px bg-g-border"></div>':'');
+    wrap.appendChild(dot);
+  });
+}
+function jumpEtapa(i){saveCurrentEtapa();fvs.curEtapa=i;renderCK();}
+function etapaItems(etapaNome){return fvs.fvs_itens.filter(it=>it.etapa===etapaNome&&!it.is_revistoria);}
+function renderEtapaItems(){
+  const nome=fvs.etapasList[fvs.curEtapa];
+  document.getElementById('etapaNome').textContent='Etapa '+(fvs.curEtapa+1)+' de '+fvs.etapasList.length+' — '+nome;
+  const items=etapaItems(nome);
+  const wrap=document.getElementById('ckItems');wrap.innerHTML='';
+  items.forEach((it)=>{
+    const card=document.createElement('div');card.className='bg-white rounded-lg shadow-md1 p-4 su';
+    const r=it.resultado||'';
+    card.innerHTML='<p class="text-sm text-g-text mb-3">'+esc(it.criterio)+'</p>'+
+      '<div class="flex gap-2 mb-2">'+
+      '<button class="opt aprovado'+(r==='Aprovado'?' sel':'')+'" onclick="setRes('+it.id+',\'Aprovado\')">Aprovado</button>'+
+      '<button class="opt reprovado'+(r==='Reprovado'?' sel':'')+'" onclick="setRes('+it.id+',\'Reprovado\')">Reprovado</button>'+
+      '</div><div class="flex gap-2">'+
+      '<button class="opt corrigido'+(r==='Corrigido'?' sel':'')+'" onclick="setRes('+it.id+',\'Corrigido\')">Corrigido</button>'+
+      '<button class="opt na'+(r==='N/A'?' sel':'')+'" onclick="setRes('+it.id+',\'N/A\')">N/A</button>'+
+      '</div>'+
+      '<input type="text" placeholder="Observação (opcional)" value="'+esc(it.observacao||'')+'" onchange="setObs('+it.id+',this.value)" class="f h-10 mt-3 text-sm">';
+    wrap.appendChild(card);
+  });
+}
+function setRes(itemId,res){
+  const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;
+  it.resultado=res;if(!it.data_1a)it.data_1a=new Date().toISOString().split('T')[0];
+  renderEtapaItems();updateProgress();
+  db.from('fvs_itens').update({resultado:res,data_1a:it.data_1a}).eq('id',itemId);
+}
+function setObs(itemId,v){const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;it.observacao=v;db.from('fvs_itens').update({observacao:v}).eq('id',itemId);}
+function updateProgress(){
+  const all=fvs.fvs_itens.filter(it=>!it.is_revistoria);
+  const done=all.filter(it=>it.resultado).length;
+  const pct=all.length?Math.round(done/all.length*100):0;
+  document.getElementById('progTxt').textContent=done+' de '+all.length;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progBar').style.width=pct+'%';
+}
+function saveCurrentEtapa(){
+  db.from('fvs').update({etapa_atual:fvs.curEtapa,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+}
+
+// ===== NAVEGAÇÃO ENTRE ETAPAS =====
+function prevEtapa(){if(fvs.curEtapa>0){fvs.curEtapa--;saveCurrentEtapa();renderCK();}}
+function nextEtapa(){
+  // validate current etapa fully answered
+  const nome=fvs.etapasList[fvs.curEtapa];
+  const items=etapaItems(nome);
+  const unanswered=items.filter(it=>!it.resultado);
+  if(unanswered.length>0){toast('Responda todos os '+items.length+' itens desta etapa ('+unanswered.length+' faltando)','error');return;}
+  if(fvs.curEtapa<fvs.etapasList.length-1){fvs.curEtapa++;saveCurrentEtapa();renderCK();}
+  else{goReview();}
+}
+function updateNavButtons(){
+  document.getElementById('btnPrev').disabled=fvs.curEtapa===0;
+  document.getElementById('btnNext').textContent=fvs.curEtapa<fvs.etapasList.length-1?'Próxima etapa →':'Revisar e finalizar →';
+}
+
+// ===== REVIEW =====
+function backToChecklist(){show('vCK');renderCK();}
+function goReview(){
+  const all=fvs.fvs_itens.filter(it=>!it.is_revistoria);
+  let ap=0,rp=0,co=0,na=0;
+  all.forEach(it=>{if(it.resultado==='Aprovado')ap++;else if(it.resultado==='Reprovado')rp++;else if(it.resultado==='Corrigido')co++;else if(it.resultado==='N/A')na++;});
+  document.getElementById('reviewSummary').textContent=fvs.servico+' · '+fvs.obra+' · '+(fvs.ambiente||'');
+  const list=document.getElementById('reviewList');
+  list.innerHTML='<div class="bg-white rounded-lg shadow-md1 p-4 flex justify-around text-center">'+
+    '<div><p class="text-2xl font-bold text-g-green">'+ap+'</p><p class="text-xs text-g-hint">Aprovados</p></div>'+
+    '<div><p class="text-2xl font-bold text-g-amber">'+co+'</p><p class="text-xs text-g-hint">Corrigidos</p></div>'+
+    '<div><p class="text-2xl font-bold text-g-red">'+rp+'</p><p class="text-xs text-g-hint">Reprovados</p></div>'+
+    '<div><p class="text-2xl font-bold text-g-secondary">'+na+'</p><p class="text-xs text-g-hint">N/A</p></div></div>';
+  // NC section if reprovados
+  const reprovados=all.filter(it=>it.resultado==='Reprovado');
+  const ncSec=document.getElementById('ncSection');
+  if(reprovados.length>0){
+    ncSec.classList.remove('hidden');
+    document.getElementById('ncList').innerHTML=reprovados.map(it=>'<div class="bg-g-redBg rounded-lg p-3"><p class="text-xs font-medium text-g-red mb-1">'+esc(it.criterio)+'</p><input type="text" placeholder="Tratamento da não-conformidade" value="'+esc(it.observacao||'')+'" onchange="setObs('+it.id+',this.value)" class="f h-9 text-sm"></div>').join('');
+    document.getElementById('btnFinalize').textContent='Finalizar (haverá revistoria)';
+  }else{ncSec.classList.add('hidden');document.getElementById('btnFinalize').textContent='Finalizar e Salvar';}
+  show('vReview');
+}
+
+// ===== FINALIZE =====
+async function finalizeFVS(){
+  const all=fvs.fvs_itens.filter(it=>!it.is_revistoria);
+  const hasReprovado=all.some(it=>it.resultado==='Reprovado');
+  const btn=document.getElementById('btnFinalize');if(savingFlag)return;savingFlag=true;btn.classList.add('bl');btn.disabled=true;
+  try{
+    const novoStatus=hasReprovado?'revistoria':'concluida';
+    const {error}=await db.from('fvs').update({status:novoStatus,etapa_atual:fvs.etapasList.length,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+    if(error)throw error;
+    // save NCs for reprovados
+    if(hasReprovado){
+      const ncs=all.filter(it=>it.resultado==='Reprovado').map(it=>({fvs_id:fvs.id,local:fvs.ambiente,descricao:it.criterio,tratamento:it.observacao||''}));
+      if(ncs.length)await db.from('fvs_ncs').insert(ncs);
+      toast('FVS finalizada. Há reprovados — foi para Revistoria.','info');
+    }else{
+      toast('FVS concluída com sucesso!','success');
+    }
+    goHome();
+  }catch(e){toast('Erro ao finalizar: '+(e.message||e),'error');console.error(e);}
+  finally{savingFlag=false;btn.classList.remove('bl');btn.disabled=false;}
+}
+
+// ===== DETALHE (histórico) =====
+async function verDetalhe(id){
+  try{
+    const {data,error}=await db.from('fvs').select('*, fvs_itens(*), fvs_ncs(*)').eq('id',id).single();
+    if(error)throw error;
+    const f=data;const its=(f.fvs_itens||[]).filter(i=>!i.is_revistoria).sort((a,b)=>a.id-b.id);
+    const byEtapa={};its.forEach(i=>{(byEtapa[i.etapa]=byEtapa[i.etapa]||[]).push(i);});
+    let h='<div class="bg-white rounded-lg shadow-md1 p-4 mb-4"><div class="flex items-center gap-2 mb-2"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-g-greenBg text-g-green">Concluída</span><span class="text-xs text-g-hint">'+esc(f.fvs_codigo)+'</span></div>';
+    h+='<h2 class="text-lg font-bold text-g-text">'+esc(f.servico)+'</h2><p class="text-xs text-g-secondary mt-1">'+esc(f.obra)+' · '+esc(f.pavimento||'')+' · '+esc(f.ambiente||'')+'</p>';
+    h+='<p class="text-xs text-g-hint mt-1">👷 '+esc(f.encarregado||'-')+' · Coord.: '+esc(f.coordenador||'-')+'</p>';
+    h+='<p class="text-xs text-g-hint">🔧 '+esc((f.profissionais||[]).join(', ')||'-')+'</p>';
+    h+='<p class="text-xs text-g-hint">Por: '+esc(f.preenchido_por||'-')+' · '+fmtD(f.data_abertura)+'</p></div>';
+    Object.entries(byEtapa).forEach(([et,items])=>{
+      h+='<div class="bg-white rounded-lg shadow-md1 p-4 mb-3"><p class="sl">'+esc(et)+'</p>';
+      items.forEach(it=>{
+        const rc={'Aprovado':'text-g-green','Reprovado':'text-g-red','Corrigido':'text-g-amber','N/A':'text-g-secondary'}[it.resultado]||'text-g-hint';
+        h+='<div class="flex items-start justify-between gap-2 py-2 border-t border-g-divider"><span class="text-xs text-g-text flex-1">'+esc(it.criterio)+(it.observacao?'<br><span class="text-g-hint">obs: '+esc(it.observacao)+'</span>':'')+'</span><span class="text-xs font-medium '+rc+' whitespace-nowrap">'+esc(it.resultado||'-')+'</span></div>';
       });
-      
-      if(fs==='ok')d=d.filter(f=>f._status==='aprovada');
-      if(fs==='pend')d=d.filter(f=>f._status==='pendente');
-      if(fs==='and')d=d.filter(f=>f._status==='andamento');
-      document.getElementById('shCnt').textContent=d.length+' FVS';
-      document.getElementById('cntHist').textContent=shared.length;
-      if(!d.length){empty.classList.remove('hidden');return;}empty.classList.add('hidden');
-      d.slice(0,30).forEach((f,i)=>{
-        const sb=f._status==='aprovada'?'bg-g-greenBg text-g-green':f._status==='pendente'?'bg-g-amberBg text-g-amber':'bg-g-blueBg text-g-blue';
-        const st=f._status==='aprovada'?'✓ Aprovada':f._status==='pendente'?'⚠ Pendente revistoria':'⏳ Etapa '+f._etapasDone+'/'+f._etapasTotal;
-        const c=document.createElement('div');c.className='bg-white rounded-lg shadow-md1 p-4 su fc';c.style.animationDelay=(i*.02)+'s';
-        c.onclick=()=>showDetail(f);
-        c.innerHTML='<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span></div><p class="text-sm font-bold text-g-text truncate">'+esc(f.servico)+'</p><p class="text-xs text-g-secondary mt-0.5">'+esc(f.obra)+' · '+esc(f.pavimento)+' · '+esc(f.ambiente)+'</p><p class="text-xs text-g-hint mt-0.5">Por: '+esc(f.responsavel||'-')+' · '+fmtD(f.dataAbertura)+'</p></div><div class="flex flex-col items-end gap-1 flex-shrink-0"><div class="flex gap-1.5 text-xs font-medium"><span class="text-g-green">'+f.aprovados+'✓</span>'+(f.corrigidos?'<span class="text-g-amber">'+f.corrigidos+'⚠</span>':'')+(f.reprovados?'<span class="text-g-red">'+f.reprovados+'✕</span>':'')+'</div><span class="text-xs text-g-hint">'+f.total+' itens</span><span class="text-g-blue text-xs font-medium mt-1">Detalhes →</span></div></div>';
-        list.appendChild(c);
-      });
-    }
-
-    function showDetail(f){
-      const h=document.getElementById('dtHead');
-      const hr=f.reprovados>0,isR=String(f.fvsId).includes('-REV');
-      const sb=isR?'bg-g-blueBg text-g-blue':hr?'bg-g-amberBg text-g-amber':'bg-g-greenBg text-g-green';
-      const st=isR?'↻ Revistoria':hr?'⚠ Pendente':'✓ Aprovada';
-      h.innerHTML='<div class="flex items-center gap-2 mb-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full '+sb+'">'+st+'</span><span class="text-xs text-g-hint">'+f.fvsId+'</span></div><h2 class="text-lg font-bold text-g-text">'+f.servico+'</h2><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3 text-xs"><div><span class="text-g-hint block">Obra</span><span class="text-g-text font-medium">'+f.obra+'</span></div><div><span class="text-g-hint block">Pavimento</span><span class="text-g-text font-medium">'+f.pavimento+'</span></div><div><span class="text-g-hint block">Ambiente</span><span class="text-g-text font-medium">'+f.ambiente+'</span></div><div><span class="text-g-hint block">Encarregado</span><span class="text-g-text font-medium">'+(f.encarregado||'-')+'</span></div><div><span class="text-g-hint block">Executor</span><span class="text-g-text font-medium">'+(f.executor||'-')+'</span></div><div><span class="text-g-hint block">Abertura</span><span class="text-g-text font-medium">'+fmtD(f.dataAbertura)+'</span></div></div><div class="flex gap-3 mt-4 text-sm font-medium"><span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">'+f.aprovados+' aprov.</span>'+(f.corrigidos?'<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">'+f.corrigidos+' corrig.</span>':'')+(f.reprovados?'<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">'+f.reprovados+' reprov.</span>':'')+'</div>';
-      const c=document.getElementById('dtItens');c.innerHTML='';
-      if(!f.itens||!f.itens.length){c.innerHTML='<p class="text-sm text-g-hint text-center py-6">Sem detalhes</p>';show('vDetail');var now2=new Date();document.getElementById('printDate').textContent=now2.toLocaleDateString('pt-BR');document.getElementById('printDateFooter').textContent=now2.toLocaleDateString('pt-BR');return;}
-      const etapas={};f.itens.forEach(it=>{if(!etapas[it.etapa])etapas[it.etapa]=[];etapas[it.etapa].push(it);});
-      Object.entries(etapas).forEach(([en,its])=>{
-        const sec=document.createElement('div');sec.className='mb-4';sec.innerHTML='<p class="sl">'+en+'</p>';
-        its.sort((a,b)=>a.numero-b.numero).forEach(it=>{
-          const rb=it.resultado==='Aprovado'?'bg-g-greenBg text-g-green border-g-green':it.resultado==='Reprovado'?'bg-g-redBg text-g-red border-g-red':'bg-g-amberBg text-g-amber border-g-amber';
-          const ri=it.resultado==='Aprovado'?'✓':it.resultado==='Reprovado'?'✕':'⚠';
-          const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 mb-2';
-          cd.innerHTML='<div class="flex items-start gap-3"><span class="text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 border '+rb+'">'+ri+'</span><div class="flex-1 min-w-0"><p class="text-sm text-g-text">'+it.criterio+'</p>'+(it.observacao?'<p class="text-xs text-g-secondary mt-1 italic">Obs: '+it.observacao+'</p>':'')+'<div class="flex gap-3 mt-1.5 text-xs text-g-hint">'+(it.data1a?'<span>1ª: '+fmtD(it.data1a)+'</span>':'')+(it.dataFinal?'<span>Final: '+fmtD(it.dataFinal)+'</span>':'')+'</div></div></div>';
-          sec.appendChild(cd);
-        });
-        c.appendChild(sec);
-      });
-      show('vDetail');
-      var now=new Date();var pd=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-      document.getElementById('printDate').textContent=pd;
-      document.getElementById('printDateFooter').textContent=pd;
-    }
-
-    // ===== SELECT FVS TYPE =====
-    function selFVS(svc){
-      fvs.svc=svc;
-      document.getElementById('idTitle').textContent=svc;
-      document.getElementById('idSub').textContent=CK[svc].titulo||'Preencha os dados da frente';
-      const os=document.getElementById('obra');os.innerHTML='<option value="">Selecione a obra</option>';pop('obra',REF.obras);
-      const es=document.getElementById('encarregado');es.innerHTML='<option value="">Selecione</option>';pop('encarregado',REF.encarregados);
-      const xs=document.getElementById('executor');xs.innerHTML='<option value="">Selecione</option>';pop('executor',REF.executores);
-      const ss=document.getElementById('sigRB');ss.innerHTML='<option value="">Selecione</option>';pop('sigRB',REF.encarregados);
-      show('vIdent');
-    }
-
-    document.getElementById('obra').addEventListener('change',function(){
-      const sp=document.getElementById('pavimento');sp.innerHTML='<option value="">Selecione o pavimento</option>';
-      if(!this.value){document.getElementById('fgP').classList.add('disabled');return;}
-      document.getElementById('fgP').classList.remove('disabled');
-      (REF.pavimentos[this.value]||[]).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sp.appendChild(o);});
+      h+='</div>';
     });
-
-    // ===== START CHECKLIST =====
-    function startCK(){
-      const flds=['obra','pavimento','ambiente','encarregado','executor'];
-      let ok=true,first=null;document.querySelectorAll('.error').forEach(el=>el.classList.remove('error'));
-      flds.forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('error');if(!first)first=el;ok=false;}});
-      if(!document.getElementById('responsavel').value.trim()){toast('Preencha "Preenchido por"','error');return;}
-      if(!ok){first.scrollIntoView({behavior:'smooth',block:'center'});toast('Preencha os campos obrigatórios','error');return;}
-      const ck=CK[fvs.svc];
-      fvs={id:'FVS-'+Date.now(),resp:document.getElementById('responsavel').value.trim(),obra:document.getElementById('obra').value,pav:document.getElementById('pavimento').value,amb:document.getElementById('ambiente').value.trim(),svc:fvs.svc,enc:document.getElementById('encarregado').value,exe:document.getElementById('executor').value,dt:new Date().toISOString().split('T')[0],etapas:ck.etapas,cur:0,res:{},sigs:[],ncs:[]};
-      saveFVS();show('vCK');renderStep();renderEtapa();
+    if((f.fvs_ncs||[]).length){
+      h+='<div class="bg-white rounded-lg shadow-md1 p-4 mb-3"><p class="sl">Não-conformidades</p>';
+      f.fvs_ncs.forEach(nc=>{h+='<div class="bg-g-redBg rounded-lg p-3 mt-2"><p class="text-xs font-medium text-g-red">'+esc(nc.descricao)+'</p>'+(nc.tratamento?'<p class="text-xs text-g-secondary mt-1">Tratamento: '+esc(nc.tratamento)+'</p>':'')+'</div>';});
+      h+='</div>';
     }
-
-    function contFVS(id){const s=getSaved().find(s=>s.id===id);if(!s){toast('FVS não encontrada','error');return;}fvs={...s};show('vCK');renderStep();renderEtapa();}
-
-    // ===== STEPPER =====
-    function renderStep(){
-      const c=document.getElementById('stepper');c.innerHTML='';
-      fvs.etapas.forEach((e,i)=>{
-        if(i>0){const l=document.createElement('div');l.className='sln '+(i<=fvs.cur?'done':'pending');c.appendChild(l);}
-        const d=document.createElement('div');d.className='sd '+(i<fvs.cur?'done':i===fvs.cur?'active':'pending');d.textContent=i<fvs.cur?'✓':(i+1);c.appendChild(d);
-      });
-    }
-
-    // ===== RENDER ETAPA =====
-    function renderEtapa(){
-      const et=fvs.etapas[fvs.cur];
-      document.getElementById('eLbl').textContent='Etapa '+(fvs.cur+1)+' de '+fvs.etapas.length;
-      document.getElementById('eNome').textContent=et.nome;
-      const c=document.getElementById('ckCont');c.innerHTML='';
-      et.itens.forEach((cr,i)=>{
-        const k=fvs.cur+'-'+i,r=fvs.res[k]||{};
-        let ex='';
-        if(r.resultado==='Reprovado'||r.resultado==='Aprovado após correções'){
-          const missingObs=!r.observacao;
-          const missingDate=r.resultado==='Aprovado após correções'&&!r.dataFinal;
-          ex='<div class="mt-3 space-y-2"><div><label class="fl">Observação <span class="text-g-red">*</span></label><textarea rows="2" class="f text-sm'+(missingObs?' error':'')+'" placeholder="Descreva a não conformidade..." onchange="setObs(\''+k+'\',this.value)">'+(r.observacao||'')+'</textarea>'+(missingObs?'<p class="text-xs text-g-red mt-1 font-medium">Obrigatório para itens reprovados</p>':'')+'</div>';
-          if(r.resultado==='Aprovado após correções')ex+='<div><label class="fl">Data Vistoria Final <span class="text-g-red">*</span></label><input type="date" class="f h-10'+(missingDate?' error':'')+'" value="'+(r.dataFinal||'')+'" onchange="setDF(\''+k+'\',this.value)">'+(missingDate?'<p class="text-xs text-g-red mt-1 font-medium">Informe a data da vistoria final</p>':'')+'</div>';
-          ex+='</div>';
-        }
-        const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 su';cd.style.animationDelay=(i*.03)+'s';
-        cd.id='item-'+k;
-        cd.innerHTML='<div class="flex items-start gap-3 mb-3"><span class="text-xs font-bold text-g-hint bg-g-bg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">'+(i+1)+'</span><p class="text-sm text-g-text leading-relaxed">'+esc(cr)+'</p></div><div class="grid grid-cols-2 gap-2"><button onclick="setRes(\''+k+'\',\'Aprovado\')" class="rb '+(r.resultado==='Aprovado'?'sok':'')+'">✓ Aprovado</button><button onclick="setRes(\''+k+'\',\'Reprovado\')" class="rb '+(r.resultado==='Reprovado'?'sfl':'')+'">✕ Reprovado</button><button onclick="setRes(\''+k+'\',\'Aprovado após correções\')" class="rb '+(r.resultado==='Aprovado após correções'?'sfx':'')+'">⚠ Corrigido</button><button onclick="setRes(\''+k+'\',\'Não se aplica\')" class="rb '+(r.resultado==='Não se aplica'?'sna':'')+'">— N/A</button></div>'+ex;
-        c.appendChild(cd);
-      });
-      updProg();document.getElementById('btnBk').classList.toggle('hidden',fvs.cur===0);window.scrollTo({top:0,behavior:'smooth'});
-    }
-
-    function setRes(k,v){
-      if(!fvs.res[k])fvs.res[k]={};
-      fvs.res[k].resultado=v;
-      fvs.res[k].data1a=fvs.res[k].data1a||new Date().toISOString().split('T')[0];
-      saveFVS();
-      renderEtapa();
-      // Auto-scroll to next pending item
-      if(v==='Aprovado'){
-        const et=fvs.etapas[fvs.cur];
-        for(let i=0;i<et.itens.length;i++){
-          const nk=fvs.cur+'-'+i;
-          if(!fvs.res[nk]||!fvs.res[nk].resultado){
-            setTimeout(()=>{const el=document.getElementById('item-'+nk);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},150);
-            break;
-          }
-        }
-      }
-    }
-    function setObs(k,v){if(!fvs.res[k])fvs.res[k]={};fvs.res[k].observacao=v;saveFVS();updProg();}
-    function setDF(k,v){if(!fvs.res[k])fvs.res[k]={};fvs.res[k].dataFinal=v;saveFVS();updProg();}
-
-    function approveAll(){
-      const et=fvs.etapas[fvs.cur];
-      const today=new Date().toISOString().split('T')[0];
-      et.itens.forEach((_,i)=>{
-        const k=fvs.cur+'-'+i;
-        if(!fvs.res[k]||!fvs.res[k].resultado){
-          fvs.res[k]={resultado:'Aprovado',data1a:today};
-        }
-      });
-      saveFVS();renderEtapa();
-      toast('Todos os itens aprovados. Desmarque os que precisam de atenção.','success');
-    }
-
-    function updateGlobal(){
-      let gO=0,gF=0,gX=0,gN=0,gP=0,gT=0;
-      fvs.etapas.forEach((et,ei)=>{
-        et.itens.forEach((_,ii)=>{
-          gT++;
-          const r=fvs.res[ei+'-'+ii];
-          if(!r||!r.resultado)gP++;
-          else if(r.resultado==='Aprovado')gO++;
-          else if(r.resultado==='Reprovado')gF++;
-          else if(r.resultado==='Não se aplica')gN++;
-          else gX++;
-        });
-      });
-      document.getElementById('gOk').textContent=gO+' ✓';
-      document.getElementById('gFx').textContent=gX+' ⚠';
-      document.getElementById('gFl').textContent=gF+' ✕';
-      document.getElementById('gPend').textContent=gP+' de '+gT+' pendentes'+(gN?' · '+gN+' N/A':'');
-      // Hide approve all if all items in current etapa already have results
-      const et=fvs.etapas[fvs.cur];
-      const allDone=et.itens.every((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];return r&&r.resultado;});
-      document.getElementById('btnApproveAll').classList.toggle('hidden',allDone);
-    }
-
-    function updProg(){
-      const et=fvs.etapas[fvs.cur];let dn=0,ok=true;
-      et.itens.forEach((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];if(r&&r.resultado){if(r.resultado==='Reprovado'&&!r.observacao)ok=false;else if(r.resultado==='Aprovado após correções'&&(!r.observacao||!r.dataFinal))ok=false;else dn++;}else ok=false;});
-      document.getElementById('eProg').textContent=dn+'/'+et.itens.length;
-      document.getElementById('btnAdv').disabled=!ok||dn<et.itens.length;
-      // Update button text with hint if incomplete
-      const btn=document.getElementById('btnAdv');
-      if(!ok&&dn>0){
-        // Find first incomplete item
-        for(let i=0;i<et.itens.length;i++){
-          const r=fvs.res[fvs.cur+'-'+i];
-          if(r&&r.resultado==='Reprovado'&&!r.observacao){btn.textContent='⚠ Preencha observação do item '+(i+1);break;}
-          else if(r&&r.resultado==='Aprovado após correções'&&(!r.observacao||!r.dataFinal)){btn.textContent='⚠ Complete os dados do item '+(i+1);break;}
-          else if(!r||!r.resultado){btn.textContent='Avalie o item '+(i+1)+' para continuar';break;}
-        }
-      } else if(dn<et.itens.length){
-        btn.textContent='Avalie todos os itens para avançar';
-      } else {
-        btn.textContent='Assinar e Avançar →';
-      }
-      updateGlobal();
-    }
-
-    // ===== NAVIGATE =====
-    function advance(){
-      show('vSig');const et=fvs.etapas[fvs.cur];document.getElementById('sigNm').textContent=et.nome;
-      let o=0,f=0,x=0;et.itens.forEach((_,i)=>{const r=fvs.res[fvs.cur+'-'+i];if(r){if(r.resultado==='Aprovado')o++;else if(r.resultado==='Reprovado')f++;else x++;}});
-      document.getElementById('sigRes').innerHTML='<span class="text-g-green bg-g-greenBg px-3 py-1 rounded-full">✓ '+o+'</span>'+(f?'<span class="text-g-red bg-g-redBg px-3 py-1 rounded-full">✕ '+f+'</span>':'')+(x?'<span class="text-g-amber bg-g-amberBg px-3 py-1 rounded-full">⚠ '+x+'</span>':'');
-    }
-    function goBack(){if(fvs.cur>0){fvs.cur--;renderStep();renderEtapa();}}
-
-    async function confirmSig(){
-      const r=document.getElementById('sigRB').value;if(!r){toast('Selecione o Responsável Bronx','error');return;}
-      fvs.sigs[fvs.cur]={rb:r,ro:document.getElementById('sigRO').value.trim(),dt:new Date().toISOString().split('T')[0]};
-      
-      // Send current etapa items to Sheets immediately
-      const et=fvs.etapas[fvs.cur];
-      const itens=[];
-      et.itens.forEach((cr,ii)=>{
-        const res=fvs.res[fvs.cur+'-'+ii]||{};
-        itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:res.resultado||'',data1a:res.data1a||'',dataFinal:res.dataFinal||'',observacao:res.observacao||''});
-      });
-      try{
-        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
-        if(!fvs.sentEtapas)fvs.sentEtapas=[];
-        fvs.sentEtapas.push(fvs.cur);
-        toast('Etapa "'+ et.nome +'" salva!','success');
-      }catch(e){console.error(e);toast('Etapa salva localmente. Será enviada ao finalizar.','error');}
-      
-      fvs.cur++;saveFVS();document.getElementById('sigRO').value='';
-      if(fvs.cur>=fvs.etapas.length){show('vNC');}else{show('vCK');renderStep();renderEtapa();}
-      setTimeout(()=>fetchShared(),2000);
-    }
-
-    async function confirmSigAndHome(){
-      const r=document.getElementById('sigRB').value;if(!r){toast('Selecione o Responsável Bronx','error');return;}
-      fvs.sigs[fvs.cur]={rb:r,ro:document.getElementById('sigRO').value.trim(),dt:new Date().toISOString().split('T')[0]};
-      const et=fvs.etapas[fvs.cur];
-      const itens=[];
-      et.itens.forEach((cr,ii)=>{
-        const res=fvs.res[fvs.cur+'-'+ii]||{};
-        itens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:res.resultado||'',data1a:res.data1a||'',dataFinal:res.dataFinal||'',observacao:res.observacao||''});
-      });
-      try{
-        await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:itens})});
-        if(!fvs.sentEtapas)fvs.sentEtapas=[];
-        fvs.sentEtapas.push(fvs.cur);
-        toast('Etapa "'+ et.nome +'" salva!','success');
-      }catch(e){console.error(e);}
-      fvs.cur++;saveFVS();document.getElementById('sigRO').value='';
-      setTimeout(()=>fetchShared(),2000);
-      goHome();
-    }
-
-    // ===== NCs =====
-    function addNC(){
-      ncC++;const id=ncC,l=document.getElementById('ncL'),c=document.createElement('div');
-      c.className='bg-white rounded-lg shadow-md1 p-4 space-y-3 su';c.id='nc-'+id;
-      c.innerHTML='<div class="flex items-center justify-between"><span class="text-xs font-bold text-g-secondary uppercase">NC #'+id+'</span><button onclick="document.getElementById(\'nc-'+id+'\').remove()" class="text-g-hint hover:text-g-red text-lg">✕</button></div><div><label class="fl">Local <span class="text-g-red">*</span></label><input type="text" id="ncl-'+id+'" placeholder="Local" class="f h-10"></div><div><label class="fl">Descrição <span class="text-g-red">*</span></label><textarea id="ncd-'+id+'" rows="2" placeholder="Descreva" class="f text-sm"></textarea></div><div><label class="fl">Tratamento <span class="text-g-red">*</span></label><textarea id="nct-'+id+'" rows="2" placeholder="Ação corretiva" class="f text-sm"></textarea></div>';
-      l.appendChild(c);
-    }
-
-    function getNCs(){
-      const ncs=[];document.querySelectorAll('#ncL > div').forEach(c=>{const id=c.id.replace('nc-','');const l=document.getElementById('ncl-'+id)?.value?.trim(),d=document.getElementById('ncd-'+id)?.value?.trim(),t=document.getElementById('nct-'+id)?.value?.trim();if(l||d||t)ncs.push({local:l||'',descricao:d||'',tratamento:t||''});});return ncs;
-    }
-
-    // ===== REVIEW =====
-    function showReview(){
-      // Collect NCs before showing review
-      fvs.ncs=getNCs();
-
-      // Summary
-      let tO=0,tF=0,tX=0;
-      Object.values(fvs.res).forEach(r=>{if(r.resultado==='Aprovado')tO++;else if(r.resultado==='Reprovado')tF++;else tX++;});
-      const total=tO+tF+tX;
-
-      const sum=document.getElementById('reviewSummary');
-      sum.innerHTML=
-        '<div class="flex items-center justify-between mb-3"><h3 class="text-sm font-bold text-g-text">'+fvs.svc+'</h3><span class="text-xs text-g-hint">'+fvs.id+'</span></div>'+
-        '<div class="grid grid-cols-3 gap-2 text-xs mb-3">'+
-          '<div><span class="text-g-hint block">Obra</span><span class="font-medium text-g-text">'+fvs.obra+'</span></div>'+
-          '<div><span class="text-g-hint block">Pavimento</span><span class="font-medium text-g-text">'+fvs.pav+'</span></div>'+
-          '<div><span class="text-g-hint block">Ambiente</span><span class="font-medium text-g-text">'+fvs.amb+'</span></div>'+
-        '</div>'+
-        '<div class="flex gap-3 text-sm font-bold">'+
-          '<span class="text-g-green bg-g-greenBg px-3 py-1.5 rounded-full">'+tO+' ✓ Aprovados</span>'+
-          (tX?'<span class="text-g-amber bg-g-amberBg px-3 py-1.5 rounded-full">'+tX+' ⚠ Corrigidos</span>':'')+
-          (tF?'<span class="text-g-red bg-g-redBg px-3 py-1.5 rounded-full">'+tF+' ✕ Reprovados</span>':'')+
-        '</div>'+
-        (tF?'<p class="text-xs text-g-red mt-3 font-medium">⚠ Esta FVS ficará pendente de revistoria para os '+tF+' item(ns) reprovado(s).</p>':'');
-
-      // Items grouped by etapa — only show non-approved
-      const c=document.getElementById('reviewItens');c.innerHTML='';
-      let hasNonApproved=false;
-      fvs.etapas.forEach((et,ei)=>{
-        const nonApproved=[];
-        et.itens.forEach((cr,ii)=>{
-          const r=fvs.res[ei+'-'+ii]||{};
-          if(r.resultado&&r.resultado!=='Aprovado')nonApproved.push({num:ii+1,cr,r});
-        });
-        if(nonApproved.length>0){
-          hasNonApproved=true;
-          const sec=document.createElement('div');sec.className='mb-3';
-          sec.innerHTML='<p class="sl">'+et.nome+' — Itens não aprovados</p>';
-          nonApproved.forEach(it=>{
-            const rb=it.r.resultado==='Reprovado'?'bg-g-redBg text-g-red border-g-red':'bg-g-amberBg text-g-amber border-g-amber';
-            const ri=it.r.resultado==='Reprovado'?'✕':'⚠';
-            const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-3 mb-2';
-            cd.innerHTML='<div class="flex items-start gap-2"><span class="text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border '+rb+'">'+ri+'</span><div class="flex-1"><p class="text-sm text-g-text">Item '+it.num+': '+it.cr+'</p>'+(it.r.observacao?'<p class="text-xs text-g-secondary mt-1">'+it.r.observacao+'</p>':'')+'</div></div>';
-            sec.appendChild(cd);
-          });
-          c.appendChild(sec);
-        }
-      });
-      if(!hasNonApproved){c.innerHTML='<p class="text-sm text-g-green text-center py-3 font-medium">✓ Todos os '+total+' itens aprovados</p>';}
-
-      // NCs
-      const ncDiv=document.getElementById('reviewNCs');
-      if(fvs.ncs.length>0){
-        ncDiv.innerHTML='<p class="sl">Não Conformidades ('+fvs.ncs.length+')</p>';
-        fvs.ncs.forEach((nc,i)=>{
-          ncDiv.innerHTML+='<div class="bg-white rounded-lg shadow-md1 p-3 mb-2 text-sm"><span class="font-bold text-g-text">NC #'+(i+1)+':</span> '+nc.local+' — '+nc.descricao+'</div>';
-        });
-      } else {
-        ncDiv.innerHTML='<p class="text-xs text-g-hint text-center py-2">Sem não conformidades registradas</p>';
-      }
-
-      show('vReview');
-    }
-
-    // ===== FINALIZE =====
-    async function finalize(){
-      const btn=document.getElementById('btnConfirmFin');btn.classList.add('bl');btn.disabled=true;
-      try{
-        // Only send etapas that weren't already sent during signing
-        const sent=fvs.sentEtapas||[];
-        const unsentItens=[];
-        fvs.etapas.forEach((et,ei)=>{
-          if(sent.includes(ei))return; // already sent
-          et.itens.forEach((cr,ii)=>{const r=fvs.res[ei+'-'+ii]||{};unsentItens.push({etapa:et.nome,numero:ii+1,criterio:cr,resultado:r.resultado||'',data1a:r.data1a||'',dataFinal:r.dataFinal||'',observacao:r.observacao||''});});
-        });
-        if(unsentItens.length>0){
-          await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id,responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:unsentItens})});
-        }
-        // Send NCs
-        const ncs=fvs.ncs||[];
-        if(ncs.length>0)await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'ncs',fvsId:fvs.id,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,ncs:ncs})});
-        // Handle completion
-        const hr=Object.values(fvs.res).some(r=>r.resultado==='Reprovado');
-        if(hr){fvs.cur=fvs.etapas.length;fvs.status='revistoria';saveFVS();}
-        else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));}
-        let tO=0,tF=0,tX=0;Object.values(fvs.res).forEach(r=>{if(r.resultado==='Aprovado')tO++;else if(r.resultado==='Reprovado')tF++;else tX++;});
-        document.getElementById('doneRes').textContent=fvs.svc+' — '+fvs.obra+'\n'+tO+' aprovados, '+tF+' reprovados, '+tX+' corrigidos'+(ncs.length?', '+ncs.length+' NC(s)':'')+(hr?'\n\nFVS salva para revistoria.':'');
-        show('vDone');toast('FVS finalizada!','success');setTimeout(()=>fetchShared(),2000);
-      }catch(e){toast('Erro ao enviar','error');console.error(e);}
-      finally{btn.classList.remove('bl');btn.disabled=false;}
-    }
-
-    // ===== REVISIT =====
-    function openRev(id){
-      const s=getSaved().find(s=>s.id===id);if(!s){toast('FVS não encontrada','error');return;}fvs={...s};
-      const reps=[];fvs.etapas.forEach((et,ei)=>{et.itens.forEach((cr,ii)=>{const k=ei+'-'+ii,r=fvs.res[k];if(r&&r.resultado==='Reprovado')reps.push({k,etapa:et.nome,num:ii+1,cr,obs:r.observacao||''});});});
-      document.getElementById('revInfo').textContent=fvs.svc+' — '+fvs.obra+' · '+fvs.pav+'\n'+reps.length+' item(ns) reprovado(s)';
-      const c=document.getElementById('revCont');c.innerHTML='';
-      reps.forEach((it,i)=>{
-        const cd=document.createElement('div');cd.className='bg-white rounded-lg shadow-md1 p-4 su';cd.style.animationDelay=(i*.03)+'s';
-        cd.innerHTML='<div class="flex items-start gap-3 mb-2"><span class="text-xs font-bold text-g-red bg-g-redBg w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">✕</span><div><p class="text-xs text-g-hint">'+it.etapa+' · Item '+it.num+'</p><p class="text-sm text-g-text leading-relaxed mt-1">'+it.cr+'</p>'+(it.obs?'<p class="text-xs text-g-secondary mt-1 italic">Obs: '+it.obs+'</p>':'')+'</div></div><div class="mt-3 space-y-2"><label class="fl">Resultado <span class="text-g-red">*</span></label><div class="flex gap-2"><button onclick="this.parentElement.querySelectorAll(\'.rb\').forEach(b=>{b.classList.remove(\'sok\',\'sfl\')});this.classList.add(\'sok\');this.dataset.r=\'Aprovado após correções\'" class="rb" data-key="'+it.k+'">✓ Aprovado</button><button onclick="this.parentElement.querySelectorAll(\'.rb\').forEach(b=>{b.classList.remove(\'sok\',\'sfl\')});this.classList.add(\'sfl\');this.dataset.r=\'Reprovado\'" class="rb" data-key="'+it.k+'">✕ Mantém</button></div><div><label class="fl">Data Revistoria <span class="text-g-red">*</span></label><input type="date" class="f h-10" id="rvd-'+it.k+'" value="'+new Date().toISOString().split('T')[0]+'"></div><div><label class="fl">Observação</label><textarea rows="2" class="f text-sm" id="rvo-'+it.k+'" placeholder="Correção realizada..."></textarea></div></div>';
-        c.appendChild(cd);
-      });
-      show('vRev');
-    }
-
-    async function saveRevisit(){
-      const btn=document.getElementById('btnRev');btn.classList.add('bl');btn.disabled=true;
-      const ritens=[];
-      document.querySelectorAll('#revCont .rb.sok, #revCont .rb.sfl').forEach(b=>{
-        const k=b.dataset.key,res=b.dataset.r;if(!k||!res)return;
-        const dt=document.getElementById('rvd-'+k)?.value||'';const obs=document.getElementById('rvo-'+k)?.value?.trim()||'';
-        fvs.res[k].resultado=res;fvs.res[k].dataFinal=dt;if(obs)fvs.res[k].observacao=(fvs.res[k].observacao||'')+' | Rev: '+obs;
-        const ps=k.split('-'),et=fvs.etapas[parseInt(ps[0])];
-        ritens.push({etapa:et.nome,numero:parseInt(ps[1])+1,criterio:et.itens[parseInt(ps[1])],resultado:res,data1a:fvs.res[k].data1a||'',dataFinal:dt,observacao:fvs.res[k].observacao||''});
-      });
-      try{
-        if(ritens.length>0)await fetch(EP,{method:'POST',mode:'no-cors',body:JSON.stringify({tipo:'itens',fvsId:fvs.id+'-REV',responsavel:fvs.resp,obra:fvs.obra,pavimento:fvs.pav,ambiente:fvs.amb,servico:fvs.svc,encarregado:fvs.enc,executor:fvs.exe,dataAbertura:fvs.dt,itens:ritens})});
-        const still=Object.values(fvs.res).some(r=>r.resultado==='Reprovado');
-        if(still){saveFVS();toast('Revistoria salva. Ainda há reprovados.','error');}
-        else{const a=getSaved().filter(s=>s.id!==fvs.id);localStorage.setItem('bronx_fvs_sv',JSON.stringify(a));toast('Revistoria concluída!','success');}
-        show('vDash');renderDash();setTimeout(()=>fetchShared(),2000);
-      }catch(e){toast('Erro','error');console.error(e);}
-      finally{btn.classList.remove('bl');btn.disabled=false;}
-    }
-  </script>
+    document.getElementById('detailContent').innerHTML=h;
+    show('vDetail');
+  }catch(e){toast('Erro ao abrir detalhe: '+(e.message||e),'error');console.error(e);}
+}
+</script>
 </body>
 </html>
