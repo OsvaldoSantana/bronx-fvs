@@ -150,6 +150,7 @@ select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image
   <div class="mb-3">
     <p class="sl mb-1" id="etapaNome">Etapa</p>
   </div>
+  <div id="etapaBar" class="mb-3 hidden"></div>
   <div id="ckItems" class="space-y-3"></div>
 
   <!-- Navegação entre etapas -->
@@ -177,6 +178,19 @@ select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image
   <button onclick="goHome()" class="text-sm text-g-blue font-medium mb-4 flex items-center gap-1">← Voltar ao início</button>
   <div id="detailContent"></div>
 </main>
+
+<!-- ===== MODAL ETAPA CONCLUÍDA ===== -->
+<div id="etapaModal" class="fixed inset-0 bg-black/40 z-[90] hidden items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-md2 p-6 max-w-sm w-full">
+    <div class="w-12 h-12 rounded-full bg-g-greenBg flex items-center justify-center text-2xl mx-auto mb-3">✓</div>
+    <p class="text-sm text-g-text text-center mb-1" id="etapaModalInfo"></p>
+    <p class="text-xs text-g-hint text-center mb-5">O que deseja fazer agora?</p>
+    <div class="space-y-2">
+      <button onclick="modalIrProxima()" class="w-full h-12 bg-g-blue text-white rounded-lg text-sm font-medium" id="etapaModalProx">Próxima etapa →</button>
+      <button onclick="modalVoltarInicio()" class="w-full h-12 border border-g-border text-g-secondary rounded-lg text-sm font-medium">← Voltar ao início</button>
+    </div>
+  </div>
+</div>
 
 <div id="toastC" class="fixed bottom-6 left-4 right-4 z-[100] flex flex-col items-center pointer-events-none"></div>
 
@@ -368,7 +382,8 @@ async function openFVS(id){
     fvs=data;
     fvs.fvs_itens.sort((a,b)=>{if(a.is_revistoria!==b.is_revistoria)return a.is_revistoria?1:-1;return a.id-b.id;});
     fvs.etapasList=REF.checklists[fvs.servico].etapas.map(e=>e.nome);
-    fvs.curEtapa=Math.min(fvs.etapa_atual||0,fvs.etapasList.length-1);
+    fvs.curEtapa=0; // sempre abre na primeira etapa; navega manualmente
+    fvs.editEtapa=false; // controla se a etapa atual está destravada para edição
     profEditOpen=false;
     if(fvs.status==='revistoria'){
       // Revistoria: mostra só os reprovados para reavaliar
@@ -473,35 +488,61 @@ function renderStepper(){
     wrap.appendChild(dot);
   });
 }
-function jumpEtapa(i){saveCurrentEtapa();fvs.curEtapa=i;renderCK();}
+function jumpEtapa(i){fvs.editEtapa=false;saveCurrentEtapa();fvs.curEtapa=i;renderCK();}
 function etapaItems(etapaNome){return fvs.fvs_itens.filter(it=>it.etapa===etapaNome&&!it.is_revistoria);}
+function etapaCompleta(etapaNome){const its=etapaItems(etapaNome);return its.length>0&&its.every(it=>it.resultado);}
 function renderEtapaItems(){
   const nome=fvs.etapasList[fvs.curEtapa];
   document.getElementById('etapaNome').textContent='Etapa '+(fvs.curEtapa+1)+' de '+fvs.etapasList.length+' — '+nome;
   const items=etapaItems(nome);
+  const completa=etapaCompleta(nome);
+  // Etapa preenchida fica travada, a menos que o usuário tenha clicado em Editar
+  const travada=completa&&!fvs.editEtapa;
+  // Barra de status da etapa (travada + botão editar)
+  const bar=document.getElementById('etapaBar');
+  if(travada){
+    bar.classList.remove('hidden');
+    bar.innerHTML='<div class="flex items-center justify-between bg-g-greenBg rounded-lg px-3 py-2"><span class="text-xs font-medium text-g-green">✓ Etapa preenchida e salva</span><button onclick="editarEtapa()" class="text-xs font-medium text-g-blue px-3 py-1 rounded-md bg-white border border-g-border">✎ Editar etapa</button></div>';
+  }else if(completa&&fvs.editEtapa){
+    bar.classList.remove('hidden');
+    bar.innerHTML='<div class="flex items-center justify-between bg-g-amberBg rounded-lg px-3 py-2"><span class="text-xs font-medium text-g-amber">✎ Editando — as alterações são salvas automaticamente</span><button onclick="travarEtapa()" class="text-xs font-medium text-g-secondary px-3 py-1 rounded-md bg-white border border-g-border">Concluir edição</button></div>';
+  }else{
+    bar.classList.add('hidden');
+  }
   const wrap=document.getElementById('ckItems');wrap.innerHTML='';
   items.forEach((it)=>{
-    const card=document.createElement('div');card.className='bg-white rounded-lg shadow-md1 p-4 su';
+    const card=document.createElement('div');card.className='bg-white rounded-lg shadow-md1 p-4 su'+(travada?' opacity-90':'');
     const r=it.resultado||'';
+    const dis=travada?' disabled style="cursor:default"':'';
+    const onclickAttr=travada?'':' onclick="setRes('+it.id+',';
     card.innerHTML='<p class="text-sm text-g-text mb-3">'+esc(it.criterio)+'</p>'+
       '<div class="flex gap-2 mb-2">'+
-      '<button class="opt aprovado'+(r==='Aprovado'?' sel':'')+'" onclick="setRes('+it.id+',\'Aprovado\')">Aprovado</button>'+
-      '<button class="opt reprovado'+(r==='Reprovado'?' sel':'')+'" onclick="setRes('+it.id+',\'Reprovado\')">Reprovado</button>'+
+      '<button class="opt aprovado'+(r==='Aprovado'?' sel':'')+'"'+(travada?'':' onclick="setRes('+it.id+',\'Aprovado\')"')+dis+'>Aprovado</button>'+
+      '<button class="opt reprovado'+(r==='Reprovado'?' sel':'')+'"'+(travada?'':' onclick="setRes('+it.id+',\'Reprovado\')"')+dis+'>Reprovado</button>'+
       '</div><div class="flex gap-2">'+
-      '<button class="opt corrigido'+(r==='Corrigido'?' sel':'')+'" onclick="setRes('+it.id+',\'Corrigido\')">Corrigido</button>'+
-      '<button class="opt na'+(r==='N/A'?' sel':'')+'" onclick="setRes('+it.id+',\'N/A\')">N/A</button>'+
+      '<button class="opt corrigido'+(r==='Corrigido'?' sel':'')+'"'+(travada?'':' onclick="setRes('+it.id+',\'Corrigido\')"')+dis+'>Corrigido</button>'+
+      '<button class="opt na'+(r==='N/A'?' sel':'')+'"'+(travada?'':' onclick="setRes('+it.id+',\'N/A\')"')+dis+'>N/A</button>'+
       '</div>'+
-      '<input type="text" placeholder="Observação (opcional)" value="'+esc(it.observacao||'')+'" onchange="setObs('+it.id+',this.value)" class="f h-10 mt-3 text-sm">';
+      '<input type="text" placeholder="Observação (opcional)" value="'+esc(it.observacao||'')+'" '+(travada?'readonly':'onchange="setObs('+it.id+',this.value)"')+' class="f h-10 mt-3 text-sm'+(travada?' bg-g-bg':'')+'">';
     wrap.appendChild(card);
   });
 }
-function setRes(itemId,res){
+function editarEtapa(){fvs.editEtapa=true;renderEtapaItems();}
+function travarEtapa(){fvs.editEtapa=false;renderEtapaItems();}
+async function setRes(itemId,res){
   const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;
   it.resultado=res;if(!it.data_1a)it.data_1a=new Date().toISOString().split('T')[0];
   renderEtapaItems();updateProgress();
-  db.from('fvs_itens').update({resultado:res,data_1a:it.data_1a}).eq('id',itemId);
+  try{
+    const {error}=await db.from('fvs_itens').update({resultado:res,data_1a:it.data_1a}).eq('id',itemId);
+    if(error)throw error;
+  }catch(e){toast('Erro ao salvar item: '+(e.message||e),'error');console.error(e);}
 }
-function setObs(itemId,v){const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;it.observacao=v;db.from('fvs_itens').update({observacao:v}).eq('id',itemId);}
+async function setObs(itemId,v){
+  const it=fvs.fvs_itens.find(x=>x.id===itemId);if(!it)return;it.observacao=v;
+  try{const {error}=await db.from('fvs_itens').update({observacao:v}).eq('id',itemId);if(error)throw error;}
+  catch(e){toast('Erro ao salvar observação','error');console.error(e);}
+}
 function updateProgress(){
   const all=fvs.fvs_itens.filter(it=>!it.is_revistoria);
   const done=all.filter(it=>it.resultado).length;
@@ -510,21 +551,39 @@ function updateProgress(){
   document.getElementById('progPct').textContent=pct+'%';
   document.getElementById('progBar').style.width=pct+'%';
 }
-function saveCurrentEtapa(){
-  db.from('fvs').update({etapa_atual:fvs.curEtapa,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+async function saveCurrentEtapa(){
+  try{
+    const {error}=await db.from('fvs').update({etapa_atual:fvs.curEtapa,updated_at:new Date().toISOString()}).eq('id',fvs.id);
+    if(error)throw error;
+  }catch(e){toast('Erro ao salvar progresso','error');console.error(e);}
 }
 
 // ===== NAVEGAÇÃO ENTRE ETAPAS =====
-function prevEtapa(){if(fvs.curEtapa>0){fvs.curEtapa--;saveCurrentEtapa();renderCK();}}
-function nextEtapa(){
+function prevEtapa(){if(fvs.curEtapa>0){fvs.curEtapa--;fvs.editEtapa=false;saveCurrentEtapa();renderCK();}}
+async function nextEtapa(){
   // validate current etapa fully answered
   const nome=fvs.etapasList[fvs.curEtapa];
   const items=etapaItems(nome);
   const unanswered=items.filter(it=>!it.resultado);
   if(unanswered.length>0){toast('Responda todos os '+items.length+' itens desta etapa ('+unanswered.length+' faltando)','error');return;}
-  if(fvs.curEtapa<fvs.etapasList.length-1){fvs.curEtapa++;saveCurrentEtapa();renderCK();}
-  else{goReview();}
+  await saveCurrentEtapa();
+  if(fvs.curEtapa<fvs.etapasList.length-1){
+    // mostra modal: voltar ao início ou próxima etapa
+    abrirEtapaModal(nome);
+  }else{
+    goReview();
+  }
 }
+function abrirEtapaModal(etapaConcluida){
+  const proxima=fvs.etapasList[fvs.curEtapa+1];
+  document.getElementById('etapaModalInfo').innerHTML='Etapa <b>'+esc(etapaConcluida)+'</b> concluída e salva. ✓';
+  document.getElementById('etapaModalProx').textContent='Ir para: '+proxima;
+  document.getElementById('etapaModal').classList.remove('hidden');
+  document.getElementById('etapaModal').classList.add('flex');
+}
+function fecharEtapaModal(){document.getElementById('etapaModal').classList.add('hidden');document.getElementById('etapaModal').classList.remove('flex');}
+function modalIrProxima(){fecharEtapaModal();fvs.curEtapa++;fvs.editEtapa=false;saveCurrentEtapa();renderCK();}
+function modalVoltarInicio(){fecharEtapaModal();goHome();}
 function updateNavButtons(){
   document.getElementById('btnPrev').disabled=fvs.curEtapa===0;
   document.getElementById('btnNext').textContent=fvs.curEtapa<fvs.etapasList.length-1?'Próxima etapa →':'Revisar e finalizar →';
