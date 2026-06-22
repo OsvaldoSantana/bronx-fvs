@@ -67,6 +67,19 @@ select.f{cursor:pointer;-webkit-appearance:none;appearance:none;background-image
     <button onclick="dashTab('revistoria')" id="dt-revistoria" class="tab">Revistoria <span id="cRev" class="text-xs bg-g-bg px-1.5 rounded-full ml-1">0</span></button>
     <button onclick="dashTab('historico')" id="dt-historico" class="tab">Histórico</button>
   </div></div>
+  <div class="bg-white rounded-lg shadow-md1 p-3 mb-4">
+    <div class="flex items-center justify-between mb-2">
+      <span class="sl mb-0">Filtros</span>
+      <button onclick="limparFiltros()" class="text-xs text-g-blue font-medium hover:underline">Limpar</button>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <select id="fObra" onchange="renderDash()" class="f h-9 text-xs"><option value="">Todas obras</option></select>
+      <select id="fServico" onchange="renderDash()" class="f h-9 text-xs"><option value="">Todos serviços</option></select>
+      <select id="fColab" onchange="renderDash()" class="f h-9 text-xs"><option value="">Todos colaboradores</option></select>
+      <select id="fResp" onchange="renderDash()" class="f h-9 text-xs"><option value="">Todos que lançaram</option></select>
+    </div>
+    <p id="filtroCount" class="text-xs text-g-hint mt-2 hidden"></p>
+  </div>
   <div id="dashList" class="space-y-3"></div>
   <div id="dashLoad" class="text-center py-8 text-sm text-g-hint">Carregando...</div>
   <div id="dashEmpty" class="text-center py-8 text-sm text-g-hint hidden">Nenhuma FVS aqui ainda</div>
@@ -261,9 +274,27 @@ async function loadDash(){
     const nA=allFvs.filter(f=>f.status==='em_andamento').length;
     const nR=allFvs.filter(f=>f.status==='revistoria').length;
     document.getElementById('cAnd').textContent=nA;document.getElementById('cRev').textContent=nR;
+    popularFiltros();
   }catch(e){console.error(e);allFvs=[];}
   document.getElementById('dashLoad').classList.add('hidden');renderDash();
 }
+function popularFiltros(){
+  const obras=[...new Set(allFvs.map(f=>f.obra).filter(Boolean))].sort();
+  const servicos=[...new Set(allFvs.map(f=>f.servico).filter(Boolean))].sort();
+  const colabs=[...new Set(allFvs.flatMap(f=>f.profissionais||[]).filter(Boolean))].sort();
+  const resps=[...new Set(allFvs.map(f=>f.preenchido_por).filter(Boolean))].sort();
+  const fill=(id,arr,label)=>{
+    const sel=document.getElementById(id);const cur=sel.value;
+    sel.innerHTML='<option value="">'+label+'</option>';
+    arr.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});
+    if(cur&&arr.includes(cur))sel.value=cur;
+  };
+  fill('fObra',obras,'Todas obras');
+  fill('fServico',servicos,'Todos serviços');
+  fill('fColab',colabs,'Todos colaboradores');
+  fill('fResp',resps,'Todos que lançaram');
+}
+function limparFiltros(){['fObra','fServico','fColab','fResp'].forEach(id=>document.getElementById(id).value='');renderDash();}
 function fvsStats(f){
   const its=(f.fvs_itens||[]);let ap=0,rp=0,co=0;
   its.forEach(i=>{const r=String(i.resultado||'').toLowerCase();if(r==='aprovado')ap++;else if(r==='reprovado')rp++;else if(r.indexOf('corrig')>-1||r.indexOf('correç')>-1)co++;});
@@ -275,6 +306,20 @@ function renderDash(){
   if(dashFilter==='andamento')d=allFvs.filter(f=>f.status==='em_andamento');
   else if(dashFilter==='revistoria')d=allFvs.filter(f=>f.status==='revistoria');
   else d=allFvs.filter(f=>f.status==='concluida');
+  // Aplicar filtros
+  const fo=document.getElementById('fObra').value;
+  const fs=document.getElementById('fServico').value;
+  const fc=document.getElementById('fColab').value;
+  const fr=document.getElementById('fResp').value;
+  if(fo)d=d.filter(f=>f.obra===fo);
+  if(fs)d=d.filter(f=>f.servico===fs);
+  if(fc)d=d.filter(f=>(f.profissionais||[]).includes(fc));
+  if(fr)d=d.filter(f=>f.preenchido_por===fr);
+  // Contador de filtros ativos
+  const ativos=[fo,fs,fc,fr].filter(Boolean).length;
+  const fc2=document.getElementById('filtroCount');
+  if(ativos>0){fc2.textContent=d.length+' resultado(s) · '+ativos+' filtro(s) ativo(s)';fc2.classList.remove('hidden');}
+  else fc2.classList.add('hidden');
   if(!d.length){document.getElementById('dashEmpty').classList.remove('hidden');return;}
   document.getElementById('dashEmpty').classList.add('hidden');
   d.forEach((f,i)=>{
